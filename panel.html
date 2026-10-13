@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Panel - Catálogo Digital</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen p-4 pb-24 font-sans max-w-lg mx-auto antialiased">
+
+  <!-- PANTALLA DE ACCESO POR PIN -->
+  <div id="login-box" class="min-h-[70vh] flex items-center justify-center">
+    <div class="bg-slate-900 border border-amber-500/30 rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
+      <div class="w-12 h-12 rounded-2xl bg-amber-500 text-slate-950 flex items-center justify-center text-xl font-black mx-auto">
+        <i class="fa-solid fa-lock"></i>
+      </div>
+      <h2 id="login-title" class="text-base font-bold text-white">Panel de Administración</h2>
+      <p class="text-xs text-slate-400">Introduce tu PIN de 4 dígitos para acceder a tus productos</p>
+      <input id="pin-input" type="password" maxlength="4" placeholder="••••" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-center text-xl font-mono text-amber-400 tracking-widest outline-none focus:border-amber-400">
+      <button onclick="verificarPin()" class="w-full bg-amber-500 text-slate-950 font-black py-3 rounded-xl text-xs uppercase tracking-wider active:scale-95">
+        Ingresar al Panel
+      </button>
+    </div>
+  </div>
+
+  <!-- PANEL DE GESTIÓN (OCULTO HASTA PONER EL PIN) -->
+  <div id="panel-contenido" class="hidden space-y-4">
+    <header class="flex justify-between items-center py-3 border-b border-slate-800">
+      <div>
+        <h1 id="panel-biz-name" class="text-lg font-black text-amber-400">MI NEGOCIO</h1>
+        <p id="panel-dias-restantes" class="text-[11px] font-bold text-cyan-400"></p>
+      </div>
+      <button onclick="verMiTienda()" class="bg-slate-800 text-xs px-3 py-1.5 rounded-xl text-amber-400 border border-slate-700 font-bold active:scale-95">
+        Ver Tienda ➔
+      </button>
+    </header>
+
+    <!-- FORMULARIO DE PRODUCTO -->
+    <section class="bg-slate-900 border border-amber-500/30 rounded-3xl p-5 shadow-xl space-y-3.5">
+      <div class="flex justify-between items-center">
+        <h2 id="form-titulo" class="text-sm font-black text-white flex items-center gap-1.5">
+          <i class="fa-solid fa-plus-circle text-amber-400"></i> AGREGAR OFERTA
+        </h2>
+        <button onclick="cancelarEdicion()" id="btn-cancelar-edit" class="hidden text-xs text-red-400 underline font-bold">Cancelar</button>
+      </div>
+
+      <input type="hidden" id="edit-id" value="">
+
+      <div>
+        <label class="text-[11px] text-slate-400 font-bold uppercase">Nombre del Producto / Plato *</label>
+        <input id="p-nombre" type="text" placeholder="Ej. Hamburguesa Especial" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400 mt-1">
+      </div>
+
+      <div class="grid grid-cols-2 gap-2.5">
+        <div>
+          <label class="text-[11px] text-slate-400 font-bold uppercase">Precio en CUP *</label>
+          <input id="p-precio" type="number" placeholder="850" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400 mt-1">
+        </div>
+        <div>
+          <label class="text-[11px] text-slate-400 font-bold uppercase">Categoría *</label>
+          <input id="p-categoria" list="cat-list" type="text" placeholder="BEBIDAS, PIZZAS..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400 mt-1 uppercase">
+          <datalist id="cat-list"></datalist>
+        </div>
+      </div>
+
+      <!-- FOTO DESDE GALERÍA -->
+      <div>
+        <label class="text-[11px] text-amber-300 font-bold uppercase flex items-center gap-1">
+          <i class="fa-solid fa-camera"></i> Foto del producto
+        </label>
+        <label class="mt-1 w-full bg-slate-800 border border-dashed border-amber-500/40 rounded-2xl p-3 flex flex-col items-center justify-center cursor-pointer active:scale-98 transition">
+          <i class="fa-solid fa-image text-amber-400 text-xl mb-0.5"></i>
+          <span id="file-label" class="text-xs text-white font-bold">Elegir foto de tu galería</span>
+          <input type="file" id="file-input" accept="image/*" class="hidden" onchange="procesarFoto(event)">
+        </label>
+
+        <div id="preview-box" class="mt-2 hidden flex items-center gap-3 bg-slate-950 p-2 rounded-xl border border-slate-800">
+          <img id="img-preview" class="w-12 h-12 object-cover rounded-lg border border-amber-400" src="">
+          <button onclick="quitarFoto()" class="text-red-400 text-xs underline">Quitar foto</button>
+        </div>
+      </div>
+
+      <div>
+        <label class="text-[11px] text-slate-400 font-bold uppercase">Descripción / Detalles</label>
+        <input id="p-desc" type="text" placeholder="Ingredientes, porciones, detalles..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400 mt-1">
+      </div>
+
+      <button onclick="guardarProducto()" id="btn-guardar" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-3 rounded-xl text-xs uppercase tracking-wider active:scale-95 transition shadow-lg">
+        Guardar en mi Catálogo
+      </button>
+    </section>
+
+    <!-- INVENTARIO -->
+    <section class="space-y-2.5">
+      <h2 class="text-xs font-black text-white uppercase flex items-center gap-1.5">
+        <i class="fa-solid fa-boxes-stacked text-amber-400"></i> Mis Productos
+      </h2>
+      <div id="lista-prods" class="space-y-2"></div>
+    </section>
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://qhkqznpgjirvnndriehr.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFoa3F6bnBnamlydm5uZHJpZWhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5MTE5NzQsImV4cCI6MjEwNzQ4Nzk3NH0.AHUdASoGr0FJWUuP0LxS9UJ2_-QzFPwAjmEeWZ3g1Uc";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const TIENDA_SLUG = (urlParams.get('tienda') || '').toLowerCase().trim();
+
+    let negocioActual = null;
+    let productos = [];
+    let imagenBase64 = "";
+
+    async function iniciar() {
+      if (!TIENDA_SLUG) {
+        alert("Enlace inválido. Falta el nombre del negocio.");
+        return;
+      }
+      const { data } = await supabaseClient.from('negocios').select('*').eq('slug', TIENDA_SLUG).single();
+      if (!data) {
+        alert("Negocio no encontrado.");
+        return;
+      }
+      negocioActual = data;
+      document.getElementById("login-title").innerText = data.nombre;
+    }
+
+    function verificarPin() {
+      const pin = document.getElementById("pin-input").value.trim();
+      if (pin === negocioActual.pin_admin) {
+        document.getElementById("login-box").classList.add("hidden");
+        document.getElementById("panel-contenido").classList.remove("hidden");
+        cargarDatosPanel();
+      } else {
+        alert("PIN incorrecto.");
+      }
+    }
+
+    function cargarDatosPanel() {
+      document.getElementById("panel-biz-name").innerText = negocioActual.nombre;
+      
+      // Calcular días restantes
+      const ahora = new Date();
+      const vence = new Date(negocioActual.fecha_vencimiento);
+      const diffMs = vence - ahora;
+      const diasRestantes = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+      const tag = document.getElementById("panel-dias-restantes");
+      if (diasRestantes > 0) {
+        tag.innerText = `⏳ Te quedan ${diasRestantes} días de servicio`;
+      } else {
+        tag.innerText = `⚠️ Periodo vencido. Contacta al admin para renovar`;
+        tag.className = "text-[11px] font-bold text-red-400";
+      }
+
+      cargarProductos();
+    }
+
+    function verMiTienda() {
+      window.open(`index.html?tienda=${negocioActual.slug}&v=${Date.now()}`, '_blank');
+    }
+
+    function procesarFoto(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      document.getElementById("file-label").innerText = "Procesando...";
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement("canvas");
+          const maxDim = 500;
+          let w = img.width, h = img.height;
+          if (w > h) { if (w > maxDim) { h *= maxDim / w; w = maxDim; } }
+          else { if (h > maxDim) { w *= maxDim / h; h = maxDim; } }
+          canvas.width = w; canvas.height = h;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, w, h);
+          imagenBase64 = canvas.toDataURL("image/jpeg", 0.70);
+          document.getElementById("img-preview").src = imagenBase64;
+          document.getElementById("preview-box").classList.remove("hidden");
+          document.getElementById("file-label").innerText = "Foto seleccionada";
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function quitarFoto() {
+      imagenBase64 = "";
+      document.getElementById("file-input").value = "";
+      document.getElementById("preview-box").classList.add("hidden");
+      document.getElementById("file-label").innerText = "Elegir foto de tu galería";
+    }
+
+    async function cargarProductos() {
+      const cont = document.getElementById("lista-prods");
+      const { data } = await supabaseClient
+        .from('productos')
+        .select('*')
+        .eq('negocio_id', negocioActual.id)
+        .order('id', { ascending: false });
+
+      productos = data || [];
+      if (productos.length === 0) {
+        cont.innerHTML = '<div class="text-xs text-slate-500 text-center py-6">Aún no tienes productos. ¡Agrega el primero arriba!</div>';
+        return;
+      }
+
+      let html = '';
+      productos.forEach(p => {
+        const estClass = p.disponible ? 'text-emerald-400' : 'text-red-400';
+        const estTexto = p.disponible ? 'Disponible' : 'Agotado';
+        html += `<div class="bg-slate-900 border border-slate-800 rounded-2xl p-2.5 flex items-center justify-between gap-3">
+          <div class="flex items-center gap-2.5">
+            <img src="${p.imagen || 'https://via.placeholder.com/80'}" class="w-12 h-12 object-cover rounded-xl bg-slate-950 border border-slate-800">
+            <div>
+              <h3 class="text-xs font-bold text-white">${p.nombre}</h3>
+              <p class="text-xs text-amber-400 font-bold">$${Number(p.precio).toLocaleString()} CUP</p>
+              <span class="text-[9px] font-bold ${estClass}">● ${estTexto}</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button onclick="editarProd(${p.id})" class="p-2 bg-blue-600/30 text-blue-400 rounded-xl text-xs"><i class="fa-solid fa-pen"></i></button>
+            <button onclick="toggleEstadoProd(${p.id}, ${p.disponible})" class="px-2 py-1.5 bg-slate-800 text-[10px] rounded-xl font-bold">${p.disponible ? 'Agotar' : 'Activar'}</button>
+            <button onclick="eliminarProd(${p.id})" class="p-2 bg-red-950/60 text-red-400 rounded-xl text-xs"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        </div>`;
+      });
+      cont.innerHTML = html;
+    }
+
+    function editarProd(id) {
+      const p = productos.find(x => x.id === id);
+      if (!p) return;
+      document.getElementById("edit-id").value = p.id;
+      document.getElementById("p-nombre").value = p.nombre;
+      document.getElementById("p-precio").value = p.precio;
+      document.getElementById("p-categoria").value = p.categoria || '';
+      document.getElementById("p-desc").value = p.descripcion || '';
+      if (p.imagen) {
+        imagenBase64 = p.imagen;
+        document.getElementById("img-preview").src = p.imagen;
+        document.getElementById("preview-box").classList.remove("hidden");
+      }
+      document.getElementById("form-titulo").innerHTML = '<i class="fa-solid fa-pen text-blue-400"></i> EDITAR PRODUCTO';
+      document.getElementById("btn-guardar").innerText = "Guardar Cambios";
+      document.getElementById("btn-cancelar-edit").classList.remove("hidden");
+      window.scrollTo({ top: 150, behavior: 'smooth' });
+    }
+
+    function cancelarEdicion() {
+      document.getElementById("edit-id").value = "";
+      document.getElementById("p-nombre").value = "";
+      document.getElementById("p-precio").value = "";
+      document.getElementById("p-categoria").value = "";
+      document.getElementById("p-desc").value = "";
+      quitarFoto();
+      document.getElementById("form-titulo").innerHTML = '<i class="fa-solid fa-plus-circle text-amber-400"></i> AGREGAR OFERTA';
+      document.getElementById("btn-guardar").innerText = "Guardar en mi Catálogo";
+      document.getElementById("btn-cancelar-edit").classList.add("hidden");
+    }
+
+    async function guardarProducto() {
+      const editId = document.getElementById("edit-id").value;
+      const nombre = document.getElementById("p-nombre").value.trim();
+      const precio = parseFloat(document.getElementById("p-precio").value);
+      const categoria = document.getElementById("p-categoria").value.trim().toUpperCase() || 'GENERAL';
+      const desc = document.getElementById("p-desc").value.trim();
+
+      if (!nombre || isNaN(precio)) {
+        alert("Completa el nombre y el precio.");
+        return;
+      }
+
+      const payload = {
+        negocio_id: negocioActual.id,
+        nombre,
+        precio,
+        categoria,
+        descripcion: desc,
+        imagen: imagenBase64 || ''
+      };
+
+      if (editId) {
+        await supabaseClient.from('productos').update(payload).eq('id', editId);
+      } else {
+        payload.disponible = true;
+        await supabaseClient.from('productos').insert([payload]);
+      }
+
+      cancelarEdicion();
+      cargarProductos();
+    }
+
+    async function toggleEstadoProd(id, act) {
+      await supabaseClient.from('productos').update({ disponible: !act }).eq('id', id);
+      cargarProductos();
+    }
+
+    async function eliminarProd(id) {
+      if (!confirm("¿Eliminar este producto?")) return;
+      await supabaseClient.from('productos').delete().eq('id', id);
+      cargarProductos();
+    }
+
+    iniciar();
+  </script>
+</body>
+</html>
