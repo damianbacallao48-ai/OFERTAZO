@@ -8,63 +8,117 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen p-4 pb-20 font-sans max-w-lg mx-auto">
+<body class="bg-slate-950 text-slate-100 min-h-screen p-4 pb-24 font-sans max-w-lg mx-auto antialiased">
 
-  <header class="flex justify-between items-center py-4 border-b border-slate-800 mb-6">
+  <header class="flex justify-between items-center py-4 border-b border-slate-800 mb-5">
     <div>
       <h1 class="text-xl font-black text-amber-400">OFERTAZO ADMIN</h1>
-      <p class="text-xs text-slate-400">Control de Inventario en Tiempo Real</p>
+      <p class="text-xs text-slate-400">Gestión de Inventario y Precios</p>
     </div>
-    <a href="index.html" target="_blank" class="bg-slate-800 text-xs px-3 py-2 rounded-xl text-amber-400 border border-slate-700 font-bold">
-      Ver Tienda ➔
+    <a href="index.html" target="_blank" class="bg-slate-800 text-xs px-3 py-2 rounded-xl text-amber-400 border border-slate-700 font-bold flex items-center gap-1.5 active:scale-95">
+      <span>Ver Tienda</span> <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
     </a>
   </header>
 
-  <!-- Formulario Nuevo Producto -->
-  <section class="bg-slate-900 border border-slate-800 rounded-3xl p-5 mb-6 shadow-xl space-y-3.5">
-    <h2 class="text-sm font-black text-white flex items-center gap-2">
-      <i class="fa-solid fa-plus-circle text-amber-400"></i> Nuevo Producto
-    </h2>
+  <!-- CONTROL DE TASA DE CAMBIO USD -->
+  <section class="bg-slate-900 border border-cyan-500/40 rounded-3xl p-4 mb-5 shadow-xl">
+    <div class="flex items-center justify-between gap-3">
+      <div class="flex items-center gap-2">
+        <i class="fa-solid fa-money-bill-transfer text-cyan-400 text-lg"></i>
+        <div>
+          <h3 class="text-xs font-black text-white uppercase">Tasa del Dólar (USD / CUP)</h3>
+          <p class="text-[10px] text-slate-400">Cambia la tasa para toda la tienda</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <input id="input-tasa-usd" type="number" placeholder="320" class="w-20 bg-slate-800 border border-slate-700 rounded-xl p-2 text-xs text-center font-black text-amber-400 outline-none focus:border-cyan-400">
+        <button onclick="guardarTasaUSD()" id="btn-tasa" class="bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-black px-3 py-2 rounded-xl active:scale-95 transition">
+          Actualizar
+        </button>
+      </div>
+    </div>
+  </section>
 
-    <div>
-      <label class="text-[11px] text-slate-400 font-bold">Nombre del producto *</label>
-      <input id="p-nombre" type="text" placeholder="Ej. Frijol Negro (1kg)" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
+  <!-- FORMULARIO DE PRODUCTO (CREAR / EDITAR) -->
+  <section class="bg-slate-900 border border-amber-500/30 rounded-3xl p-5 mb-6 shadow-xl space-y-3.5">
+    <div class="flex items-center justify-between">
+      <h2 id="form-titulo" class="text-sm font-black text-white flex items-center gap-2">
+        <i class="fa-solid fa-circle-plus text-amber-400"></i> AGREGAR PRODUCTO
+      </h2>
+      <button onclick="cancelarEdicion()" id="btn-cancelar-edit" class="hidden text-xs text-red-400 font-bold underline">
+        Cancelar edición
+      </button>
     </div>
 
+    <input type="hidden" id="edit-id" value="">
+
+    <!-- Nombre -->
+    <div>
+      <label class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Nombre del producto *</label>
+      <input id="p-nombre" type="text" placeholder="Ej. Frijol Colorado (1kg)" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400 mt-1">
+    </div>
+
+    <!-- Precios y Categoría -->
     <div class="grid grid-cols-2 gap-2.5">
       <div>
-        <label class="text-[11px] text-slate-400 font-bold">Precio (CUP) *</label>
-        <input id="p-precio" type="number" placeholder="1000" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
+        <label class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Precio en CUP *</label>
+        <input id="p-precio" type="number" placeholder="1000" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400 mt-1" oninput="calcularUsdPreview(this.value)">
+        <p id="precio-usd-calc" class="text-[10px] text-cyan-400 font-semibold mt-1">≈ $0.00 USD</p>
       </div>
       <div>
-        <label class="text-[11px] text-slate-400 font-bold">Categoría *</label>
-        <input id="p-categoria" type="text" placeholder="GENERAL, BEBIDAS..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
+        <label class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Categoría *</label>
+        <input id="p-categoria" list="cat-list" type="text" placeholder="Escribe o elige..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400 mt-1 uppercase">
+        <datalist id="cat-list"></datalist>
       </div>
     </div>
 
-    <div>
-      <label class="text-[11px] text-slate-400 font-bold">URL de la imagen (Link)</label>
-      <input id="p-imagen" type="text" placeholder="https://..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
+    <!-- SUBIDA DE FOTO -->
+    <div class="pt-1">
+      <label class="text-[11px] text-amber-300 font-bold uppercase tracking-wider flex items-center gap-1.5">
+        <i class="fa-solid fa-camera"></i> Foto del producto
+      </label>
+      
+      <label class="mt-1.5 w-full bg-slate-800 hover:bg-slate-750 border-2 border-dashed border-amber-500/40 rounded-2xl p-4 flex flex-col items-center justify-center cursor-pointer active:scale-98 transition">
+        <i class="fa-solid fa-cloud-arrow-up text-amber-400 text-2xl mb-1"></i>
+        <span id="file-label-text" class="text-xs font-bold text-white">Elegir foto de tu galería / cámara</span>
+        <span class="text-[10px] text-slate-400">Optimizada automáticamente</span>
+        <input type="file" id="p-file-input" accept="image/*" class="hidden" onchange="manejarArchivoFoto(event)">
+      </label>
+
+      <input id="p-imagen-url" type="text" placeholder="O pega un enlace de internet: https://..." class="w-full bg-slate-800/60 border border-slate-700/60 rounded-xl p-2 text-[11px] text-slate-300 outline-none focus:border-amber-400 mt-2" oninput="cambiarPorUrl(this.value)">
+
+      <div id="preview-area" class="mt-2.5 hidden flex items-center gap-3 bg-slate-950 p-2.5 rounded-2xl border border-slate-800">
+        <img id="img-preview-tag" class="w-14 h-14 object-cover rounded-xl border border-amber-400" src="">
+        <div class="flex-1 text-xs">
+          <p class="text-emerald-400 font-bold"><i class="fa-solid fa-check"></i> Foto seleccionada</p>
+          <button onclick="eliminarFotoSeleccionada()" type="button" class="text-red-400 text-[11px] underline mt-0.5">Quitar foto</button>
+        </div>
+      </div>
     </div>
 
+    <!-- Descripción -->
     <div>
-      <label class="text-[11px] text-slate-400 font-bold">Descripción / Detalles</label>
-      <input id="p-desc" type="text" placeholder="Presentación, peso, detalles..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
+      <label class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Descripción o detalles</label>
+      <input id="p-desc" type="text" placeholder="Detalles, peso, marca..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400 mt-1">
     </div>
 
-    <button onclick="guardarProducto()" id="btn-guardar" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-3 rounded-xl text-xs active:scale-95 transition shadow-lg mt-2">
-      Guardar y Publicar al Instante
+    <button onclick="guardarProducto()" id="btn-guardar" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-3.5 rounded-xl text-xs uppercase tracking-wider active:scale-95 transition shadow-lg mt-2 flex items-center justify-center gap-2">
+      <i class="fa-solid fa-bolt"></i> <span id="btn-guardar-texto">Guardar y Publicar Producto</span>
     </button>
   </section>
 
-  <!-- Lista de Productos -->
+  <!-- LISTA DE PRODUCTOS CON BOTÓN EDITAR -->
   <section class="space-y-3">
-    <div class="flex justify-between items-center mb-2">
-      <h2 class="text-sm font-black text-white">Inventario Activo</h2>
-      <button onclick="cargarInventario()" class="text-xs text-amber-400"><i class="fa-solid fa-rotate"></i> Actualizar</button>
+    <div class="flex justify-between items-center mb-2 px-1">
+      <h2 class="text-sm font-black text-white flex items-center gap-2">
+        <i class="fa-solid fa-boxes-stacked text-amber-400"></i> INVENTARIO ACTIVO
+      </h2>
+      <button onclick="cargarInventario()" class="text-xs text-amber-400 font-bold flex items-center gap-1 hover:text-amber-300">
+        <i class="fa-solid fa-arrows-rotate"></i> Actualizar
+      </button>
     </div>
     <div id="lista-admin" class="space-y-2.5">
-      <div class="text-center py-8 text-slate-500 text-xs">Cargando inventario...</div>
+      <div class="text-center py-10 text-slate-500 text-xs">Cargando inventario...</div>
     </div>
   </section>
 
@@ -72,6 +126,119 @@
     const SUPABASE_URL = "https://qhkqznpgjirvnndriehr.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFoa3F6bnBnamlydm5uZHJpZWhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5MTE5NzQsImV4cCI6MjEwNzQ4Nzk3NH0.AHUdASoGr0FJWUuP0LxS9UJ2_-QzFPwAjmEeWZ3g1Uc";
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let productosCargados = [];
+    let imagenComprimida = "";
+    let tasaUSDActual = 320;
+
+    async function cargarTasaUSD() {
+      try {
+        const { data } = await supabaseClient
+          .from('configuracion')
+          .select('*')
+          .eq('clave', 'tasa_usd')
+          .single();
+        if (data && data.valor) {
+          tasaUSDActual = parseFloat(data.valor) || 320;
+          document.getElementById("input-tasa-usd").value = tasaUSDActual;
+        }
+      } catch (e) {
+        document.getElementById("input-tasa-usd").value = tasaUSDActual;
+      }
+    }
+
+    async function guardarTasaUSD() {
+      const nuevaTasa = parseFloat(document.getElementById("input-tasa-usd").value);
+      if (!nuevaTasa || nuevaTasa <= 0) {
+        alert("Escribe una tasa de cambio válida (ej. 320).");
+        return;
+      }
+      const btn = document.getElementById("btn-tasa");
+      btn.innerText = "...";
+      btn.disabled = true;
+
+      const { error } = await supabaseClient
+        .from('configuracion')
+        .upsert({ clave: 'tasa_usd', valor: String(nuevaTasa) });
+
+      btn.innerText = "Actualizar";
+      btn.disabled = false;
+
+      if (error) {
+        alert("Error actualizando tasa: " + error.message);
+      } else {
+        tasaUSDActual = nuevaTasa;
+        alert("¡Tasa del dólar actualizada a: " + nuevaTasa + " CUP!");
+        cargarInventario();
+      }
+    }
+
+    function calcularUsdPreview(val) {
+      const num = parseFloat(val);
+      const span = document.getElementById("precio-usd-calc");
+      if (!num || isNaN(num)) {
+        span.innerText = "≈ $0.00 USD";
+      } else {
+        span.innerText = "≈ $" + (num / tasaUSDActual).toFixed(2) + " USD";
+      }
+    }
+
+    function manejarArchivoFoto(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      document.getElementById("file-label-text").innerText = "Procesando foto...";
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement("canvas");
+          const maxDim = 500;
+          let w = img.width;
+          let h = img.height;
+          if (w > h) {
+            if (w > maxDim) { h *= maxDim / w; w = maxDim; }
+          } else {
+            if (h > maxDim) { w *= maxDim / h; h = maxDim; }
+          }
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, w, h);
+
+          imagenComprimida = canvas.toDataURL("image/jpeg", 0.70);
+          document.getElementById("p-imagen-url").value = "";
+          mostrarPreview(imagenComprimida);
+          document.getElementById("file-label-text").innerText = "Foto seleccionada (Toca para cambiar)";
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function cambiarPorUrl(url) {
+      if (url && url.trim() !== "") {
+        imagenComprimida = "";
+        mostrarPreview(url.trim());
+      } else if (!imagenComprimida) {
+        document.getElementById("preview-area").classList.add("hidden");
+      }
+    }
+
+    function mostrarPreview(src) {
+      const p = document.getElementById("preview-area");
+      document.getElementById("img-preview-tag").src = src;
+      p.classList.remove("hidden");
+    }
+
+    function eliminarFotoSeleccionada() {
+      imagenComprimida = "";
+      document.getElementById("p-file-input").value = "";
+      document.getElementById("p-imagen-url").value = "";
+      document.getElementById("file-label-text").innerText = "Elegir foto de tu galería / cámara";
+      document.getElementById("preview-area").classList.add("hidden");
+    }
 
     async function cargarInventario() {
       const cont = document.getElementById("lista-admin");
@@ -81,8 +248,18 @@
         .order('id', { ascending: false });
 
       if (error) {
-        cont.innerHTML = '<div class="text-xs text-red-400 text-center">Error: ' + error.message + '</div>';
+        cont.innerHTML = '<div class="text-xs text-red-400 text-center py-4">Error: ' + error.message + '</div>';
         return;
+      }
+
+      productosCargados = data || [];
+
+      // Categorías en datalist
+      const dl = document.getElementById("cat-list");
+      if (dl && data) {
+        const catSet = new Set();
+        data.forEach(p => { if (p.categoria) catSet.add(p.categoria.toUpperCase()); });
+        dl.innerHTML = Array.from(catSet).map(c => `<option value="${c}">`).join('');
       }
 
       if (!data || data.length === 0) {
@@ -92,22 +269,26 @@
 
       let html = '';
       data.forEach(p => {
-        const estadoColor = p.disponible ? 'bg-emerald-500/20 text-emerald-300' : 'bg-red-500/20 text-red-300';
+        const estadoColor = p.disponible ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : 'bg-red-500/20 text-red-300 border-red-500/40';
         const estadoTexto = p.disponible ? 'Activo' : 'Agotado';
         const accionTexto = p.disponible ? 'Agotar' : 'Activar';
+        const cup = Number(p.precio || 0);
+        const usd = (cup / tasaUSDActual).toFixed(2);
 
         html += '<div class="bg-slate-900 border border-slate-800 rounded-2xl p-3 flex items-center justify-between gap-3">' +
           '<div class="flex items-center gap-3">' +
-            '<img src="' + (p.imagen || 'https://via.placeholder.com/80') + '" class="w-12 h-12 rounded-xl object-cover bg-slate-800">' +
+            '<img src="' + (p.imagen || 'https://via.placeholder.com/80') + '" class="w-12 h-12 rounded-xl object-cover bg-slate-950 border border-slate-800">' +
             '<div>' +
-              '<h3 class="text-xs font-bold text-white">' + p.nombre + '</h3>' +
-              '<p class="text-[11px] text-amber-400 font-black">$' + Number(p.precio).toLocaleString() + ' CUP</p>' +
-              '<span class="text-[9px] px-2 py-0.5 rounded-full font-bold ' + estadoColor + '">' + estadoTexto + '</span>' +
+              '<span class="text-[9px] font-bold text-amber-400 uppercase tracking-wider">' + (p.categoria || 'GENERAL') + '</span>' +
+              '<h3 class="text-xs font-bold text-white leading-tight">' + p.nombre + '</h3>' +
+              '<p class="text-xs text-amber-400 font-bold">$' + cup.toLocaleString() + ' CUP <span class="text-cyan-400 text-[10px] font-normal">($' + usd + ' USD)</span></p>' +
+              '<span class="text-[9px] px-2 py-0.5 rounded-full font-bold border ' + estadoColor + '">' + estadoTexto + '</span>' +
             '</div>' +
           '</div>' +
           '<div class="flex items-center gap-1.5">' +
-            '<button onclick="toggleDisponibilidad(' + p.id + ', ' + p.disponible + ')" class="bg-slate-800 text-xs px-2.5 py-1.5 rounded-xl border border-slate-700 font-bold hover:bg-slate-700">' + accionTexto + '</button>' +
-            '<button onclick="eliminarProducto(' + p.id + ')" class="bg-red-950/60 text-red-400 text-xs px-2.5 py-1.5 rounded-xl border border-red-800 hover:bg-red-900 font-bold"><i class="fa-solid fa-trash"></i></button>' +
+            '<button onclick="editarProducto(' + p.id + ')" class="bg-blue-600/30 text-blue-400 text-xs p-2 rounded-xl border border-blue-500/40 hover:bg-blue-600/50 active:scale-95"><i class="fa-solid fa-pen-to-square"></i></button>' +
+            '<button onclick="toggleDisponibilidad(' + p.id + ', ' + p.disponible + ')" class="bg-slate-800 text-[11px] px-2.5 py-1.5 rounded-xl border border-slate-700 font-bold hover:bg-slate-700 active:scale-95">' + accionTexto + '</button>' +
+            '<button onclick="eliminarProducto(' + p.id + ')" class="bg-red-950/70 text-red-400 text-xs p-2 rounded-xl border border-red-800 hover:bg-red-900 active:scale-95"><i class="fa-solid fa-trash"></i></button>' +
           '</div>' +
         '</div>';
       });
@@ -115,43 +296,100 @@
       cont.innerHTML = html;
     }
 
+    function editarProducto(id) {
+      const prod = productosCargados.find(p => p.id === id);
+      if (!prod) return;
+
+      document.getElementById("edit-id").value = prod.id;
+      document.getElementById("p-nombre").value = prod.nombre;
+      document.getElementById("p-precio").value = prod.precio;
+      document.getElementById("p-categoria").value = prod.categoria || '';
+      document.getElementById("p-desc").value = prod.descripcion || '';
+      
+      calcularUsdPreview(prod.precio);
+
+      if (prod.imagen) {
+        if (prod.imagen.startsWith("data:image")) {
+          imagenComprimida = prod.imagen;
+          document.getElementById("p-imagen-url").value = "";
+        } else {
+          imagenComprimida = "";
+          document.getElementById("p-imagen-url").value = prod.imagen;
+        }
+        mostrarPreview(prod.imagen);
+      } else {
+        eliminarFotoSeleccionada();
+      }
+
+      document.getElementById("form-titulo").innerHTML = '<i class="fa-solid fa-pen-to-square text-blue-400"></i> EDITANDO PRODUCTO';
+      document.getElementById("btn-guardar-texto").innerText = "Guardar Cambios del Producto";
+      document.getElementById("btn-cancelar-edit").classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function cancelarEdicion() {
+      document.getElementById("edit-id").value = "";
+      document.getElementById("p-nombre").value = "";
+      document.getElementById("p-precio").value = "";
+      document.getElementById("p-categoria").value = "";
+      document.getElementById("p-desc").value = "";
+      document.getElementById("precio-usd-calc").innerText = "≈ $0.00 USD";
+      eliminarFotoSeleccionada();
+
+      document.getElementById("form-titulo").innerHTML = '<i class="fa-solid fa-circle-plus text-amber-400"></i> AGREGAR PRODUCTO';
+      document.getElementById("btn-guardar-texto").innerText = "Guardar y Publicar Producto";
+      document.getElementById("btn-cancelar-edit").classList.add("hidden");
+    }
+
     async function guardarProducto() {
+      const editId = document.getElementById("edit-id").value;
       const nombre = document.getElementById("p-nombre").value.trim();
       const precio = parseFloat(document.getElementById("p-precio").value);
       const categoria = document.getElementById("p-categoria").value.trim().toUpperCase() || 'GENERAL';
-      const imagen = document.getElementById("p-imagen").value.trim();
+      const imagenUrlInput = document.getElementById("p-imagen-url").value.trim();
       const descripcion = document.getElementById("p-desc").value.trim();
 
+      const fotoFinal = imagenComprimida || imagenUrlInput || '';
+
       if (!nombre || isNaN(precio)) {
-        alert("Por favor completa el nombre y el precio.");
+        alert("Por favor introduce el nombre y el precio en CUP.");
         return;
       }
 
       const btn = document.getElementById("btn-guardar");
-      btn.innerText = "Guardando...";
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...';
       btn.disabled = true;
 
-      const { error } = await supabaseClient
-        .from('productos')
-        .insert([{
-          nombre: nombre,
-          precio: precio,
-          categoria: categoria,
-          imagen: imagen,
-          descripcion: descripcion,
-          disponible: true
-        }]);
+      const payload = {
+        nombre: nombre,
+        precio: precio,
+        categoria: categoria,
+        imagen: fotoFinal,
+        descripcion: descripcion
+      };
 
-      btn.innerText = "Guardar y Publicar al Instante";
+      let res;
+      if (editId) {
+        // Actualizar existente
+        res = await supabaseClient
+          .from('productos')
+          .update(payload)
+          .eq('id', editId);
+      } else {
+        // Nuevo producto
+        payload.disponible = true;
+        res = await supabaseClient
+          .from('productos')
+          .insert([payload]);
+      }
+
+      btn.innerHTML = '<i class="fa-solid fa-bolt"></i> <span id="btn-guardar-texto">' + (editId ? "Guardar Cambios del Producto" : "Guardar y Publicar Producto") + '</span>';
       btn.disabled = false;
 
-      if (error) {
-        alert("Error al guardar: " + error.message);
+      if (res.error) {
+        alert("Error al guardar: " + res.error.message);
       } else {
-        document.getElementById("p-nombre").value = "";
-        document.getElementById("p-precio").value = "";
-        document.getElementById("p-imagen").value = "";
-        document.getElementById("p-desc").value = "";
+        cancelarEdicion();
         cargarInventario();
       }
     }
@@ -165,7 +403,7 @@
     }
 
     async function eliminarProducto(id) {
-      if (!confirm("¿Seguro que deseas eliminar este producto?")) return;
+      if (!confirm("¿Deseas eliminar este producto del inventario?")) return;
       await supabaseClient
         .from('productos')
         .delete()
@@ -173,6 +411,7 @@
       cargarInventario();
     }
 
+    cargarTasaUSD();
     cargarInventario();
   </script>
 </body>
