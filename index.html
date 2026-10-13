@@ -77,20 +77,47 @@
   </section>
 
   <!-- Categorías Deslizables -->
-  <nav class="sticky top-12 z-20 bg-[#05070e]/95 backdrop-blur-md px-3 py-2 border-b border-slate-900 mt-1.5">
+  <nav id="nav-categorias" class="sticky top-12 z-20 bg-[#05070e]/95 backdrop-blur-md px-3 py-2 border-b border-slate-900 mt-1.5">
     <div class="max-w-xl mx-auto flex gap-1.5 overflow-x-auto no-scrollbar" id="categories-bar"></div>
   </nav>
 
-  <!-- Contenedor Principal (Productos o Bloqueo por Inactividad) -->
+  <!-- Contenedor Principal (Productos o Bloqueo con Datos de Transfermóvil) -->
   <main class="max-w-xl mx-auto px-3 py-3 relative z-10">
-    <div id="biz-inactive-notice" class="hidden text-center py-20 px-4 space-y-3">
-      <div class="w-16 h-16 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto text-amber-400 text-2xl">
-        <i class="fa-solid fa-clock-rotate-left"></i>
+    
+    <!-- PANTALLA DE BLOQUEO POR VENCIMIENTO -->
+    <div id="biz-inactive-notice" class="hidden text-center py-12 px-4 space-y-4">
+      <div class="w-16 h-16 rounded-full bg-red-500/10 border border-red-500/30 flex items-center justify-center mx-auto text-red-400 text-2xl">
+        <i class="fa-solid fa-triangle-exclamation"></i>
       </div>
-      <h2 class="text-base font-bold text-white">Catálogo temporalmente no disponible</h2>
-      <p class="text-xs text-slate-400 max-w-xs mx-auto">Este espacio comercial se encuentra en pausa. Por favor intenta nuevamente más tarde o contacta directamente con el negocio.</p>
+      <div>
+        <h2 class="text-base font-bold text-white">Catálogo Fuera de Servicio</h2>
+        <p class="text-xs text-slate-400 max-w-xs mx-auto mt-1">
+          El periodo contratado de este catálogo ha expirado. Para reactivar el servicio, realice el pago mensual.
+        </p>
+      </div>
+
+      <!-- Cuadro de Pago para el dueño -->
+      <div class="bg-slate-900 border border-amber-500/30 rounded-3xl p-5 text-left space-y-3 max-w-sm mx-auto shadow-2xl">
+        <h3 class="text-xs font-black text-amber-400 uppercase flex items-center gap-1.5">
+          <i class="fa-solid fa-mobile-screen text-cyan-400"></i> Pago por Transfermóvil
+        </h3>
+        <div class="space-y-1.5 text-xs text-slate-300">
+          <p class="flex justify-between"><span>Monto mensual:</span> <strong class="text-amber-400 font-bold">$1,500 CUP</strong></p>
+          <div class="pt-2 border-t border-slate-800">
+            <span class="text-[10px] text-slate-400 uppercase font-bold">Transferir a Tarjeta:</span>
+            <div class="flex items-center justify-between mt-1">
+              <span class="font-mono text-cyan-300 font-black text-xs" id="pub-card-num">9238-1299-7952-7274</span>
+              <button onclick="copiarTarjetaCliente()" id="btn-copy-pub" class="bg-slate-800 text-amber-400 text-[10px] px-2 py-1 rounded-lg border border-slate-700">Copiar</button>
+            </div>
+          </div>
+        </div>
+        <button onclick="contactarSoporteWA()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-2.5 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2 active:scale-95 transition">
+          <i class="fa-brands fa-whatsapp text-base"></i> Enviar Comprobante (+53 58960660)
+        </button>
+      </div>
     </div>
 
+    <!-- Rejilla de Productos (2 Columnas) -->
     <div id="products-grid" class="grid grid-cols-2 gap-2.5">
       <div class="col-span-2 text-center py-16 text-slate-500 text-xs">
         <i class="fa-solid fa-spinner fa-spin text-2xl text-amber-400 mb-2"></i>
@@ -205,7 +232,9 @@
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFoa3F6bnBnamlydm5uZHJpZWhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5MTE5NzQsImV4cCI6MjEwNzQ4Nzk3NH0.AHUdASoGr0FJWUuP0LxS9UJ2_-QzFPwAjmEeWZ3g1Uc";
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Detección del negocio desde la URL: ?tienda=nombre (si no hay, usa 'ofertazo')
+    const MI_ADMIN_WHATSAPP = "5358960660";
+    const MI_TARJETA = "9238129979527274";
+
     const urlParams = new URLSearchParams(window.location.search);
     const TIENDA_SLUG = (urlParams.get('tienda') || 'ofertazo').toLowerCase().trim();
 
@@ -240,7 +269,6 @@
           .single();
 
         if (error || !data) {
-          // Si no encuentra el slug exacto, intenta cargar la principal 'ofertazo'
           const { data: def } = await supabaseClient.from('negocios').select('*').eq('slug', 'ofertazo').single();
           negocioActual = def;
         } else {
@@ -249,7 +277,6 @@
 
         if (!negocioActual) throw new Error("No se pudo cargar la información de la tienda.");
 
-        // Aplicar datos del negocio a la interfaz
         document.title = `${negocioActual.nombre} - Catálogo Digital`;
         document.getElementById("biz-header-name").innerText = negocioActual.nombre;
         document.getElementById("biz-header-type").innerText = `${negocioActual.direccion || 'Ciego de Ávila'} • ${negocioActual.tipo || 'Catálogo'}`;
@@ -270,10 +297,17 @@
           document.getElementById("biz-default-icon").classList.add("hidden");
         }
 
-        // Control de mensualidad / suspensión
-        if (negocioActual.activo === false) {
+        // ==========================================
+        // REGLA DE CORTE: FECHA DE VENCIMIENTO Y ESTADO
+        // ==========================================
+        const ahora = new Date();
+        const fechaVence = negocioActual.fecha_vencimiento ? new Date(negocioActual.fecha_vencimiento) : null;
+        const expiradoPorFecha = (fechaVence && fechaVence < ahora);
+        const pausadoPorAdmin = (negocioActual.activo === false);
+
+        if (pausadoPorAdmin || expiradoPorFecha) {
           document.getElementById("products-grid").classList.add("hidden");
-          document.getElementById("categories-bar").classList.add("hidden");
+          document.getElementById("nav-categorias").classList.add("hidden");
           document.getElementById("biz-inactive-notice").classList.remove("hidden");
           return false;
         }
@@ -283,6 +317,21 @@
         document.getElementById("products-grid").innerHTML = `<div class="col-span-2 text-center py-16 text-red-400 text-xs">${err.message}</div>`;
         return false;
       }
+    }
+
+    function copiarTarjetaCliente() {
+      navigator.clipboard.writeText(MI_TARJETA).then(() => {
+        const btn = document.getElementById("btn-copy-pub");
+        btn.innerText = "¡Copiado!";
+        setTimeout(() => { btn.innerText = "Copiar"; }, 2000);
+      });
+    }
+
+    function contactarSoporteWA() {
+      const nombre = negocioActual ? negocioActual.nombre : "mi negocio";
+      const slug = negocioActual ? negocioActual.slug : "";
+      const msg = `👋 Hola, deseo reactivar el catálogo de *${nombre}* (?tienda=${slug}). Ya tengo listo el comprobante de Transfermóvil por los $1,500 CUP.`;
+      window.open(`https://wa.me/${MI_ADMIN_WHATSAPP}?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
     async function cargarCatalogo() {
