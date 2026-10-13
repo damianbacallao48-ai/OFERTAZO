@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crea tu Catálogo Digital - 10 Días Gratis</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
+</head>
+<body class="bg-[#05070e] text-slate-100 min-h-screen p-4 flex items-center justify-center antialiased">
+
+  <div class="w-full max-w-md bg-slate-900 border border-amber-500/30 rounded-3xl p-6 shadow-2xl space-y-4">
+    <div class="text-center space-y-1">
+      <div class="w-12 h-12 bg-amber-500 text-slate-950 rounded-2xl flex items-center justify-center text-xl font-black mx-auto shadow-lg mb-2">
+        <i class="fa-solid fa-rocket"></i>
+      </div>
+      <h1 class="text-xl font-black text-amber-400">CREA TU CATÁLOGO</h1>
+      <p class="text-xs text-slate-300">Prueba la plataforma <strong>10 DÍAS GRATIS</strong> sin compromiso</p>
+    </div>
+
+    <!-- Formulario de Registro -->
+    <div id="form-registro" class="space-y-3 pt-2">
+      <div>
+        <label class="text-[11px] font-bold text-slate-400 uppercase">Nombre de tu Negocio *</label>
+        <input id="reg-nombre" type="text" placeholder="Ej. Bar Habana o Pizzería Rossi" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
+      </div>
+
+      <div>
+        <label class="text-[11px] font-bold text-slate-400 uppercase">Enlace personalizado deseado (Slug) *</label>
+        <div class="flex items-center bg-slate-800 border border-slate-700 rounded-xl px-2.5 py-1 focus-within:border-amber-400">
+          <span class="text-[11px] text-slate-500">?tienda=</span>
+          <input id="reg-slug" type="text" placeholder="bar-habana" class="w-full bg-transparent p-1.5 text-xs text-cyan-400 outline-none lowercase font-mono">
+        </div>
+        <p class="text-[10px] text-slate-400 mt-0.5">Solo letras minúsculas, números o guiones.</p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2.5">
+        <div>
+          <label class="text-[11px] font-bold text-slate-400 uppercase">WhatsApp de Pedidos *</label>
+          <input id="reg-wa" type="text" placeholder="535XXXXXXX" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400 font-mono">
+        </div>
+        <div>
+          <label class="text-[11px] font-bold text-slate-400 uppercase">PIN de Acceso (4 dígitos) *</label>
+          <input id="reg-pin" type="password" maxlength="4" placeholder="1234" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-amber-300 outline-none focus:border-amber-400 text-center font-bold tracking-widest">
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2.5">
+        <div>
+          <label class="text-[11px] font-bold text-slate-400 uppercase">Tipo de Negocio</label>
+          <select id="reg-tipo" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
+            <option value="Restaurante / Cafetería">Restaurante / Cafetería</option>
+            <option value="Bar / Discoteca">Bar / Discoteca</option>
+            <option value="Punto de Venta / Tienda">Punto de Venta / Tienda</option>
+            <option value="Servicios">Servicios Varios</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-[11px] font-bold text-slate-400 uppercase">Costo Delivery (CUP)</label>
+          <input id="reg-fee" type="number" placeholder="250" value="250" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
+        </div>
+      </div>
+
+      <div>
+        <label class="text-[11px] font-bold text-slate-400 uppercase">Dirección en Ciego de Ávila</label>
+        <input id="reg-dir" type="text" placeholder="Calle, reparto o punto de referencia" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
+      </div>
+
+      <div class="p-3 bg-amber-500/10 border border-amber-500/30 rounded-2xl text-[11px] text-amber-300 leading-snug">
+        🎁 <strong>Prueba 100% Gratuita:</strong> Tienes 10 días para usar tu catálogo y recibir pedidos. Al vencer el plazo, podrás contratar el servicio mensual.
+      </div>
+
+      <button onclick="registrarNegocio()" id="btn-reg" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-3 rounded-xl text-xs uppercase tracking-wider active:scale-95 transition shadow-lg">
+        Crear Mi Catálogo Ahora
+      </button>
+    </div>
+
+    <!-- Confirmación con Enlaces Generados -->
+    <div id="box-exito" class="hidden text-center space-y-4 pt-2">
+      <div class="w-12 h-12 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center text-xl mx-auto border border-emerald-500/40">
+        <i class="fa-solid fa-check"></i>
+      </div>
+      <div>
+        <h2 class="text-base font-bold text-white">¡Tu catálogo ya está activo!</h2>
+        <p class="text-xs text-slate-300">Tienes 10 días de prueba gratuita activados.</p>
+      </div>
+
+      <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800 text-left space-y-2 text-xs">
+        <div>
+          <p class="text-[10px] text-slate-400 font-bold uppercase">Enlace para tus clientes:</p>
+          <a id="link-cliente" target="_blank" class="text-amber-400 break-all underline font-mono text-[11px]"></a>
+        </div>
+        <div class="pt-2 border-t border-slate-800">
+          <p class="text-[10px] text-slate-400 font-bold uppercase">Panel para subir tus productos:</p>
+          <a id="link-panel" target="_blank" class="text-cyan-400 break-all underline font-mono text-[11px]"></a>
+        </div>
+      </div>
+
+      <div class="space-y-2">
+        <button onclick="copiarEnlaces()" id="btn-copiar-todo" class="w-full bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs border border-slate-700 active:scale-95">
+          <i class="fa-solid fa-copy"></i> Copiar mis enlaces
+        </button>
+        <button onclick="irAPanel()" class="w-full bg-amber-500 text-slate-950 font-black py-2.5 rounded-xl text-xs uppercase tracking-wider active:scale-95">
+          Entrar a Mi Panel y Subir Fotos
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://qhkqznpgjirvnndriehr.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFoa3F6bnBnamlydm5uZHJpZWhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5MTE5NzQsImV4cCI6MjEwNzQ4Nzk3NH0.AHUdASoGr0FJWUuP0LxS9UJ2_-QzFPwAjmEeWZ3g1Uc";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let urlClienteFinal = "";
+    let urlPanelFinal = "";
+
+    async function registrarNegocio() {
+      const nombre = document.getElementById("reg-nombre").value.trim();
+      let slug = document.getElementById("reg-slug").value.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '-');
+      const wa = document.getElementById("reg-wa").value.trim().replace(/[^0-9]/g, '');
+      const pin = document.getElementById("reg-pin").value.trim();
+      const tipo = document.getElementById("reg-tipo").value;
+      const fee = parseFloat(document.getElementById("reg-fee").value) || 250;
+      const dir = document.getElementById("reg-dir").value.trim() || 'Ciego de Ávila';
+
+      if (!nombre || !slug || !wa || !pin) {
+        alert("Por favor completa todos los campos marcados con asterisco (*).");
+        return;
+      }
+
+      if (pin.length < 4) {
+        alert("El PIN debe tener 4 dígitos.");
+        return;
+      }
+
+      const btn = document.getElementById("btn-reg");
+      btn.innerText = "Creando catálogo...";
+      btn.disabled = true;
+
+      // Calcular fecha de vencimiento a 10 días a partir de hoy
+      const fechaVence = new Date();
+      fechaVence.setDate(fechaVence.getDate() + 10);
+
+      const { data, error } = await supabaseClient
+        .from('negocios')
+        .insert([{
+          nombre,
+          slug,
+          telefono_whatsapp: wa,
+          pin_admin: pin,
+          tipo,
+          costo_mensajeria: fee,
+          direccion: dir,
+          activo: true,
+          estado_pago: 'prueba',
+          fecha_vencimiento: fechaVence.toISOString()
+        }])
+        .select();
+
+      btn.innerText = "Crear Mi Catálogo Ahora";
+      btn.disabled = false;
+
+      if (error) {
+        if (error.code === "23505") {
+          alert("Ese enlace (slug) ya está en uso por otro negocio. Elige uno diferente.");
+        } else {
+          alert("Error al registrar: " + error.message);
+        }
+        return;
+      }
+
+      // Preparar enlaces
+      const base = window.location.origin + window.location.pathname.replace('registro.html', '');
+      urlClienteFinal = `${base}index.html?tienda=${slug}`;
+      urlPanelFinal = `${base}panel.html?tienda=${slug}`;
+
+      document.getElementById("link-cliente").innerText = urlClienteFinal;
+      document.getElementById("link-cliente").href = urlClienteFinal;
+      document.getElementById("link-panel").innerText = urlPanelFinal;
+      document.getElementById("link-panel").href = urlPanelFinal;
+
+      document.getElementById("form-registro").classList.add("hidden");
+      document.getElementById("box-exito").classList.remove("hidden");
+    }
+
+    function copiarEnlaces() {
+      const texto = `¡Hola! Aquí están los accesos a tu nuevo catálogo:\n\n📱 Enlace de tus clientes:\n${urlClienteFinal}\n\n⚙️ Panel para subir productos (Usa tu PIN):\n${urlPanelFinal}`;
+      navigator.clipboard.writeText(texto).then(() => {
+        const b = document.getElementById("btn-copiar-todo");
+        b.innerHTML = '<i class="fa-solid fa-check text-emerald-400"></i> ¡Enlaces copiados!';
+        setTimeout(() => { b.innerHTML = '<i class="fa-solid fa-copy"></i> Copiar mis enlaces'; }, 2000);
+      });
+    }
+
+    function irAPanel() {
+      window.location.href = urlPanelFinal;
+    }
+  </script>
+</body>
+</html>
