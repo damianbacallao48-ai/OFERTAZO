@@ -8,37 +8,38 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen p-4 pb-24 font-sans max-w-lg mx-auto antialiased">
+<body class="bg-slate-950 text-slate-100 min-h-screen p-4 pb-28 font-sans max-w-lg mx-auto antialiased">
 
   <!-- PANTALLA DE ACCESO POR PIN -->
-  <div id="login-box" class="min-h-[70vh] flex items-center justify-center">
+  <div id="login-box" class="min-h-[75vh] flex items-center justify-center">
     <div class="bg-slate-900 border border-amber-500/30 rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
       <div class="w-12 h-12 rounded-2xl bg-amber-500 text-slate-950 flex items-center justify-center text-xl font-black mx-auto">
         <i class="fa-solid fa-lock"></i>
       </div>
       <h2 id="login-title" class="text-base font-bold text-white">Panel de Administración</h2>
-      <p class="text-xs text-slate-400">Introduce tu PIN de 4 dígitos para acceder a tus productos</p>
+      <p class="text-xs text-slate-400">Introduce tu PIN de 4 dígitos para gestionar tu tienda</p>
       <input id="pin-input" type="password" maxlength="4" placeholder="••••" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-center text-xl font-mono text-amber-400 tracking-widest outline-none focus:border-amber-400">
-      <button onclick="verificarPin()" class="w-full bg-amber-500 text-slate-950 font-black py-3 rounded-xl text-xs uppercase tracking-wider active:scale-95">
+      <button onclick="verificarPin()" class="w-full bg-amber-500 text-slate-950 font-black py-3 rounded-xl text-xs uppercase tracking-wider active:scale-95 transition shadow-lg">
         Ingresar al Panel
       </button>
     </div>
   </div>
 
-  <!-- PANEL DE GESTIÓN (OCULTO HASTA PONER EL PIN) -->
+  <!-- PANEL DE GESTIÓN COMPLETO -->
   <div id="panel-contenido" class="hidden space-y-4">
-    <header class="flex justify-between items-center py-3 border-b border-slate-800">
+    
+    <header class="flex justify-between items-center py-2 border-b border-slate-800">
       <div>
-        <h1 id="panel-biz-name" class="text-lg font-black text-amber-400">MI NEGOCIO</h1>
+        <h1 id="panel-biz-name" class="text-base font-black text-amber-400">MI NEGOCIO</h1>
         <p id="panel-dias-restantes" class="text-[11px] font-bold text-cyan-400"></p>
       </div>
-      <button onclick="verMiTienda()" class="bg-slate-800 text-xs px-3 py-1.5 rounded-xl text-amber-400 border border-slate-700 font-bold active:scale-95">
-        Ver Tienda ➔
+      <button onclick="verMiTienda()" class="bg-slate-800 text-xs px-3 py-1.5 rounded-xl text-amber-400 border border-slate-700 font-bold active:scale-95 flex items-center gap-1.5 shadow">
+        <span>Ver Tienda</span> <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
       </button>
     </header>
 
-    <!-- BANNER DE AVISO: DÍA 9 (1 DÍA RESTANTE) O VENCIDO -->
-    <section id="banner-pago-alerta" class="hidden bg-gradient-to-r from-amber-950/80 to-slate-900 border-2 border-amber-500/80 rounded-3xl p-5 shadow-2xl space-y-3">
+    <!-- BANNER DE AVISO: DÍA 9 O VENCIDO -->
+    <section id="banner-pago-alerta" class="hidden bg-gradient-to-r from-amber-950/80 to-slate-900 border-2 border-amber-500/80 rounded-3xl p-4 shadow-2xl space-y-3">
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-2xl bg-amber-500 text-slate-950 flex items-center justify-center text-lg font-black shrink-0 animate-bounce">
           <i class="fa-solid fa-bell"></i>
@@ -49,10 +50,10 @@
         </div>
       </div>
 
-      <div class="bg-slate-950/90 rounded-2xl p-3.5 border border-amber-500/30 space-y-2 text-xs">
+      <div class="bg-slate-950/90 rounded-2xl p-3 border border-amber-500/30 space-y-2 text-xs">
         <div class="flex justify-between items-center">
-          <span class="text-slate-400">Monto a pagar:</span>
-          <span class="text-amber-400 font-black text-sm">$1,500 CUP / Mes</span>
+          <span class="text-slate-400">Monto mensual:</span>
+          <span class="text-amber-400 font-black text-sm">$1,500 CUP</span>
         </div>
         <div class="flex justify-between items-center">
           <span class="text-slate-400">Método:</span>
@@ -69,73 +70,174 @@
         </div>
       </div>
 
-      <button onclick="notificarPagoWA()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-3 rounded-xl text-xs uppercase tracking-wider active:scale-95 transition shadow-lg flex items-center justify-center gap-2">
-        <i class="fa-brands fa-whatsapp text-base"></i> Notificar Pago al Administrador
+      <button onclick="notificarPagoWA()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-2.5 rounded-xl text-xs uppercase tracking-wider active:scale-95 transition shadow-lg flex items-center justify-center gap-2">
+        <i class="fa-brands fa-whatsapp text-base"></i> Notificar Pago (+53 58960660)
       </button>
     </section>
 
-    <!-- FORMULARIO DE PRODUCTO -->
-    <section class="bg-slate-900 border border-amber-500/30 rounded-3xl p-5 shadow-xl space-y-3.5">
-      <div class="flex justify-between items-center">
-        <h2 id="form-titulo" class="text-sm font-black text-white flex items-center gap-1.5">
-          <i class="fa-solid fa-plus-circle text-amber-400"></i> AGREGAR OFERTA
+    <!-- PESTAÑAS: OFERTAS / PERFIL -->
+    <div class="grid grid-cols-2 gap-2 bg-slate-900 p-1 rounded-2xl border border-slate-800">
+      <button onclick="cambiarPestana('productos')" id="tab-btn-prods" class="py-2 rounded-xl text-xs font-black bg-amber-500 text-slate-950 shadow transition">
+        📦 Mis Ofertas
+      </button>
+      <button onclick="cambiarPestana('perfil')" id="tab-btn-perfil" class="py-2 rounded-xl text-xs font-black text-slate-400 hover:text-white transition">
+        ⚙️ Perfil y Ajustes
+      </button>
+    </div>
+
+    <!-- PESTAÑA 1: GESTIÓN DE PRODUCTOS -->
+    <div id="seccion-productos" class="space-y-4">
+      <section class="bg-slate-900 border border-amber-500/30 rounded-3xl p-4 shadow-xl space-y-3">
+        <div class="flex justify-between items-center">
+          <h2 id="form-titulo" class="text-xs font-black text-white uppercase flex items-center gap-1.5">
+            <i class="fa-solid fa-plus-circle text-amber-400"></i> Agregar Oferta
+          </h2>
+          <button onclick="cancelarEdicion()" id="btn-cancelar-edit" class="hidden text-xs text-red-400 underline font-bold">Cancelar</button>
+        </div>
+
+        <input type="hidden" id="edit-id" value="">
+
+        <div>
+          <label class="text-[10px] text-slate-400 font-bold uppercase">Nombre del Producto / Plato *</label>
+          <input id="p-nombre" type="text" placeholder="Ej. Hamburguesa Especial" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400 mt-0.5">
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-[10px] text-slate-400 font-bold uppercase">Precio en CUP *</label>
+            <input id="p-precio" type="number" placeholder="850" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400 mt-0.5" oninput="actualizarCalcUsd(this.value)">
+            <p id="p-preview-usd" class="text-[9px] text-cyan-400 font-semibold mt-0.5">≈ $0.00 USD</p>
+          </div>
+          <div>
+            <label class="text-[10px] text-slate-400 font-bold uppercase">Categoría *</label>
+            <input id="p-categoria" list="cat-list" type="text" placeholder="BEBIDAS, PIZZAS..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400 mt-0.5 uppercase">
+            <datalist id="cat-list"></datalist>
+          </div>
+        </div>
+
+        <!-- Foto del producto desde galería -->
+        <div>
+          <label class="text-[10px] text-amber-300 font-bold uppercase flex items-center gap-1">
+            <i class="fa-solid fa-camera"></i> Foto del producto
+          </label>
+          <label class="mt-1 w-full bg-slate-800 border border-dashed border-amber-500/40 rounded-2xl p-3 flex flex-col items-center justify-center cursor-pointer active:scale-98 transition">
+            <i class="fa-solid fa-image text-amber-400 text-lg mb-0.5"></i>
+            <span id="file-label" class="text-xs text-white font-bold">Elegir foto de tu galería</span>
+            <input type="file" id="file-input" accept="image/*" class="hidden" onchange="procesarFotoProducto(event)">
+          </label>
+
+          <div id="preview-box" class="mt-2 hidden flex items-center gap-3 bg-slate-950 p-2 rounded-xl border border-slate-800">
+            <img id="img-preview" class="w-12 h-12 object-cover rounded-lg border border-amber-400" src="">
+            <button onclick="quitarFotoProducto()" class="text-red-400 text-xs underline">Quitar foto</button>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-[10px] text-slate-400 font-bold uppercase">Descripción / Detalles</label>
+          <input id="p-desc" type="text" placeholder="Ingredientes, peso, porciones..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400 mt-0.5">
+        </div>
+
+        <button onclick="guardarProducto()" id="btn-guardar" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-3 rounded-xl text-xs uppercase tracking-wider active:scale-95 transition shadow-lg">
+          Guardar en mi Catálogo
+        </button>
+      </section>
+
+      <!-- Lista de Productos -->
+      <section class="space-y-2">
+        <h2 class="text-xs font-black text-white uppercase flex items-center gap-1.5">
+          <i class="fa-solid fa-boxes-stacked text-amber-400"></i> Mis Productos
         </h2>
-        <button onclick="cancelarEdicion()" id="btn-cancelar-edit" class="hidden text-xs text-red-400 underline font-bold">Cancelar</button>
-      </div>
+        <div id="lista-prods" class="space-y-2"></div>
+      </section>
+    </div>
 
-      <input type="hidden" id="edit-id" value="">
+    <!-- PESTAÑA 2: PERFIL, FOTOS, TASA PROPIA Y PIN -->
+    <div id="seccion-perfil" class="hidden space-y-4">
+      <section class="bg-slate-900 border border-slate-800 rounded-3xl p-4 shadow-xl space-y-3.5">
+        <h2 class="text-xs font-black text-white uppercase flex items-center gap-1.5">
+          <i class="fa-solid fa-id-card text-amber-400"></i> Datos y Configuración
+        </h2>
 
-      <div>
-        <label class="text-[11px] text-slate-400 font-bold uppercase">Nombre del Producto / Plato *</label>
-        <input id="p-nombre" type="text" placeholder="Ej. Hamburguesa Especial" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400 mt-1">
-      </div>
-
-      <div class="grid grid-cols-2 gap-2.5">
         <div>
-          <label class="text-[11px] text-slate-400 font-bold uppercase">Precio en CUP *</label>
-          <input id="p-precio" type="number" placeholder="850" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400 mt-1">
+          <label class="text-[10px] text-slate-400 font-bold uppercase">Nombre del Negocio *</label>
+          <input id="cfg-nombre" type="text" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400 mt-0.5">
         </div>
+
+        <!-- TASA DE CAMBIO PROPIA DEL NEGOCIO -->
+        <div class="bg-slate-950 p-3 rounded-2xl border border-cyan-500/40 space-y-1">
+          <div class="flex justify-between items-center">
+            <label class="text-[10px] text-cyan-300 font-black uppercase flex items-center gap-1">
+              <i class="fa-solid fa-coins"></i> Mi Tasa de Cambio (1 USD en CUP) *
+            </label>
+            <span class="text-[9px] text-slate-400">Solo para tu tienda</span>
+          </div>
+          <input id="cfg-tasa" type="number" placeholder="320" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2 text-xs font-mono font-black text-amber-400 outline-none focus:border-cyan-400">
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-[10px] text-slate-400 font-bold uppercase">WhatsApp de Pedidos *</label>
+            <input id="cfg-wa" type="text" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400 mt-0.5 font-mono">
+          </div>
+          <div>
+            <label class="text-[10px] text-slate-400 font-bold uppercase">Costo Delivery (CUP)</label>
+            <input id="cfg-fee" type="number" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400 mt-0.5">
+          </div>
+        </div>
+
         <div>
-          <label class="text-[11px] text-slate-400 font-bold uppercase">Categoría *</label>
-          <input id="p-categoria" list="cat-list" type="text" placeholder="BEBIDAS, PIZZAS..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400 mt-1 uppercase">
-          <datalist id="cat-list"></datalist>
+          <label class="text-[10px] text-slate-400 font-bold uppercase">Dirección en Ciego de Ávila</label>
+          <input id="cfg-dir" type="text" placeholder="Calle, reparto o punto de referencia" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400 mt-0.5">
         </div>
-      </div>
 
-      <!-- FOTO DESDE GALERÍA -->
-      <div>
-        <label class="text-[11px] text-amber-300 font-bold uppercase flex items-center gap-1">
-          <i class="fa-solid fa-camera"></i> Foto del producto
-        </label>
-        <label class="mt-1 w-full bg-slate-800 border border-dashed border-amber-500/40 rounded-2xl p-3 flex flex-col items-center justify-center cursor-pointer active:scale-98 transition">
-          <i class="fa-solid fa-image text-amber-400 text-xl mb-0.5"></i>
-          <span id="file-label" class="text-xs text-white font-bold">Elegir foto de tu galería</span>
-          <input type="file" id="file-input" accept="image/*" class="hidden" onchange="procesarFoto(event)">
-        </label>
-
-        <div id="preview-box" class="mt-2 hidden flex items-center gap-3 bg-slate-950 p-2 rounded-xl border border-slate-800">
-          <img id="img-preview" class="w-12 h-12 object-cover rounded-lg border border-amber-400" src="">
-          <button onclick="quitarFoto()" class="text-red-400 text-xs underline">Quitar foto</button>
+        <div>
+          <label class="text-[10px] text-slate-400 font-bold uppercase">Descripción / Eslogan del Negocio</label>
+          <textarea id="cfg-desc" rows="2" placeholder="Breve mensaje para tus clientes..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400 mt-0.5"></textarea>
         </div>
-      </div>
 
-      <div>
-        <label class="text-[11px] text-slate-400 font-bold uppercase">Descripción / Detalles</label>
-        <input id="p-desc" type="text" placeholder="Ingredientes, porciones, detalles..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400 mt-1">
-      </div>
+        <!-- FOTOS: LOGO Y PORTADA -->
+        <div class="pt-2 border-t border-slate-800 space-y-3">
+          <div>
+            <label class="text-[10px] text-cyan-300 font-bold uppercase flex items-center gap-1">
+              <i class="fa-solid fa-circle-user"></i> Logo del Negocio
+            </label>
+            <div class="flex items-center gap-3 mt-1.5">
+              <img id="cfg-logo-preview" class="w-14 h-14 rounded-2xl object-cover bg-slate-800 border border-slate-700 shrink-0" src="https://via.placeholder.com/100">
+              <label class="flex-1 bg-slate-800 border border-slate-700 hover:border-cyan-400 rounded-xl p-2.5 text-center cursor-pointer active:scale-95 transition">
+                <span class="text-xs font-bold text-white"><i class="fa-solid fa-camera mr-1"></i> Cambiar Logo</span>
+                <input type="file" accept="image/*" class="hidden" onchange="procesarFotoNegocio(event, 'logo')">
+              </label>
+            </div>
+          </div>
 
-      <button onclick="guardarProducto()" id="btn-guardar" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-3 rounded-xl text-xs uppercase tracking-wider active:scale-95 transition shadow-lg">
-        Guardar en mi Catálogo
-      </button>
-    </section>
+          <div>
+            <label class="text-[10px] text-cyan-300 font-bold uppercase flex items-center gap-1">
+              <i class="fa-solid fa-panorama"></i> Foto de Portada / Fachada
+            </label>
+            <div class="mt-1.5 space-y-2">
+              <img id="cfg-portada-preview" class="w-full h-24 rounded-2xl object-cover bg-slate-800 border border-slate-700" src="https://via.placeholder.com/400x150">
+              <label class="block w-full bg-slate-800 border border-slate-700 hover:border-cyan-400 rounded-xl p-2.5 text-center cursor-pointer active:scale-95 transition">
+                <span class="text-xs font-bold text-white"><i class="fa-solid fa-image mr-1"></i> Cambiar Foto de Portada</span>
+                <input type="file" accept="image/*" class="hidden" onchange="procesarFotoNegocio(event, 'portada')">
+              </label>
+            </div>
+          </div>
+        </div>
 
-    <!-- INVENTARIO -->
-    <section class="space-y-2.5">
-      <h2 class="text-xs font-black text-white uppercase flex items-center gap-1.5">
-        <i class="fa-solid fa-boxes-stacked text-amber-400"></i> Mis Productos
-      </h2>
-      <div id="lista-prods" class="space-y-2"></div>
-    </section>
+        <!-- CAMBIO DE PIN -->
+        <div class="pt-2 border-t border-slate-800">
+          <label class="text-[10px] text-amber-300 font-bold uppercase flex items-center gap-1">
+            <i class="fa-solid fa-key"></i> Cambiar mi PIN de acceso (4 dígitos)
+          </label>
+          <input id="cfg-pin" type="password" maxlength="4" placeholder="Nuevo PIN" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-amber-400 font-mono tracking-widest outline-none focus:border-amber-400 mt-1">
+        </div>
+
+        <button onclick="guardarPerfilNegocio()" id="btn-save-perfil" class="w-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black py-3 rounded-xl text-xs uppercase tracking-wider active:scale-95 transition shadow-lg">
+          Guardar Cambios del Negocio
+        </button>
+      </section>
+    </div>
+
   </div>
 
   <script>
@@ -151,16 +253,18 @@
 
     let negocioActual = null;
     let productos = [];
-    let imagenBase64 = "";
+    let imagenProductoBase64 = "";
+    let logoBase64 = "";
+    let portadaBase64 = "";
 
     async function iniciar() {
       if (!TIENDA_SLUG) {
-        alert("Enlace inválido. Falta el identificador de la tienda.");
+        alert("Enlace incompleto. Debes abrir con ?tienda=tu-nombre");
         return;
       }
       const { data } = await supabaseClient.from('negocios').select('*').eq('slug', TIENDA_SLUG).single();
       if (!data) {
-        alert("Negocio no encontrado.");
+        alert("Negocio no encontrado en el sistema.");
         return;
       }
       negocioActual = data;
@@ -178,9 +282,44 @@
       }
     }
 
+    function cambiarPestana(pestana) {
+      const btnProds = document.getElementById("tab-btn-prods");
+      const btnPerfil = document.getElementById("tab-btn-perfil");
+      const secProds = document.getElementById("seccion-productos");
+      const secPerfil = document.getElementById("seccion-perfil");
+
+      if (pestana === 'productos') {
+        btnProds.className = "py-2 rounded-xl text-xs font-black bg-amber-500 text-slate-950 shadow transition";
+        btnPerfil.className = "py-2 rounded-xl text-xs font-black text-slate-400 hover:text-white transition";
+        secProds.classList.remove("hidden");
+        secPerfil.classList.add("hidden");
+      } else {
+        btnPerfil.className = "py-2 rounded-xl text-xs font-black bg-cyan-500 text-slate-950 shadow transition";
+        btnProds.className = "py-2 rounded-xl text-xs font-black text-slate-400 hover:text-white transition";
+        secPerfil.classList.remove("hidden");
+        secProds.classList.add("hidden");
+      }
+    }
+
+    function actualizarCalcUsd(val) {
+      const precio = parseFloat(val) || 0;
+      const tasa = parseFloat(negocioActual.tasa_usd) || 320;
+      document.getElementById("p-preview-usd").innerText = "≈ $" + (precio / tasa).toFixed(2) + " USD";
+    }
+
     function cargarDatosPanel() {
       document.getElementById("panel-biz-name").innerText = negocioActual.nombre;
+
+      document.getElementById("cfg-nombre").value = negocioActual.nombre || '';
+      document.getElementById("cfg-tasa").value = negocioActual.tasa_usd || 320;
+      document.getElementById("cfg-wa").value = negocioActual.telefono_whatsapp || '';
+      document.getElementById("cfg-fee").value = negocioActual.costo_mensajeria || 250;
+      document.getElementById("cfg-dir").value = negocioActual.direccion || '';
+      document.getElementById("cfg-desc").value = negocioActual.descripcion || '';
       
+      if (negocioActual.logo_url) document.getElementById("cfg-logo-preview").src = negocioActual.logo_url;
+      if (negocioActual.portada_url) document.getElementById("cfg-portada-preview").src = negocioActual.portada_url;
+
       const ahora = new Date();
       const vence = new Date(negocioActual.fecha_vencimiento);
       const diffMs = vence - ahora;
@@ -189,7 +328,6 @@
       const tag = document.getElementById("panel-dias-restantes");
       const bannerAlerta = document.getElementById("banner-pago-alerta");
 
-      // Si quedan 1 o 2 días (día 9 o 10) o si ya expiró, activar la alerta visual
       if (diasRestantes <= 1) {
         bannerAlerta.classList.remove("hidden");
         if (diasRestantes <= 0) {
@@ -209,53 +347,103 @@
       cargarProductos();
     }
 
-    function copiarTarjeta() {
-      navigator.clipboard.writeText(MI_TARJETA).then(() => {
-        const btn = document.getElementById("btn-copiar-card");
-        btn.innerHTML = '<i class="fa-solid fa-check text-emerald-400"></i> ¡Copiado!';
-        setTimeout(() => { btn.innerHTML = '<i class="fa-solid fa-copy"></i> Copiar'; }, 2000);
-      });
-    }
-
-    function notificarPagoWA() {
-      const msg = `👋 Hola, soy el dueño de *${negocioActual.nombre}* (?tienda=${negocioActual.slug}).\n\n` +
-        `💳 Acabo de realizar el pago de *$1,500 CUP* por Transfermóvil a la tarjeta terminada en *7274* para activar/renovar mi mes de servicio en la plataforma.\n\n` +
-        `📸 Adjunto mi comprobante de transferencia a continuación:`;
-      window.open(`https://wa.me/${MI_ADMIN_WHATSAPP}?text=${encodeURIComponent(msg)}`, '_blank');
-    }
-
-    function verMiTienda() {
-      window.open(`index.html?tienda=${negocioActual.slug}&v=${Date.now()}`, '_blank');
-    }
-
-    function procesarFoto(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      document.getElementById("file-label").innerText = "Procesando...";
+    function comprimirImagen(file, maxDim, calidad, callback) {
       const reader = new FileReader();
-      reader.onload = function(event) {
+      reader.onload = function(e) {
         const img = new Image();
         img.onload = function() {
           const canvas = document.createElement("canvas");
-          const maxDim = 500;
           let w = img.width, h = img.height;
           if (w > h) { if (w > maxDim) { h *= maxDim / w; w = maxDim; } }
           else { if (h > maxDim) { w *= maxDim / h; h = maxDim; } }
           canvas.width = w; canvas.height = h;
           const ctx = canvas.getContext("2d");
           ctx.drawImage(img, 0, 0, w, h);
-          imagenBase64 = canvas.toDataURL("image/jpeg", 0.70);
-          document.getElementById("img-preview").src = imagenBase64;
-          document.getElementById("preview-box").classList.remove("hidden");
-          document.getElementById("file-label").innerText = "Foto seleccionada";
+          callback(canvas.toDataURL("image/jpeg", calidad));
         };
-        img.src = event.target.result;
+        img.src = e.target.result;
       };
       reader.readAsDataURL(file);
     }
 
-    function quitarFoto() {
-      imagenBase64 = "";
+    function procesarFotoNegocio(e, tipo) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const maxDim = (tipo === 'logo') ? 300 : 700;
+      comprimirImagen(file, maxDim, 0.75, (base64) => {
+        if (tipo === 'logo') {
+          logoBase64 = base64;
+          document.getElementById("cfg-logo-preview").src = base64;
+        } else {
+          portadaBase64 = base64;
+          document.getElementById("cfg-portada-preview").src = base64;
+        }
+      });
+    }
+
+    async function guardarPerfilNegocio() {
+      const nombre = document.getElementById("cfg-nombre").value.trim();
+      const tasa = parseFloat(document.getElementById("cfg-tasa").value) || 320;
+      const wa = document.getElementById("cfg-wa").value.trim().replace(/[^0-9]/g, '');
+      const fee = parseFloat(document.getElementById("cfg-fee").value) || 250;
+      const dir = document.getElementById("cfg-dir").value.trim();
+      const desc = document.getElementById("cfg-desc").value.trim();
+      const nuevoPin = document.getElementById("cfg-pin").value.trim();
+
+      if (!nombre || !wa) {
+        alert("Completa el nombre y el WhatsApp.");
+        return;
+      }
+
+      const payload = {
+        nombre,
+        tasa_usd: tasa,
+        telefono_whatsapp: wa,
+        costo_mensajeria: fee,
+        direccion: dir,
+        descripcion: desc
+      };
+
+      if (logoBase64) payload.logo_url = logoBase64;
+      if (portadaBase64) payload.portada_url = portadaBase64;
+      if (nuevoPin && nuevoPin.length === 4) payload.pin_admin = nuevoPin;
+
+      const btn = document.getElementById("btn-save-perfil");
+      btn.innerText = "Guardando...";
+      btn.disabled = true;
+
+      const { error } = await supabaseClient
+        .from('negocios')
+        .update(payload)
+        .eq('id', negocioActual.id);
+
+      btn.innerText = "Guardar Cambios del Negocio";
+      btn.disabled = false;
+
+      if (error) {
+        alert("Error al guardar: " + error.message);
+      } else {
+        alert("¡Datos y tasa de cambio actualizados con éxito!");
+        Object.assign(negocioActual, payload);
+        document.getElementById("panel-biz-name").innerText = nombre;
+        cargarProductos();
+      }
+    }
+
+    function procesarFotoProducto(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      document.getElementById("file-label").innerText = "Procesando...";
+      comprimirImagen(file, 500, 0.70, (base64) => {
+        imagenProductoBase64 = base64;
+        document.getElementById("img-preview").src = base64;
+        document.getElementById("preview-box").classList.remove("hidden");
+        document.getElementById("file-label").innerText = "Foto seleccionada";
+      });
+    }
+
+    function quitarFotoProducto() {
+      imagenProductoBase64 = "";
       document.getElementById("file-input").value = "";
       document.getElementById("preview-box").classList.add("hidden");
       document.getElementById("file-label").innerText = "Elegir foto de tu galería";
@@ -275,16 +463,19 @@
         return;
       }
 
+      const tasa = parseFloat(negocioActual.tasa_usd) || 320;
       let html = '';
       productos.forEach(p => {
         const estClass = p.disponible ? 'text-emerald-400' : 'text-red-400';
         const estTexto = p.disponible ? 'Disponible' : 'Agotado';
+        const usd = (Number(p.precio) / tasa).toFixed(2);
+
         html += `<div class="bg-slate-900 border border-slate-800 rounded-2xl p-2.5 flex items-center justify-between gap-3">
           <div class="flex items-center gap-2.5">
             <img src="${p.imagen || 'https://via.placeholder.com/80'}" class="w-12 h-12 object-cover rounded-xl bg-slate-950 border border-slate-800">
             <div>
               <h3 class="text-xs font-bold text-white">${p.nombre}</h3>
-              <p class="text-xs text-amber-400 font-bold">$${Number(p.precio).toLocaleString()} CUP</p>
+              <p class="text-xs text-amber-400 font-bold">$${Number(p.precio).toLocaleString()} CUP <span class="text-[10px] text-cyan-400 font-normal">($${usd} USD)</span></p>
               <span class="text-[9px] font-bold ${estClass}">● ${estTexto}</span>
             </div>
           </div>
@@ -306,15 +497,17 @@
       document.getElementById("p-precio").value = p.precio;
       document.getElementById("p-categoria").value = p.categoria || '';
       document.getElementById("p-desc").value = p.descripcion || '';
+      actualizarCalcUsd(p.precio);
+
       if (p.imagen) {
-        imagenBase64 = p.imagen;
+        imagenProductoBase64 = p.imagen;
         document.getElementById("img-preview").src = p.imagen;
         document.getElementById("preview-box").classList.remove("hidden");
       }
-      document.getElementById("form-titulo").innerHTML = '<i class="fa-solid fa-pen text-blue-400"></i> EDITAR PRODUCTO';
+      document.getElementById("form-titulo").innerHTML = '<i class="fa-solid fa-pen text-blue-400"></i> EDITAR OFERTA';
       document.getElementById("btn-guardar").innerText = "Guardar Cambios";
       document.getElementById("btn-cancelar-edit").classList.remove("hidden");
-      window.scrollTo({ top: 150, behavior: 'smooth' });
+      window.scrollTo({ top: 120, behavior: 'smooth' });
     }
 
     function cancelarEdicion() {
@@ -323,7 +516,8 @@
       document.getElementById("p-precio").value = "";
       document.getElementById("p-categoria").value = "";
       document.getElementById("p-desc").value = "";
-      quitarFoto();
+      document.getElementById("p-preview-usd").innerText = "≈ $0.00 USD";
+      quitarFotoProducto();
       document.getElementById("form-titulo").innerHTML = '<i class="fa-solid fa-plus-circle text-amber-400"></i> AGREGAR OFERTA';
       document.getElementById("btn-guardar").innerText = "Guardar en mi Catálogo";
       document.getElementById("btn-cancelar-edit").classList.add("hidden");
@@ -347,7 +541,7 @@
         precio,
         categoria,
         descripcion: desc,
-        imagen: imagenBase64 || ''
+        imagen: imagenProductoBase64 || ''
       };
 
       if (editId) {
@@ -370,6 +564,25 @@
       if (!confirm("¿Eliminar este producto?")) return;
       await supabaseClient.from('productos').delete().eq('id', id);
       cargarProductos();
+    }
+
+    function copiarTarjeta() {
+      navigator.clipboard.writeText(MI_TARJETA).then(() => {
+        const btn = document.getElementById("btn-copiar-card");
+        btn.innerHTML = '<i class="fa-solid fa-check text-emerald-400"></i> ¡Copiado!';
+        setTimeout(() => { btn.innerHTML = '<i class="fa-solid fa-copy"></i> Copiar'; }, 2000);
+      });
+    }
+
+    function notificarPagoWA() {
+      const msg = `👋 Hola, soy el dueño de *${negocioActual.nombre}* (?tienda=${negocioActual.slug}).\n\n` +
+        `💳 Acabo de realizar el pago de *$1,500 CUP* por Transfermóvil a la tarjeta terminada en *7274* para activar/renovar mi mes de servicio en la plataforma.\n\n` +
+        `📸 Adjunto mi comprobante de transferencia a continuación:`;
+      window.open(`https://wa.me/${MI_ADMIN_WHATSAPP}?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    function verMiTienda() {
+      window.open(`index.html?tienda=${negocioActual.slug}&v=${Date.now()}`, '_blank');
     }
 
     iniciar();
