@@ -72,7 +72,7 @@
   <main class="max-w-xl mx-auto px-4 py-4 space-y-3.5" id="products-list">
     <div class="text-center py-16 text-slate-500 text-sm">
       <i class="fa-solid fa-spinner fa-spin text-2xl text-amber-400 mb-2"></i>
-      <p>Cargando catálogo...</p>
+      <p>Cargando catálogo en vivo...</p>
     </div>
   </main>
 
@@ -115,7 +115,7 @@
 
   <!-- Modal Info -->
   <div id="about-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-slate-900 w-full max-w-md rounded-3xl p-6 border border-slate-800 space-y-3 relative shadow-2xl">
+    <div class="bg-slate-900 w-full max-w-md rounded-3xl p-6 border border-slate-800 space-y-3 relative shadow-2xl p-5">
       <button onclick="cerrarAcerca()" class="absolute top-4 right-4 text-slate-400 text-lg">✕</button>
       <h3 class="font-black text-lg text-amber-400">OFERTAZO</h3>
       <p class="text-xs text-slate-300">Catálogo oficial con entrega rápida a domicilio en Ciego de Ávila.</p>
@@ -191,25 +191,38 @@
     // Cargar Categorías
     db.collection("categorias").onSnapshot(snapshot => {
       categorias = [];
-      snapshot.forEach(doc => categorias.push(doc.data().nombre));
+      snapshot.forEach(doc => {
+        const d = doc.data();
+        if (d && d.nombre) categorias.push(d.nombre);
+      });
       renderizarCategorias();
+    }, err => {
+      console.error("Error categorias:", err);
     });
 
-    // Cargar Productos
+    // Cargar Productos (con captura de error visible)
     db.collection("productos").onSnapshot(snapshot => {
       productos = [];
       snapshot.forEach(doc => productos.push({ id: doc.id, ...doc.data() }));
       renderizarProductos();
+    }, err => {
+      console.error("Error productos:", err);
+      document.getElementById("products-list").innerHTML = `
+        <div class="p-4 bg-red-950/60 border border-red-800 rounded-2xl text-center text-xs text-red-300">
+          <p class="font-bold">Error de conexión a la base de datos:</p>
+          <p class="mt-1 opacity-80">${err.message}</p>
+        </div>
+      `;
     });
 
     function renderizarCategorias() {
       const bar = document.getElementById("categories-bar");
       bar.innerHTML = `
-        <button onclick="filtrarCategoria('todos')" class="cat-pill ${categoriaSeleccionada === 'todos' ? 'active bg-amber-500 text-slate-950 font-black' : 'bg-slate-900 text-slate-400'} px-4 py-1.5 rounded-2xl text-xs whitespace-nowrap transition border border-slate-800">
+        <button onclick="filtrarCategoria('todos')" class="cat-pill ${categoriaSeleccionada.toLowerCase() === 'todos' ? 'active bg-amber-500 text-slate-950 font-black' : 'bg-slate-900 text-slate-400'} px-4 py-1.5 rounded-2xl text-xs whitespace-nowrap transition border border-slate-800">
           🔥 Todos
         </button>
         ${categorias.map(cat => `
-          <button onclick="filtrarCategoria('${cat}')" class="cat-pill ${categoriaSeleccionada === cat ? 'active bg-amber-500 text-slate-950 font-black' : 'bg-slate-900 text-slate-400'} px-4 py-1.5 rounded-2xl text-xs whitespace-nowrap transition border border-slate-800">
+          <button onclick="filtrarCategoria('${cat}')" class="cat-pill ${categoriaSeleccionada.toLowerCase() === cat.toLowerCase() ? 'active bg-amber-500 text-slate-950 font-black' : 'bg-slate-900 text-slate-400'} px-4 py-1.5 rounded-2xl text-xs whitespace-nowrap transition border border-slate-800">
             ${cat}
           </button>
         `).join('')}
@@ -224,26 +237,34 @@
 
     function renderizarProductos() {
       const cont = document.getElementById("products-list");
-      const list = categoriaSeleccionada === 'todos' ? productos : productos.filter(p => p.categoria === categoriaSeleccionada);
+      
+      const list = (categoriaSeleccionada.toLowerCase() === 'todos')
+        ? productos
+        : productos.filter(p => (p.categoria || '').trim().toLowerCase() === categoriaSeleccionada.trim().toLowerCase());
+
+      if (productos.length === 0) {
+        cont.innerHTML = `<div class="text-center py-14 text-slate-500 text-xs">Aún no hay productos publicados en el inventario.</div>`;
+        return;
+      }
 
       if (list.length === 0) {
-        cont.innerHTML = `<div class="text-center py-14 text-slate-500 text-xs">No hay productos en esta sección.</div>`;
+        cont.innerHTML = `<div class="text-center py-14 text-slate-500 text-xs">No hay productos en la categoría "${categoriaSeleccionada}".</div>`;
         return;
       }
 
       cont.innerHTML = list.map(p => `
-        <div class="bg-slate-900 rounded-3xl p-3.5 flex gap-3.5 border border-slate-800 ${!p.disponible ? 'opacity-40' : ''}">
-          <img src="${p.imagen || 'https://via.placeholder.com/150'}" class="w-24 h-24 object-cover rounded-2xl bg-slate-800" alt="${p.nombre}">
+        <div class="bg-slate-900 rounded-3xl p-3.5 flex gap-3.5 border border-slate-800 ${p.disponible === false ? 'opacity-40' : ''}">
+          <img src="${p.imagen || 'https://via.placeholder.com/150'}" class="w-24 h-24 object-cover rounded-2xl bg-slate-800 border border-slate-700/50" alt="${p.nombre}">
           <div class="flex-1 flex flex-col justify-between">
             <div>
-              <span class="text-[10px] font-bold text-amber-400 uppercase">${p.categoria || 'Producto'}</span>
+              <span class="text-[10px] font-bold text-amber-400 uppercase tracking-wider">${p.categoria || 'General'}</span>
               <h3 class="font-bold text-slate-100 text-sm leading-snug">${p.nombre}</h3>
               <p class="text-xs text-slate-400 line-clamp-2 mt-0.5">${p.descripcion || ''}</p>
             </div>
-            <div class="flex items-center justify-between mt-2 pt-1">
-              <span class="text-amber-400 font-black text-base">$${Number(p.precio).toLocaleString()} CUP</span>
-              ${p.disponible 
-                ? `<button onclick="agregar('${p.id}')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 px-3.5 py-1.5 rounded-xl text-xs font-black active:scale-95">
+            <div class="flex items-center justify-between mt-2 pt-1 border-t border-slate-800/60">
+              <span class="text-amber-400 font-black text-base">$${Number(p.precio || 0).toLocaleString()} CUP</span>
+              ${p.disponible !== false 
+                ? `<button onclick="agregar('${p.id}')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 px-3.5 py-1.5 rounded-xl text-xs font-black active:scale-95 transition">
                     + Agregar
                    </button>`
                 : `<span class="text-red-400 text-xs font-bold">Agotado</span>`
@@ -272,7 +293,7 @@
 
     function actualizarTotales() {
       const totalCount = carrito.reduce((sum, item) => sum + item.cantidad, 0);
-      const subtotal = carrito.reduce((sum, item) => sum + (Number(item.precio) * item.cantidad), 0);
+      const subtotal = carrito.reduce((sum, item) => sum + (Number(item.precio || 0) * item.cantidad), 0);
       const totalFinal = subtotal + COSTO_MENSAJERIA;
 
       const bar = document.getElementById("cart-bar");
@@ -320,10 +341,10 @@
         <div class="flex items-center justify-between bg-slate-800 p-2.5 rounded-xl border border-slate-700 text-xs">
           <div>
             <p class="font-bold text-white">${i.nombre}</p>
-            <p class="text-amber-400 font-bold">$${(Number(i.precio) * i.cantidad).toLocaleString()} CUP</p>
+            <p class="text-amber-400 font-bold">$${(Number(i.precio || 0) * i.cantidad).toLocaleString()} CUP</p>
           </div>
           <div class="flex items-center gap-2">
-            <button onclick="cambiarCantidad('${i.id}', -1)" class="w-6 h-6 bg-slate-750 text-white rounded font-bold">-</button>
+            <button onclick="cambiarCantidad('${i.id}', -1)" class="w-6 h-6 bg-slate-700 text-white rounded font-bold">-</button>
             <span class="w-4 text-center font-bold">${i.cantidad}</span>
             <button onclick="cambiarCantidad('${i.id}', 1)" class="w-6 h-6 bg-amber-500 text-slate-950 rounded font-bold">+</button>
           </div>
@@ -338,7 +359,7 @@
       if (!nombre) { alert("Por favor escribe tu nombre."); return; }
       if (!direccion) { alert("Por favor escribe la dirección de entrega."); return; }
 
-      const subtotal = carrito.reduce((sum, item) => sum + (Number(item.precio) * item.cantidad), 0);
+      const subtotal = carrito.reduce((sum, item) => sum + (Number(item.precio || 0) * item.cantidad), 0);
       const totalGeneral = subtotal + COSTO_MENSAJERIA;
 
       let msg = `⚡📦 *¡NUEVO PEDIDO OFERTAZO!* 📦⚡\n`;
@@ -351,7 +372,7 @@
       msg += `📋 *DETALLE DE PRODUCTOS:*\n`;
 
       carrito.forEach(i => {
-        msg += `  ▪️ ${i.cantidad}x ${i.nombre} ➔ $${(Number(i.precio) * i.cantidad).toLocaleString()} CUP\n`;
+        msg += `  ▪️ ${i.cantidad}x ${i.nombre} ➔ $${(Number(i.precio || 0) * i.cantidad).toLocaleString()} CUP\n`;
       });
 
       msg += `\n━━━━━━━━━━━━━━━━━━━\n`;
