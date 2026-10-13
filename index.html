@@ -3,111 +3,178 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OFERTAZO - Catálogo Digital Ciego de Ávila</title>
+  <title>Admin - OFERTAZO</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- SDK de Supabase (sin bloqueos regionales) -->
+  <!-- SDK de Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-  </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen pb-36 font-sans antialiased">
+<body class="bg-slate-950 text-slate-100 min-h-screen p-4 pb-20 font-sans max-w-lg mx-auto">
 
-  <!-- Header Superior -->
-  <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-30 px-4 py-3 shadow-xl">
-    <div class="max-w-xl mx-auto flex justify-between items-center">
-      <div class="flex items-center gap-2.5">
-        <div class="w-10 h-10 rounded-2xl bg-amber-500 flex items-center justify-center text-slate-950 text-xl font-black shadow-md">
-          <i class="fa-solid fa-bolt"></i>
-        </div>
-        <div>
-          <h1 class="text-lg font-black tracking-wider text-amber-400">OFERTAZO</h1>
-          <p class="text-[11px] text-slate-400 font-medium">Ciego de Ávila • Solo Domicilio</p>
-        </div>
-      </div>
-      
-      <div class="flex items-center gap-2">
-        <button onclick="abrirCompartir()" class="bg-amber-500/15 hover:bg-amber-500/25 text-amber-400 px-3 py-1.5 rounded-xl text-xs font-bold border border-amber-500/30 flex items-center gap-1.5 active:scale-95">
-          <i class="fa-solid fa-share-nodes"></i> Compartir
-        </button>
-        <button onclick="abrirAcerca()" class="bg-slate-800 text-slate-200 px-3 py-1.5 rounded-xl text-xs font-bold border border-slate-700 flex items-center gap-1.5 active:scale-95">
-          <i class="fa-solid fa-store text-amber-400"></i> Info
-        </button>
-      </div>
+  <header class="flex justify-between items-center py-4 border-b border-slate-800 mb-6">
+    <div>
+      <h1 class="text-xl font-black text-amber-400">OFERTAZO ADMIN</h1>
+      <p class="text-xs text-slate-400">Control de Inventario en Tiempo Real</p>
     </div>
+    <a href="index.html" target="_blank" class="bg-slate-800 text-xs px-3 py-2 rounded-xl text-amber-400 border border-slate-700 font-bold">
+      Ver Tienda ➔
+    </a>
   </header>
 
-  <!-- Banner Informativo -->
-  <section class="max-w-xl mx-auto px-4 pt-4">
-    <div class="rounded-3xl bg-slate-900 p-5 border border-amber-500/30 shadow-xl space-y-2.5">
-      <div class="flex flex-wrap gap-2">
-        <span class="bg-amber-500/20 text-amber-300 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full border border-amber-500/30">
-          🛵 Mensajería fija: $250 CUP
-        </span>
-        <span class="bg-emerald-500/20 text-emerald-300 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full border border-emerald-500/30">
-          💵 Pago Efectivo CUP
-        </span>
+  <!-- Formulario Nuevo Producto -->
+  <section class="bg-slate-900 border border-slate-800 rounded-3xl p-5 mb-6 shadow-xl space-y-3.5">
+    <h2 class="text-sm font-black text-white flex items-center gap-2">
+      <i class="fa-solid fa-plus-circle text-amber-400"></i> Nuevo Producto
+    </h2>
+
+    <div>
+      <label class="text-[11px] text-slate-400 font-bold">Nombre del producto *</label>
+      <input id="p-nombre" type="text" placeholder="Ej. Frijol Negro (1kg)" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
+    </div>
+
+    <div class="grid grid-cols-2 gap-2.5">
+      <div>
+        <label class="text-[11px] text-slate-400 font-bold">Precio (CUP) *</label>
+        <input id="p-precio" type="number" placeholder="1000" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
       </div>
-      <h2 class="text-xl font-black text-white">Pide Fácil, Rápido y al Mejor Precio</h2>
-      <p class="text-xs text-slate-300">Entregas a domicilio en Ciego de Ávila • Lunes a Sábado de 9:00 AM a 5:00 PM</p>
-      <div class="inline-flex items-center gap-2 bg-slate-800/80 px-2.5 py-1 rounded-lg text-xs text-amber-300">
-        <i class="fa-solid fa-clock"></i> Entrega estimada: <strong>de 2 a 3 horas</strong>
+      <div>
+        <label class="text-[11px] text-slate-400 font-bold">Categoría *</label>
+        <input id="p-categoria" type="text" placeholder="GENERAL, BEBIDAS..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
       </div>
+    </div>
+
+    <div>
+      <label class="text-[11px] text-slate-400 font-bold">URL de la imagen (Link)</label>
+      <input id="p-imagen" type="text" placeholder="https://..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
+    </div>
+
+    <div>
+      <label class="text-[11px] text-slate-400 font-bold">Descripción / Detalles</label>
+      <input id="p-desc" type="text" placeholder="Presentación, peso, detalles..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
+    </div>
+
+    <button onclick="guardarProducto()" id="btn-guardar" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-3 rounded-xl text-xs active:scale-95 transition shadow-lg mt-2">
+      Guardar y Publicar al Instante
+    </button>
+  </section>
+
+  <!-- Lista de Productos en Base de Datos -->
+  <section class="space-y-3">
+    <div class="flex justify-between items-center mb-2">
+      <h2 class="text-sm font-black text-white">Inventario Activo</h2>
+      <button onclick="cargarInventario()" class="text-xs text-amber-400"><i class="fa-solid fa-rotate"></i> Actualizar</button>
+    </div>
+    <div id="lista-admin" class="space-y-2.5">
+      <div class="text-center py-8 text-slate-500 text-xs">Cargando inventario...</div>
     </div>
   </section>
 
-  <!-- Categorías -->
-  <nav class="sticky top-14 z-20 bg-slate-950 px-4 py-3 border-b border-slate-900 mt-2">
-    <div class="max-w-xl mx-auto flex gap-2 overflow-x-auto no-scrollbar" id="categories-bar"></div>
-  </nav>
+  <script>
+    const SUPABASE_URL = "https://qhkqznpgjirvnndriehr.supabase.co";
+    const SUPABASE_KEY = "Sb_publishable_Ih_3RgWJTptRasXqF9UcxQ_eTkkw7j-";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  <!-- Lista de Productos -->
-  <main class="max-w-xl mx-auto px-4 py-4 space-y-3.5" id="products-list">
-    <div class="text-center py-16 text-slate-500 text-sm">
-      <i class="fa-solid fa-spinner fa-spin text-2xl text-amber-400 mb-2"></i>
-      <p>Cargando catálogo en tiempo real...</p>
-    </div>
-  </main>
+    async function cargarInventario() {
+      const cont = document.getElementById("lista-admin");
+      const { data, error } = await supabaseClient
+        .from('productos')
+        .select('*')
+        .order('id', { ascending: false });
 
-  <!-- Barra Carrito Flotante -->
-  <div id="cart-bar" class="fixed bottom-4 left-4 right-4 max-w-xl mx-auto hidden z-40">
-    <button onclick="abrirCarrito()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-4 px-6 rounded-2xl shadow-2xl flex justify-between items-center active:scale-95 transition">
-      <span class="flex items-center gap-2">
-        <i class="fa-solid fa-basket-shopping text-lg"></i>
-        <span id="cart-count" class="bg-slate-950 text-amber-400 text-xs px-2 py-0.5 rounded-full font-black">0</span>
-        <span>Ver mi pedido</span>
-      </span>
-      <span id="cart-total-bar" class="text-lg font-black">$0 CUP</span>
-    </button>
-  </div>
+      if (error) {
+        cont.innerHTML = '<div class="text-xs text-red-400 text-center">Error: ' + error.message + '</div>';
+        return;
+      }
 
-  <!-- Modal Compartir -->
-  <div id="share-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-slate-900 w-full max-w-sm rounded-3xl p-6 border border-slate-800 space-y-4 text-center relative shadow-2xl">
-      <button onclick="cerrarCompartir()" class="absolute top-4 right-4 text-slate-400 text-lg">✕</button>
-      <div class="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl mx-auto">
-        <i class="fa-solid fa-share-nodes"></i>
-      </div>
-      <div>
-        <h3 class="font-bold text-white text-base">Compartir OFERTAZO</h3>
-        <p class="text-xs text-slate-400">Pasa el catálogo directo a tus contactos</p>
-      </div>
-      <div class="space-y-2.5 pt-1">
-        <button onclick="compartirWA()" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 text-sm active:scale-95">
-          <i class="fa-brands fa-whatsapp text-lg"></i> Enviar por WhatsApp
-        </button>
-        <button onclick="compartirFB()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 text-sm active:scale-95">
-          <i class="fa-brands fa-facebook text-lg"></i> Enviar a Facebook
-        </button>
-        <button onclick="copiarLink()" id="btn-copy" class="w-full bg-slate-800 text-slate-200 font-bold py-3 rounded-xl flex items-center justify-center gap-2 border border-slate-700 text-sm active:scale-95">
-          <i class="fa-solid fa-link text-amber-400"></i> Copiar Enlace
-        </button>
-      </div>
-    </div>
-  </div>
+      if (!data || data.length === 0) {
+        cont.innerHTML = '<div class="text-xs text-slate-500 text-center py-6">No hay productos guardados.</div>';
+        return;
+      }
 
-  <!-- Modal Info -->
-  <div id="about-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-slate
+      let html = '';
+      data.forEach(p => {
+        const estadoColor = p.disponible ? 'bg-emerald-500/20 text-emerald-300' : 'bg-red-500/20 text-red-300';
+        const estadoTexto = p.disponible ? 'Activo' : 'Agotado';
+        const accionTexto = p.disponible ? 'Agotar' : 'Activar';
+
+        html += '<div class="bg-slate-900 border border-slate-800 rounded-2xl p-3 flex items-center justify-between gap-3">' +
+          '<div class="flex items-center gap-3">' +
+            '<img src="' + (p.imagen || 'https://via.placeholder.com/80') + '" class="w-12 h-12 rounded-xl object-cover bg-slate-800">' +
+            '<div>' +
+              '<h3 class="text-xs font-bold text-white">' + p.nombre + '</h3>' +
+              '<p class="text-[11px] text-amber-400 font-black">$' + Number(p.precio).toLocaleString() + ' CUP</p>' +
+              '<span class="text-[9px] px-2 py-0.5 rounded-full font-bold ' + estadoColor + '">' + estadoTexto + '</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="flex items-center gap-1.5">' +
+            '<button onclick="toggleDisponibilidad(' + p.id + ', ' + p.disponible + ')" class="bg-slate-800 text-xs px-2.5 py-1.5 rounded-xl border border-slate-700 font-bold hover:bg-slate-700">' + accionTexto + '</button>' +
+            '<button onclick="eliminarProducto(' + p.id + ')" class="bg-red-950/60 text-red-400 text-xs px-2.5 py-1.5 rounded-xl border border-red-800 hover:bg-red-900 font-bold"><i class="fa-solid fa-trash"></i></button>' +
+          '</div>' +
+        '</div>';
+      });
+
+      cont.innerHTML = html;
+    }
+
+    async function guardarProducto() {
+      const nombre = document.getElementById("p-nombre").value.trim();
+      const precio = parseFloat(document.getElementById("p-precio").value);
+      const categoria = document.getElementById("p-categoria").value.trim().toUpperCase() || 'GENERAL';
+      const imagen = document.getElementById("p-imagen").value.trim();
+      const descripcion = document.getElementById("p-desc").value.trim();
+
+      if (!nombre || isNaN(precio)) {
+        alert("Por favor completa el nombre y el precio.");
+        return;
+      }
+
+      const btn = document.getElementById("btn-guardar");
+      btn.innerText = "Guardando...";
+      btn.disabled = true;
+
+      const { error } = await supabaseClient
+        .from('productos')
+        .insert([{
+          nombre: nombre,
+          precio: precio,
+          categoria: categoria,
+          imagen: imagen,
+          descripcion: descripcion,
+          disponible: true
+        }]);
+
+      btn.innerText = "Guardar y Publicar al Instante";
+      btn.disabled = false;
+
+      if (error) {
+        alert("Error al guardar: " + error.message);
+      } else {
+        document.getElementById("p-nombre").value = "";
+        document.getElementById("p-precio").value = "";
+        document.getElementById("p-imagen").value = "";
+        document.getElementById("p-desc").value = "";
+        cargarInventario();
+      }
+    }
+
+    async function toggleDisponibilidad(id, actual) {
+      await supabaseClient
+        .from('productos')
+        .update({ disponible: !actual })
+        .eq('id', id);
+      cargarInventario();
+    }
+
+    async function eliminarProducto(id) {
+      if (!confirm("¿Seguro que deseas eliminar este producto?")) return;
+      await supabaseClient
+        .from('productos')
+        .delete()
+        .eq('id', id);
+      cargarInventario();
+    }
+
+    cargarInventario();
+  </script>
+</body>
+</html>
