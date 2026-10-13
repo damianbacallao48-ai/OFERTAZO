@@ -3,112 +3,276 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin - OFERTAZO</title>
+  <title>OFERTAZO - Catálogo Digital Ciego de Ávila</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- SDK de Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen p-4 pb-20 font-sans max-w-lg mx-auto">
+<body class="bg-slate-950 text-slate-100 min-h-screen pb-36 font-sans antialiased">
 
-  <header class="flex justify-between items-center py-4 border-b border-slate-800 mb-6">
-    <div>
-      <h1 class="text-xl font-black text-amber-400">OFERTAZO ADMIN</h1>
-      <p class="text-xs text-slate-400">Control de Inventario en Tiempo Real</p>
+  <!-- Header Superior -->
+  <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-30 px-4 py-3 shadow-xl">
+    <div class="max-w-xl mx-auto flex justify-between items-center">
+      <div class="flex items-center gap-2.5">
+        <div class="w-10 h-10 rounded-2xl bg-amber-500 flex items-center justify-center text-slate-950 text-xl font-black shadow-md">
+          <i class="fa-solid fa-bolt"></i>
+        </div>
+        <div>
+          <h1 class="text-lg font-black tracking-wider text-amber-400">OFERTAZO</h1>
+          <p class="text-[11px] text-slate-400 font-medium">Ciego de Ávila • Solo Domicilio</p>
+        </div>
+      </div>
+      
+      <div class="flex items-center gap-2">
+        <button onclick="abrirCompartir()" class="bg-amber-500/15 hover:bg-amber-500/25 text-amber-400 px-3 py-1.5 rounded-xl text-xs font-bold border border-amber-500/30 flex items-center gap-1.5 active:scale-95">
+          <i class="fa-solid fa-share-nodes"></i> Compartir
+        </button>
+        <button onclick="abrirAcerca()" class="bg-slate-800 text-slate-200 px-3 py-1.5 rounded-xl text-xs font-bold border border-slate-700 flex items-center gap-1.5 active:scale-95">
+          <i class="fa-solid fa-store text-amber-400"></i> Info
+        </button>
+      </div>
     </div>
-    <a href="index.html" target="_blank" class="bg-slate-800 text-xs px-3 py-2 rounded-xl text-amber-400 border border-slate-700 font-bold">
-      Ver Tienda ➔
-    </a>
   </header>
 
-  <!-- Formulario Nuevo Producto -->
-  <section class="bg-slate-900 border border-slate-800 rounded-3xl p-5 mb-6 shadow-xl space-y-3.5">
-    <h2 class="text-sm font-black text-white flex items-center gap-2">
-      <i class="fa-solid fa-plus-circle text-amber-400"></i> Nuevo Producto
-    </h2>
-
-    <div>
-      <label class="text-[11px] text-slate-400 font-bold">Nombre del producto *</label>
-      <input id="p-nombre" type="text" placeholder="Ej. Frijol Negro (1kg)" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
-    </div>
-
-    <div class="grid grid-cols-2 gap-2.5">
-      <div>
-        <label class="text-[11px] text-slate-400 font-bold">Precio (CUP) *</label>
-        <input id="p-precio" type="number" placeholder="1000" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
+  <!-- Banner Informativo -->
+  <section class="max-w-xl mx-auto px-4 pt-4">
+    <div class="rounded-3xl bg-slate-900 p-5 border border-amber-500/30 shadow-xl space-y-2.5">
+      <div class="flex flex-wrap gap-2">
+        <span class="bg-amber-500/20 text-amber-300 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full border border-amber-500/30">
+          🛵 Mensajería fija: $250 CUP
+        </span>
+        <span class="bg-emerald-500/20 text-emerald-300 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full border border-emerald-500/30">
+          💵 Pago Efectivo CUP
+        </span>
       </div>
-      <div>
-        <label class="text-[11px] text-slate-400 font-bold">Categoría *</label>
-        <input id="p-categoria" type="text" placeholder="GENERAL, BEBIDAS..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
+      <h2 class="text-xl font-black text-white">Pide Fácil, Rápido y al Mejor Precio</h2>
+      <p class="text-xs text-slate-300">Entregas a domicilio en Ciego de Ávila • Lunes a Sábado de 9:00 AM a 5:00 PM</p>
+      <div class="inline-flex items-center gap-2 bg-slate-800/80 px-2.5 py-1 rounded-lg text-xs text-amber-300">
+        <i class="fa-solid fa-clock"></i> Entrega estimada: <strong>de 2 a 3 horas</strong>
       </div>
     </div>
+  </section>
 
-    <div>
-      <label class="text-[11px] text-slate-400 font-bold">URL de la imagen (Link)</label>
-      <input id="p-imagen" type="text" placeholder="https://..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
+  <!-- Categorías -->
+  <nav class="sticky top-14 z-20 bg-slate-950 px-4 py-3 border-b border-slate-900 mt-2">
+    <div class="max-w-xl mx-auto flex gap-2 overflow-x-auto no-scrollbar" id="categories-bar"></div>
+  </nav>
+
+  <!-- Lista de Productos -->
+  <main class="max-w-xl mx-auto px-4 py-4 space-y-3.5" id="products-list">
+    <div class="text-center py-16 text-slate-500 text-sm">
+      <i class="fa-solid fa-spinner fa-spin text-2xl text-amber-400 mb-2"></i>
+      <p>Cargando catálogo en tiempo real...</p>
     </div>
+  </main>
 
-    <div>
-      <label class="text-[11px] text-slate-400 font-bold">Descripción / Detalles</label>
-      <input id="p-desc" type="text" placeholder="Presentación, peso, detalles..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
-    </div>
-
-    <button onclick="guardarProducto()" id="btn-guardar" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-3 rounded-xl text-xs active:scale-95 transition shadow-lg mt-2">
-      Guardar y Publicar al Instante
+  <!-- Barra Carrito Flotante -->
+  <div id="cart-bar" class="fixed bottom-4 left-4 right-4 max-w-xl mx-auto hidden z-40">
+    <button onclick="abrirCarrito()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-4 px-6 rounded-2xl shadow-2xl flex justify-between items-center active:scale-95 transition">
+      <span class="flex items-center gap-2">
+        <i class="fa-solid fa-basket-shopping text-lg"></i>
+        <span id="cart-count" class="bg-slate-950 text-amber-400 text-xs px-2 py-0.5 rounded-full font-black">0</span>
+        <span>Ver mi pedido</span>
+      </span>
+      <span id="cart-total-bar" class="text-lg font-black">$0 CUP</span>
     </button>
-  </section>
+  </div>
 
-  <!-- Lista de Productos en Base de Datos -->
-  <section class="space-y-3">
-    <div class="flex justify-between items-center mb-2">
-      <h2 class="text-sm font-black text-white">Inventario Activo</h2>
-      <button onclick="cargarInventario()" class="text-xs text-amber-400"><i class="fa-solid fa-rotate"></i> Actualizar</button>
+  <!-- Modal Compartir -->
+  <div id="share-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 w-full max-w-sm rounded-3xl p-6 border border-slate-800 space-y-4 text-center relative shadow-2xl">
+      <button onclick="cerrarCompartir()" class="absolute top-4 right-4 text-slate-400 text-lg">✕</button>
+      <div class="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl mx-auto">
+        <i class="fa-solid fa-share-nodes"></i>
+      </div>
+      <div>
+        <h3 class="font-bold text-white text-base">Compartir OFERTAZO</h3>
+        <p class="text-xs text-slate-400">Pasa el catálogo directo a tus contactos</p>
+      </div>
+      <div class="space-y-2.5 pt-1">
+        <button onclick="compartirWA()" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 text-sm active:scale-95">
+          <i class="fa-brands fa-whatsapp text-lg"></i> Enviar por WhatsApp
+        </button>
+        <button onclick="compartirFB()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 text-sm active:scale-95">
+          <i class="fa-brands fa-facebook text-lg"></i> Enviar a Facebook
+        </button>
+        <button onclick="copiarLink()" id="btn-copy" class="w-full bg-slate-800 text-slate-200 font-bold py-3 rounded-xl flex items-center justify-center gap-2 border border-slate-700 text-sm active:scale-95">
+          <i class="fa-solid fa-link text-amber-400"></i> Copiar Enlace
+        </button>
+      </div>
     </div>
-    <div id="lista-admin" class="space-y-2.5">
-      <div class="text-center py-8 text-slate-500 text-xs">Cargando inventario...</div>
+  </div>
+
+  <!-- Modal Info -->
+  <div id="about-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 w-full max-w-md rounded-3xl p-6 border border-slate-800 space-y-3 relative shadow-2xl p-5">
+      <button onclick="cerrarAcerca()" class="absolute top-4 right-4 text-slate-400 text-lg">✕</button>
+      <h3 class="font-black text-lg text-amber-400">OFERTAZO</h3>
+      <p class="text-xs text-slate-300">Catálogo oficial con entrega rápida a domicilio en Ciego de Ávila.</p>
+      <div class="space-y-2 pt-2 border-t border-slate-800 text-xs text-slate-300">
+        <p>📍 <strong>Ubicación:</strong> Ciego de Ávila</p>
+        <p>🕒 <strong>Horario:</strong> Lunes a Sábado de 9:00 AM a 5:00 PM</p>
+        <p>⏱️ <strong>Demora estimada:</strong> De 2 a 3 horas</p>
+        <p>🛵 <strong>Mensajería:</strong> $250 CUP fijos</p>
+        <p>💵 <strong>Pago:</strong> Efectivo CUP al recibir</p>
+        <p>📱 <strong>WhatsApp:</strong> +53 58960660</p>
+      </div>
     </div>
-  </section>
+  </div>
+
+  <!-- Modal Checkout -->
+  <div id="cart-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-slate-900 w-full max-w-lg rounded-t-3xl sm:rounded-3xl max-h-[92vh] flex flex-col border border-slate-800 shadow-2xl">
+      <div class="p-4 border-b border-slate-800 flex justify-between items-center">
+        <h2 class="text-sm font-black text-amber-400">Resumen de tu Compra</h2>
+        <button onclick="cerrarCarrito()" class="text-slate-400 text-lg">✕</button>
+      </div>
+
+      <div class="p-4 overflow-y-auto flex-1 space-y-3">
+        <div id="cart-items" class="space-y-2"></div>
+
+        <div class="pt-3 border-t border-slate-800 space-y-2.5">
+          <div>
+            <label class="text-[11px] text-slate-400 font-bold">Nombre de quien recibe:</label>
+            <input id="client-name" type="text" placeholder="Ej. Damian" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
+          </div>
+          <div>
+            <label class="text-[11px] text-slate-400 font-bold">Dirección exacta en Ciego de Ávila:</label>
+            <input id="client-address" type="text" placeholder="Calle, número, entrecalles y reparto" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
+          </div>
+          <div class="p-2.5 bg-amber-500/10 border border-amber-500/20 rounded-xl text-[11px] text-amber-300">
+            ⏱️ <strong>Demora:</strong> El pedido puede tardar de 2 a 3 horas en llegar.
+          </div>
+        </div>
+
+        <div class="bg-slate-800/60 p-3 rounded-2xl border border-slate-700 space-y-1.5 text-xs">
+          <div class="flex justify-between text-slate-300">
+            <span>Subtotal productos:</span>
+            <span id="calc-subtotal" class="font-bold">$0 CUP</span>
+          </div>
+          <div class="flex justify-between text-slate-300">
+            <span>Mensajería:</span>
+            <span class="font-bold text-amber-400">+$250 CUP</span>
+          </div>
+          <div class="flex justify-between text-sm font-black text-white pt-2 border-t border-slate-700">
+            <span>Total en efectivo:</span>
+            <span id="calc-total" class="text-amber-400 font-black">$0 CUP</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-4 border-t border-slate-800">
+        <button onclick="enviarPedido()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-3.5 rounded-2xl flex items-center justify-center gap-2 shadow-lg active:scale-95 text-sm">
+          <i class="fa-brands fa-whatsapp text-xl"></i> Enviar Pedido a WhatsApp
+        </button>
+      </div>
+    </div>
+  </div>
 
   <script>
+    const MI_WHATSAPP = "5358960660";
+    const COSTO_MENSAJERIA = 250;
+
     const SUPABASE_URL = "https://qhkqznpgjirvnndriehr.supabase.co";
-    const SUPABASE_KEY = "Sb_publishable_Ih_3RgWJTptRasXqF9UcxQ_eTkkw7j-";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFoa3F6bnBnamlydm5uZHJpZWhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5MTE5NzQsImV4cCI6MjEwNzQ4Nzk3NH0.AHUdASoGr0FJWUuP0LxS9UJ2_-QzFPwAjmEeWZ3g1Uc";
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    async function cargarInventario() {
-      const cont = document.getElementById("lista-admin");
-      const { data, error } = await supabaseClient
-        .from('productos')
-        .select('*')
-        .order('id', { ascending: false });
+    let productos = [];
+    let categorias = [];
+    let carrito = [];
+    let categoriaSeleccionada = 'todos';
 
-      if (error) {
-        cont.innerHTML = '<div class="text-xs text-red-400 text-center">Error: ' + error.message + '</div>';
+    async function cargarCatalogo() {
+      const cont = document.getElementById("products-list");
+      try {
+        const { data, error } = await supabaseClient
+          .from('productos')
+          .select('*')
+          .order('id', { ascending: true });
+
+        if (error) throw error;
+
+        productos = data || [];
+        
+        const catSet = new Set();
+        productos.forEach(p => {
+          if (p.categoria) catSet.add(p.categoria.toUpperCase());
+        });
+        categorias = Array.from(catSet);
+
+        renderizarCategorias();
+        renderizarProductos();
+      } catch (err) {
+        cont.innerHTML = '<div class="p-4 bg-red-950/80 border border-red-800 rounded-2xl text-center text-xs text-red-300">' +
+          'No se pudo conectar a la base de datos.<br>' + err.message +
+          '<br><button onclick="cargarCatalogo()" class="mt-3 bg-amber-500 text-slate-950 font-bold px-3 py-1 rounded-lg">Reintentar</button>' +
+          '</div>';
+      }
+    }
+
+    function renderizarCategorias() {
+      const bar = document.getElementById("categories-bar");
+      let html = '<button onclick="filtrarCategoria(\'todos\')" class="cat-pill ' + 
+        (categoriaSeleccionada.toLowerCase() === 'todos' ? 'active bg-amber-500 text-slate-950 font-black' : 'bg-slate-900 text-slate-400') + 
+        ' px-4 py-1.5 rounded-2xl text-xs whitespace-nowrap transition border border-slate-800">🔥 Todos</button>';
+      
+      categorias.forEach(cat => {
+        html += '<button onclick="filtrarCategoria(\'' + cat + '\')" class="cat-pill ' + 
+          (categoriaSeleccionada.toLowerCase() === cat.toLowerCase() ? 'active bg-amber-500 text-slate-950 font-black' : 'bg-slate-900 text-slate-400') + 
+          ' px-4 py-1.5 rounded-2xl text-xs whitespace-nowrap transition border border-slate-800">' + cat + '</button>';
+      });
+      bar.innerHTML = html;
+    }
+
+    function filtrarCategoria(cat) {
+      categoriaSeleccionada = cat;
+      renderizarCategorias();
+      renderizarProductos();
+    }
+
+    function renderizarProductos() {
+      const cont = document.getElementById("products-list");
+      const list = (categoriaSeleccionada.toLowerCase() === 'todos')
+        ? productos
+        : productos.filter(p => (p.categoria || '').trim().toUpperCase() === categoriaSeleccionada.toUpperCase());
+
+      if (productos.length === 0) {
+        cont.innerHTML = '<div class="text-center py-14 text-slate-500 text-xs">No hay productos en inventario.</div>';
         return;
       }
 
-      if (!data || data.length === 0) {
-        cont.innerHTML = '<div class="text-xs text-slate-500 text-center py-6">No hay productos guardados.</div>';
+      if (list.length === 0) {
+        cont.innerHTML = '<div class="text-center py-14 text-slate-500 text-xs">No hay productos en esta categoría.</div>';
         return;
       }
 
       let html = '';
-      data.forEach(p => {
-        const estadoColor = p.disponible ? 'bg-emerald-500/20 text-emerald-300' : 'bg-red-500/20 text-red-300';
-        const estadoTexto = p.disponible ? 'Activo' : 'Agotado';
-        const accionTexto = p.disponible ? 'Agotar' : 'Activar';
+      list.forEach(p => {
+        const precioNum = Number(p.precio || 0).toLocaleString();
+        const imagenSrc = p.imagen || 'https://via.placeholder.com/150';
+        const catName = p.categoria || 'GENERAL';
+        const opacidad = (p.disponible === false) ? 'opacity-40' : '';
+        
+        const botonAccion = (p.disponible !== false)
+          ? '<button onclick="agregar(' + p.id + ')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 px-3.5 py-1.5 rounded-xl text-xs font-black active:scale-95 transition">+ Agregar</button>'
+          : '<span class="text-red-400 text-xs font-bold">Agotado</span>';
 
-        html += '<div class="bg-slate-900 border border-slate-800 rounded-2xl p-3 flex items-center justify-between gap-3">' +
-          '<div class="flex items-center gap-3">' +
-            '<img src="' + (p.imagen || 'https://via.placeholder.com/80') + '" class="w-12 h-12 rounded-xl object-cover bg-slate-800">' +
+        html += '<div class="bg-slate-900 rounded-3xl p-3.5 flex gap-3.5 border border-slate-800 ' + opacidad + '">' +
+          '<img src="' + imagenSrc + '" class="w-24 h-24 object-cover rounded-2xl bg-slate-800 border border-slate-700/50" alt="' + p.nombre + '">' +
+          '<div class="flex-1 flex flex-col justify-between">' +
             '<div>' +
-              '<h3 class="text-xs font-bold text-white">' + p.nombre + '</h3>' +
-              '<p class="text-[11px] text-amber-400 font-black">$' + Number(p.precio).toLocaleString() + ' CUP</p>' +
-              '<span class="text-[9px] px-2 py-0.5 rounded-full font-bold ' + estadoColor + '">' + estadoTexto + '</span>' +
+              '<span class="text-[10px] font-bold text-amber-400 uppercase tracking-wider">' + catName + '</span>' +
+              '<h3 class="font-bold text-slate-100 text-sm leading-snug">' + p.nombre + '</h3>' +
+              '<p class="text-xs text-slate-400 line-clamp-2 mt-0.5">' + (p.descripcion || '') + '</p>' +
             '</div>' +
-          '</div>' +
-          '<div class="flex items-center gap-1.5">' +
-            '<button onclick="toggleDisponibilidad(' + p.id + ', ' + p.disponible + ')" class="bg-slate-800 text-xs px-2.5 py-1.5 rounded-xl border border-slate-700 font-bold hover:bg-slate-700">' + accionTexto + '</button>' +
-            '<button onclick="eliminarProducto(' + p.id + ')" class="bg-red-950/60 text-red-400 text-xs px-2.5 py-1.5 rounded-xl border border-red-800 hover:bg-red-900 font-bold"><i class="fa-solid fa-trash"></i></button>' +
+            '<div class="flex items-center justify-between mt-2 pt-1 border-t border-slate-800/60">' +
+              '<span class="text-amber-400 font-black text-base">$' + precioNum + ' CUP</span>' +
+              botonAccion +
+            '</div>' +
           '</div>' +
         '</div>';
       });
@@ -116,65 +280,127 @@
       cont.innerHTML = html;
     }
 
-    async function guardarProducto() {
-      const nombre = document.getElementById("p-nombre").value.trim();
-      const precio = parseFloat(document.getElementById("p-precio").value);
-      const categoria = document.getElementById("p-categoria").value.trim().toUpperCase() || 'GENERAL';
-      const imagen = document.getElementById("p-imagen").value.trim();
-      const descripcion = document.getElementById("p-desc").value.trim();
-
-      if (!nombre || isNaN(precio)) {
-        alert("Por favor completa el nombre y el precio.");
-        return;
-      }
-
-      const btn = document.getElementById("btn-guardar");
-      btn.innerText = "Guardando...";
-      btn.disabled = true;
-
-      const { error } = await supabaseClient
-        .from('productos')
-        .insert([{
-          nombre: nombre,
-          precio: precio,
-          categoria: categoria,
-          imagen: imagen,
-          descripcion: descripcion,
-          disponible: true
-        }]);
-
-      btn.innerText = "Guardar y Publicar al Instante";
-      btn.disabled = false;
-
-      if (error) {
-        alert("Error al guardar: " + error.message);
+    function agregar(id) {
+      const prod = productos.find(p => p.id === id);
+      const existe = carrito.find(item => item.id === id);
+      if (existe) {
+        existe.cantidad += 1;
       } else {
-        document.getElementById("p-nombre").value = "";
-        document.getElementById("p-precio").value = "";
-        document.getElementById("p-imagen").value = "";
-        document.getElementById("p-desc").value = "";
-        cargarInventario();
+        carrito.push(Object.assign({}, prod, { cantidad: 1 }));
       }
+      actualizarTotales();
     }
 
-    async function toggleDisponibilidad(id, actual) {
-      await supabaseClient
-        .from('productos')
-        .update({ disponible: !actual })
-        .eq('id', id);
-      cargarInventario();
+    function cambiarCantidad(id, delta) {
+      const item = carrito.find(p => p.id === id);
+      if (!item) return;
+      item.cantidad += delta;
+      if (item.cantidad <= 0) {
+        carrito = carrito.filter(p => p.id !== id);
+      }
+      actualizarTotales();
+      renderizarItemsCarrito();
     }
 
-    async function eliminarProducto(id) {
-      if (!confirm("¿Seguro que deseas eliminar este producto?")) return;
-      await supabaseClient
-        .from('productos')
-        .delete()
-        .eq('id', id);
-      cargarInventario();
+    function actualizarTotales() {
+      const totalCount = carrito.reduce((sum, item) => sum + item.cantidad, 0);
+      const subtotal = carrito.reduce((sum, item) => sum + (Number(item.precio || 0) * item.cantidad), 0);
+      const totalFinal = subtotal + COSTO_MENSAJERIA;
+
+      const bar = document.getElementById("cart-bar");
+      if (totalCount > 0) {
+        bar.classList.remove("hidden");
+        document.getElementById("cart-count").innerText = totalCount;
+        document.getElementById("cart-total-bar").innerText = '$' + totalFinal.toLocaleString() + ' CUP';
+      } else {
+        bar.classList.add("hidden");
+        cerrarCarrito();
+      }
+
+      document.getElementById("calc-subtotal").innerText = '$' + subtotal.toLocaleString() + ' CUP';
+      document.getElementById("calc-total").innerText = '$' + totalFinal.toLocaleString() + ' CUP';
     }
 
-    cargarInventario();
+    function abrirCarrito() { document.getElementById("cart-modal").classList.remove("hidden"); renderizarItemsCarrito(); actualizarTotales(); }
+    function cerrarCarrito() { document.getElementById("cart-modal").classList.add("hidden"); }
+    function abrirAcerca() { document.getElementById("about-modal").classList.remove("hidden"); }
+    function cerrarAcerca() { document.getElementById("about-modal").classList.add("hidden"); }
+    function abrirCompartir() { document.getElementById("share-modal").classList.remove("hidden"); }
+    function cerrarCompartir() { document.getElementById("share-modal").classList.add("hidden"); }
+
+    function compartirWA() {
+      const txt = encodeURIComponent("¡Pide en OFERTAZO! Catálogo digital en vivo en Ciego de Ávila:\n" + window.location.href);
+      window.open("https://api.whatsapp.com/send?text=" + txt, '_blank');
+    }
+
+    function compartirFB() {
+      window.open("https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(window.location.href), '_blank');
+    }
+
+    function copiarLink() {
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        const b = document.getElementById("btn-copy");
+        b.innerHTML = '<i class="fa-solid fa-check text-emerald-400"></i> ¡Copiado!';
+        setTimeout(() => { b.innerHTML = '<i class="fa-solid fa-link text-amber-400"></i> Copiar Enlace'; }, 2000);
+      });
+    }
+
+    function renderizarItemsCarrito() {
+      const c = document.getElementById("cart-items");
+      if (carrito.length === 0) { cerrarCarrito(); return; }
+      let html = '';
+      carrito.forEach(i => {
+        const subItem = (Number(i.precio || 0) * i.cantidad).toLocaleString();
+        html += '<div class="flex items-center justify-between bg-slate-800 p-2.5 rounded-xl border border-slate-700 text-xs">' +
+          '<div>' +
+            '<p class="font-bold text-white">' + i.nombre + '</p>' +
+            '<p class="text-amber-400 font-bold">$' + subItem + ' CUP</p>' +
+          '</div>' +
+          '<div class="flex items-center gap-2">' +
+            '<button onclick="cambiarCantidad(' + i.id + ', -1)" class="w-6 h-6 bg-slate-700 text-white rounded font-bold">-</button>' +
+            '<span class="w-4 text-center font-bold">' + i.cantidad + '</span>' +
+            '<button onclick="cambiarCantidad(' + i.id + ', 1)" class="w-6 h-6 bg-amber-500 text-slate-950 rounded font-bold">+</button>' +
+          '</div>' +
+        '</div>';
+      });
+      c.innerHTML = html;
+    }
+
+    function enviarPedido() {
+      const nombre = document.getElementById("client-name").value.trim();
+      const direccion = document.getElementById("client-address").value.trim();
+
+      if (!nombre) { alert("Por favor escribe tu nombre."); return; }
+      if (!direccion) { alert("Por favor escribe la dirección de entrega."); return; }
+
+      const subtotal = carrito.reduce((sum, item) => sum + (Number(item.precio || 0) * item.cantidad), 0);
+      const totalGeneral = subtotal + COSTO_MENSAJERIA;
+
+      let msg = "⚡📦 *¡NUEVO PEDIDO OFERTAZO!* 📦⚡\n" +
+        "📍 *Ciego de Ávila*\n\n" +
+        "👤 *Cliente:* " + nombre + "\n" +
+        "🏠 *Dirección:* " + direccion + "\n" +
+        "🛵 *Entrega:* A Domicilio\n" +
+        "💵 *Método de Pago:* Efectivo CUP (al recibir)\n" +
+        "⏱️ *Tiempo estimado de entrega:* 2 a 3 horas\n\n" +
+        "📋 *DETALLE DE PRODUCTOS:*\n";
+
+      carrito.forEach(i => {
+        const subItem = (Number(i.precio || 0) * i.cantidad).toLocaleString();
+        msg += "  ▪️ " + i.cantidad + "x " + i.nombre + " ➔ $" + subItem + " CUP\n";
+      });
+
+      msg += "\n━━━━━━━━━━━━━━━━━━━\n" +
+        "🛒 *Subtotal Productos:* $" + subtotal.toLocaleString() + " CUP\n" +
+        "🛵 *Costo Domicilio:* $" + COSTO_MENSAJERIA + " CUP\n" +
+        "💰 *TOTAL A PAGAR:* $" + totalGeneral.toLocaleString() + " CUP\n" +
+        "━━━━━━━━━━━━━━━━━━━\n\n" +
+        "⚠️ _El pedido puede demorar de 2 a 3 horas en llegar a su destino._";
+
+      window.open("https://wa.me/" + MI_WHATSAPP + "?text=" + encodeURIComponent(msg), '_blank');
+    }
+
+    cargarCatalogo();
   </script>
 </body>
 </html>
