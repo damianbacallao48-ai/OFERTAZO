@@ -13,6 +13,8 @@
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Librería para generar Código QR y exportar canvas -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -59,7 +61,6 @@
       box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
     }
 
-    /* CARRUSEL DE EXHIBICIÓN ESTÉTICA CONTINUA */
     @keyframes marqueeFuturista {
       0% { transform: translateX(0%); }
       100% { transform: translateX(-50%); }
@@ -77,8 +78,13 @@
       border-radius: 18px;
       overflow: hidden;
       box-shadow: 0 8px 20px rgba(0,0,0,0.55);
-      pointer-events: none; /* Solo elemento visual promocional */
+      pointer-events: none;
       user-select: none;
+    }
+
+    /* Estilo del recuadro QR imprimible */
+    #qr-card-canvas-box {
+      background: radial-gradient(circle at center, #0f172a 0%, #05070e 100%);
     }
   </style>
 </head>
@@ -123,7 +129,7 @@
         </button>
       </div>
 
-      <!-- Fila 2: Acciones Rápidas (Admin Propio, Crear Tienda y Difundir) -->
+      <!-- Fila 2: Acciones Rápidas -->
       <div class="grid grid-cols-3 gap-2 pt-0.5">
         <a id="btn-ir-admin" href="#" class="neon-pill-btn bg-slate-900 border border-amber-500/40 text-amber-300 hover:text-white py-1.5 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1.5 shadow-sm">
           <i class="fa-solid fa-gear text-amber-400"></i>
@@ -146,27 +152,39 @@
 
   <!-- Banner Informativo del Negocio Actual -->
   <section class="max-w-xl mx-auto px-3 pt-3 relative z-10">
-    <div class="cyber-panel rounded-3xl p-3.5 shadow-xl space-y-2">
-      <div class="flex flex-wrap gap-1.5">
-        <span id="badge-delivery" class="bg-amber-500/20 text-amber-300 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full border border-amber-500/40 flex items-center gap-1">
-          <i class="fa-solid fa-motorcycle text-amber-400 text-[9px]"></i> Mensajería: $250 CUP
-        </span>
-        <span class="bg-emerald-500/20 text-emerald-300 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full border border-emerald-500/40 flex items-center gap-1">
-          <i class="fa-solid fa-money-bill-wave text-emerald-400 text-[9px]"></i> Efectivo CUP / USD
-        </span>
-        <span id="badge-tasa" class="bg-cyan-500/20 text-cyan-300 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full border border-cyan-500/40 font-cyber">
-          1 USD = 320 CUP
-        </span>
+    <div class="cyber-panel rounded-3xl p-3.5 shadow-xl space-y-2.5">
+      <div class="flex flex-wrap items-center justify-between gap-1.5">
+        <div class="flex flex-wrap gap-1.5">
+          <span id="badge-delivery" class="bg-amber-500/20 text-amber-300 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full border border-amber-500/40 flex items-center gap-1">
+            <i class="fa-solid fa-motorcycle text-amber-400 text-[9px]"></i> Mensajería: $250 CUP
+          </span>
+          <span id="badge-tasa" class="bg-cyan-500/20 text-cyan-300 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full border border-cyan-500/40 font-cyber">
+            1 USD = 320 CUP
+          </span>
+        </div>
+
+        <!-- Indicador de Visitas, Likes y Botón QR Rápido -->
+        <div class="flex items-center gap-1.5">
+          <span class="bg-slate-900/90 text-slate-300 text-[10px] font-cyber px-2 py-0.5 rounded-full border border-slate-700 flex items-center gap-1">
+            <i class="fa-regular fa-eye text-cyan-400 text-[9px]"></i> <span id="stat-visitas">0</span>
+          </span>
+          <button onclick="darLike()" id="btn-like" class="bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-500/40 px-2 py-0.5 rounded-full text-[10px] font-cyber font-bold flex items-center gap-1 active:scale-90 transition">
+            <i class="fa-solid fa-heart text-[9px]"></i> <span id="stat-likes">0</span>
+          </button>
+          <button onclick="abrirModalQR()" title="Generar Código QR" class="bg-cyan-950/50 hover:bg-cyan-900/70 text-cyan-300 border border-cyan-500/40 px-2 py-0.5 rounded-full text-[10px] font-cyber font-bold flex items-center gap-1 active:scale-95 transition">
+            <i class="fa-solid fa-qrcode text-[10px]"></i> <span>QR</span>
+          </button>
+        </div>
       </div>
+
       <p id="biz-description" class="text-[11px] text-slate-300 leading-snug">
         Cargando información del local...
       </p>
     </div>
   </section>
 
-  <!-- SECCIÓN FUTURISTA: CARRUSEL "OTROS NEGOCIOS" (SOLO PROMOCIÓN VISUAL) -->
+  <!-- CARRUSEL "OTROS NEGOCIOS" -->
   <section id="seccion-otros-negocios" class="max-w-xl mx-auto pt-4 relative z-10 hidden">
-    <!-- Letrero de Neón con Botón para abrir el Directorio -->
     <div class="px-3 flex items-center justify-between mb-2">
       <div class="flex items-center gap-2">
         <span class="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_#22d3ee] animate-pulse"></span>
@@ -174,18 +192,14 @@
           ⚡ OTROS NEGOCIOS ⚡
         </h2>
       </div>
-      <!-- Botón que abre el Directorio -->
       <button onclick="abrirDirectorio()" class="text-[10px] font-black text-amber-400 hover:text-white bg-slate-900/90 border border-amber-500/40 hover:border-amber-400 px-2.5 py-1 rounded-xl font-cyber flex items-center gap-1 active:scale-95 transition shadow-sm">
         <span>Ver Directorio</span>
         <i class="fa-solid fa-chevron-right text-[8px]"></i>
       </button>
     </div>
 
-    <!-- Carrusel Continuo Sin Clics (Puro escaparate de fotos y marcas) -->
     <div class="relative overflow-hidden w-full py-1" style="mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent); -webkit-mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);">
-      <div id="carrusel-track" class="carrusel-track gap-3 px-3">
-        <!-- Tarjetas visuales inyectadas por JS -->
-      </div>
+      <div id="carrusel-track" class="carrusel-track gap-3 px-3"></div>
     </div>
   </section>
 
@@ -194,7 +208,7 @@
     <div class="max-w-xl mx-auto flex gap-1.5 overflow-x-auto no-scrollbar" id="categories-bar"></div>
   </nav>
 
-  <!-- Contenedor Principal (Rejilla de Productos) -->
+  <!-- Contenedor Principal (Productos) -->
   <main class="max-w-xl mx-auto px-3 py-3 relative z-10 space-y-5">
     
     <!-- Aviso de Tienda Vencida -->
@@ -237,6 +251,37 @@
       </div>
     </div>
 
+    <!-- SECCIÓN DE OPINIONES Y COMENTARIOS -->
+    <section class="cyber-panel rounded-3xl p-4 space-y-3.5 border border-amber-500/30">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+        <h3 class="text-xs font-black text-amber-400 font-cyber flex items-center gap-2">
+          <i class="fa-solid fa-comments text-cyan-400"></i> OPINIONES DE CLIENTES
+        </h3>
+        <span id="count-comentarios" class="text-[10px] text-slate-400 font-cyber font-bold">0 Reseñas</span>
+      </div>
+
+      <div class="space-y-2 bg-slate-900/60 p-3 rounded-2xl border border-slate-800">
+        <div class="flex gap-2">
+          <input id="input-com-nombre" type="text" placeholder="Tu nombre o apodo" class="w-1/2 bg-slate-950 border border-slate-700 rounded-xl px-2.5 py-1.5 text-xs text-white outline-none focus:border-amber-400">
+          <select id="input-com-estrellas" class="w-1/2 bg-slate-950 border border-slate-700 rounded-xl px-2.5 py-1.5 text-xs text-amber-400 outline-none focus:border-amber-400 font-bold">
+            <option value="5">⭐⭐⭐⭐⭐ Excelente</option>
+            <option value="4">⭐⭐⭐⭐ Muy bueno</option>
+            <option value="3">⭐⭐⭐ Regular</option>
+            <option value="2">⭐⭐ Malo</option>
+            <option value="1">⭐ Pésimo</option>
+          </select>
+        </div>
+        <textarea id="input-com-texto" rows="2" placeholder="Escribe tu opinión sobre el servicio o productos..." class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400 resize-none"></textarea>
+        <button onclick="enviarComentario()" id="btn-enviar-com" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-2 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 active:scale-95 transition">
+          <i class="fa-solid fa-paper-plane text-[10px]"></i> Publicar Comentario
+        </button>
+      </div>
+
+      <div id="lista-comentarios" class="space-y-2.5 max-h-60 overflow-y-auto no-scrollbar pt-1">
+        <p class="text-[11px] text-slate-500 text-center py-3">Sé el primero en calificar este negocio.</p>
+      </div>
+    </section>
+
     <!-- Banner Promocional para Crear Negocios -->
     <section class="cyber-panel rounded-3xl p-5 text-center space-y-3 border-2 border-dashed border-amber-500/40 relative overflow-hidden shadow-2xl">
       <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-300 text-slate-950 flex items-center justify-center text-xl font-black mx-auto shadow-lg">
@@ -265,11 +310,57 @@
 
   </main>
 
+  <!-- MODAL TARJETA QR GENERADA (FUTURISTA & DESCARGABLE) -->
+  <div id="qr-modal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="cyber-panel w-full max-w-sm rounded-3xl p-5 border border-amber-500/40 text-center relative shadow-2xl space-y-4">
+      <button onclick="cerrarModalQR()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">✕</button>
+      
+      <!-- Contenedor del Flyer Imprimible -->
+      <div id="qr-card-box" class="rounded-2xl p-4 border border-slate-700 space-y-3 bg-gradient-to-b from-[#0d1527] to-[#05070e] shadow-inner">
+        <!-- Logo y Nombre del Negocio -->
+        <div class="flex items-center justify-center gap-2">
+          <div class="w-8 h-8 rounded-xl bg-amber-500 flex items-center justify-center text-slate-950 font-black overflow-hidden shadow-md">
+            <i class="fa-solid fa-store" id="qr-icon-default"></i>
+            <img id="qr-modal-logo" class="w-full h-full object-cover hidden" alt="Logo">
+          </div>
+          <h3 id="qr-modal-nombre" class="font-cyber font-black text-sm text-amber-400 tracking-wider">NEGOCIO</h3>
+        </div>
+
+        <!-- Actividades señaladas por la Administración -->
+        <div class="bg-amber-500/10 border border-amber-500/30 rounded-xl px-2.5 py-1">
+          <p id="qr-modal-actividades" class="text-[10px] text-amber-300 font-bold uppercase font-cyber">
+            ACTIVIDAD COMERCIAL
+          </p>
+        </div>
+
+        <!-- Recuadro del Código QR -->
+        <div class="bg-white p-3.5 rounded-2xl inline-block shadow-[0_0_20px_rgba(245,158,11,0.35)] mx-auto">
+          <div id="qrcode-render"></div>
+        </div>
+
+        <p class="text-[10px] text-slate-400 leading-tight">
+          Escanea con tu cámara o abre el enlace en tu navegador para ver ofertas y ordenar.
+        </p>
+
+        <p id="qr-modal-url" class="text-[9px] text-cyan-400 font-mono truncate px-2"></p>
+      </div>
+
+      <!-- Botones de Acción -->
+      <div class="grid grid-cols-2 gap-2 pt-1">
+        <button onclick="descargarFlyerQR()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-2.5 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 active:scale-95 transition shadow-md">
+          <i class="fa-solid fa-download"></i> Guardar QR
+        </button>
+        <button onclick="compartirQRWhatsApp()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-2.5 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 active:scale-95 transition shadow-md">
+          <i class="fa-brands fa-whatsapp text-sm"></i> Compartir
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL: DIRECTORIO COMPLETO INTERACTIVO -->
   <div id="directory-modal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 hidden flex flex-col items-center justify-end sm:justify-center p-0 sm:p-4">
     <div class="cyber-panel w-full max-w-lg rounded-t-3xl sm:rounded-3xl max-h-[92vh] flex flex-col border border-indigo-500/40 shadow-2xl overflow-hidden">
       
-      <!-- Encabezado del Directorio -->
       <div class="p-4 border-b border-slate-800 flex justify-between items-center bg-[#070b16]">
         <div>
           <h2 class="text-sm font-black text-indigo-400 font-cyber flex items-center gap-2">
@@ -280,7 +371,6 @@
         <button onclick="cerrarDirectorio()" class="text-slate-400 hover:text-white text-xl p-1">✕</button>
       </div>
 
-      <!-- Buscador en Tiempo Real -->
       <div class="p-3 bg-slate-900/60 border-b border-slate-800">
         <div class="relative">
           <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-xs text-slate-400"></i>
@@ -288,7 +378,6 @@
         </div>
       </div>
 
-      <!-- Lista de Negocios en el Directorio -->
       <div id="dir-list" class="p-4 overflow-y-auto flex-1 space-y-3 divide-y divide-slate-800/60">
         <div class="text-center py-12 text-slate-500 text-xs">
           <i class="fa-solid fa-spinner fa-spin text-xl text-indigo-400 mb-2"></i>
@@ -296,7 +385,6 @@
         </div>
       </div>
 
-      <!-- Pie del Directorio -->
       <div class="p-3 bg-[#070b16] border-t border-slate-800 text-center">
         <a href="registro.html" class="inline-flex items-center justify-center gap-2 w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition active:scale-95 shadow-md">
           <i class="fa-solid fa-plus-circle text-amber-300"></i> Registrar mi tienda aquí
@@ -330,6 +418,9 @@
         <p class="text-[11px] text-slate-400">Pasa el catálogo directo a tus contactos</p>
       </div>
       <div class="space-y-2 pt-1">
+        <button onclick="abrirModalQR()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 text-xs active:scale-95 shadow-md">
+          <i class="fa-solid fa-qrcode text-base"></i> Ver Tarjeta & Código QR
+        </button>
         <button onclick="compartirWA()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 text-xs active:scale-95 shadow-md">
           <i class="fa-brands fa-whatsapp text-base"></i> Enviar por WhatsApp
         </button>
@@ -412,6 +503,13 @@
     let categoriaSeleccionada = 'todos';
     let tasaUSD = 320;
     let listaTodosNegocios = [];
+    let qrInstancia = null;
+
+    function urlConCacheBuster(url) {
+      if (!url) return '';
+      const sep = url.includes('?') ? '&' : '?';
+      return `${url}${sep}t=${Date.now()}`;
+    }
 
     async function cargarNegocio() {
       try {
@@ -440,23 +538,29 @@
         document.title = `${negocioActual.nombre} - Catálogo Digital`;
         document.getElementById("biz-header-name").innerText = negocioActual.nombre;
         document.getElementById("biz-header-type").innerText = `${negocioActual.direccion || 'Ciego de Ávila'} • ${negocioActual.tipo || 'Catálogo'}`;
-        document.getElementById("badge-delivery").innerText = `🛵 Domicilio: $${negocioActual.costo_mensajeria || 250} CUP`;
+        document.getElementById("badge-delivery").innerText = `🛵 Mensajería: $${negocioActual.costo_mensajeria || 250} CUP`;
         document.getElementById("biz-description").innerText = negocioActual.descripcion || `Catálogo oficial de ${negocioActual.nombre}.`;
 
         document.getElementById("modal-share-title").innerText = `Compartir ${negocioActual.nombre}`;
 
+        document.getElementById("stat-visitas").innerText = (negocioActual.visitas || 0) + 1;
+        document.getElementById("stat-likes").innerText = negocioActual.likes || 0;
+
         if (negocioActual.logo_url) {
           const img = document.getElementById("biz-logo");
-          img.src = negocioActual.logo_url;
+          img.src = urlConCacheBuster(negocioActual.logo_url);
           img.classList.remove("hidden");
           document.getElementById("biz-default-icon").classList.add("hidden");
         }
 
         if (negocioActual.portada_url) {
           const box = document.getElementById("biz-portada-box");
-          document.getElementById("biz-portada").src = negocioActual.portada_url;
+          document.getElementById("biz-portada").src = urlConCacheBuster(negocioActual.portada_url);
           box.classList.remove("hidden");
         }
+
+        registrarVisita();
+        cargarComentarios();
 
         const ahora = new Date();
         const fechaVence = negocioActual.fecha_vencimiento ? new Date(negocioActual.fecha_vencimiento) : null;
@@ -477,6 +581,232 @@
       }
     }
 
+    /* SISTEMA DE CÓDIGO QR */
+    function abrirModalQR() {
+      cerrarCompartir();
+      if (!negocioActual) return;
+
+      document.getElementById("qr-modal").classList.remove("hidden");
+      document.getElementById("qr-modal-nombre").innerText = negocioActual.nombre.toUpperCase();
+      
+      // Mostrar actividades señaladas por la administración (tipo o categorías)
+      const actividades = negocioActual.tipo || 'Catálogo Comercial & Delivery';
+      document.getElementById("qr-modal-actividades").innerText = `⚡ ${actividades} ⚡`;
+
+      const enlaceLimpio = obtenerEnlaceLimpio();
+      document.getElementById("qr-modal-url").innerText = enlaceLimpio;
+
+      if (negocioActual.logo_url) {
+        const logoImg = document.getElementById("qr-modal-logo");
+        logoImg.src = urlConCacheBuster(negocioActual.logo_url);
+        logoImg.classList.remove("hidden");
+        document.getElementById("qr-icon-default").classList.add("hidden");
+      }
+
+      // Renderizar el QR limpio
+      const renderContainer = document.getElementById("qrcode-render");
+      renderContainer.innerHTML = "";
+      qrInstancia = new QRCode(renderContainer, {
+        text: enlaceLimpio,
+        width: 170,
+        height: 170,
+        colorDark: "#05070e",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    }
+
+    function cerrarModalQR() {
+      document.getElementById("qr-modal").classList.add("hidden");
+    }
+
+    function descargarFlyerQR() {
+      const qrCanvas = document.querySelector("#qrcode-render canvas");
+      if (!qrCanvas) {
+        alert("Generando código QR, intenta en un segundo.");
+        return;
+      }
+
+      // Crear un lienzo virtual para armar la tarjeta gráfica descargable
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = 600;
+      canvas.height = 780;
+
+      // Fondo estilo Cyberpunk
+      ctx.fillStyle = "#070b16";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Borde neón ámbar
+      ctx.lineWidth = 6;
+      ctx.strokeStyle = "#f59e0b";
+      ctx.strokeRect(15, 15, canvas.width - 30, canvas.height - 30);
+
+      // Cabecera: Nombre de la tienda
+      ctx.fillStyle = "#fbbf24";
+      ctx.font = "bold 32px 'Orbitron', sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(negocioActual.nombre.toUpperCase(), canvas.width / 2, 80);
+
+      // Actividades señaladas
+      ctx.fillStyle = "#22d3ee";
+      ctx.font = "bold 18px 'Plus Jakarta Sans', sans-serif";
+      const actividades = (negocioActual.tipo || "Catálogo & Delivery").toUpperCase();
+      ctx.fillText(actividades, canvas.width / 2, 125);
+
+      // Recuadro blanco para el QR
+      ctx.fillStyle = "#ffffff";
+      ctx.roundRect ? ctx.roundRect(140, 160, 320, 320, 20) : ctx.fillRect(140, 160, 320, 320);
+      ctx.fill();
+
+      // Dibujar QR centrado
+      ctx.drawImage(qrCanvas, 165, 185, 270, 270);
+
+      // Textos descriptivos
+      ctx.fillStyle = "#f8fafc";
+      ctx.font = "bold 20px 'Plus Jakarta Sans', sans-serif";
+      ctx.fillText("¡ESCANEA Y HAZ TU PEDIDO!", canvas.width / 2, 535);
+
+      ctx.fillStyle = "#94a3b8";
+      ctx.font = "16px 'Plus Jakarta Sans', sans-serif";
+      ctx.fillText("Envíos directos a tu WhatsApp • Ciego de Ávila", canvas.width / 2, 575);
+
+      // Pie del flyer
+      ctx.fillStyle = "#10b981";
+      ctx.font = "bold 16px 'Orbitron', sans-serif";
+      ctx.fillText("OFERTAZO.CUBA • CATÁLOGO DIGITAL", canvas.width / 2, 720);
+
+      // Descarga directa
+      const a = document.createElement("a");
+      a.download = `QR_${negocioActual.slug || 'tienda'}.png`;
+      a.href = canvas.toDataURL("image/png");
+      a.click();
+    }
+
+    function compartirQRWhatsApp() {
+      const name = negocioActual ? negocioActual.nombre : "mi negocio";
+      const act = negocioActual ? (negocioActual.tipo || "Catálogo Digital") : "";
+      const url = obtenerEnlaceLimpio();
+      const txt = encodeURIComponent(`📲 *¡VISITA NUESTRO CATÁLOGO DIGITAL!* 📲\n🏬 *${name}*\n🏷️ *Actividad:* ${act}\n\n👉 Accede aquí directo o escanea nuestro código QR:\n${url}`);
+      window.open(`https://api.whatsapp.com/send?text=${txt}`, '_blank');
+    }
+
+    async function registrarVisita() {
+      try {
+        const key = `visita_${negocioActual.id}_${new Date().toDateString()}`;
+        if (!sessionStorage.getItem(key)) {
+          sessionStorage.setItem(key, "1");
+          const nuevasVisitas = (negocioActual.visitas || 0) + 1;
+          await supabaseClient
+            .from('negocios')
+            .update({ visitas: nuevasVisitas })
+            .eq('id', negocioActual.id);
+        }
+      } catch (e) {
+        console.error("Error al registrar visita:", e);
+      }
+    }
+
+    async function darLike() {
+      if (!negocioActual) return;
+      const keyLike = `liked_${negocioActual.id}`;
+      if (localStorage.getItem(keyLike)) {
+        alert("¡Ya le diste Me Gusta a este negocio!");
+        return;
+      }
+
+      try {
+        const nuevosLikes = (negocioActual.likes || 0) + 1;
+        const { error } = await supabaseClient
+          .from('negocios')
+          .update({ likes: nuevosLikes })
+          .eq('id', negocioActual.id);
+
+        if (!error) {
+          localStorage.setItem(keyLike, "1");
+          negocioActual.likes = nuevosLikes;
+          document.getElementById("stat-likes").innerText = nuevosLikes;
+          const btn = document.getElementById("btn-like");
+          btn.classList.add("text-rose-300", "bg-rose-600/50");
+        }
+      } catch (e) {
+        console.error("Error al dar like:", e);
+      }
+    }
+
+    async function cargarComentarios() {
+      if (!negocioActual) return;
+      try {
+        const { data, error } = await supabaseClient
+          .from('comentarios')
+          .select('*')
+          .eq('negocio_id', negocioActual.id)
+          .order('id', { ascending: false })
+          .limit(20);
+
+        const listEl = document.getElementById("lista-comentarios");
+        const countEl = document.getElementById("count-comentarios");
+
+        if (error || !data || data.length === 0) {
+          listEl.innerHTML = '<p class="text-[11px] text-slate-500 text-center py-3">Sé el primero en calificar este negocio.</p>';
+          countEl.innerText = "0 Reseñas";
+          return;
+        }
+
+        countEl.innerText = `${data.length} Reseña${data.length > 1 ? 's' : ''}`;
+        let html = '';
+        data.forEach(c => {
+          const estrellasStr = '⭐'.repeat(c.estrellas || 5);
+          html += `
+            <div class="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800 space-y-1">
+              <div class="flex items-center justify-between text-[11px]">
+                <strong class="text-white font-cyber">${c.nombre}</strong>
+                <span class="text-[10px] text-amber-400">${estrellasStr}</span>
+              </div>
+              <p class="text-[11px] text-slate-300">${c.mensaje}</p>
+            </div>
+          `;
+        });
+        listEl.innerHTML = html;
+      } catch (e) {
+        console.error("Error al cargar comentarios:", e);
+      }
+    }
+
+    async function enviarComentario() {
+      const nombre = document.getElementById("input-com-nombre").value.trim();
+      const estrellas = parseInt(document.getElementById("input-com-estrellas").value) || 5;
+      const texto = document.getElementById("input-com-texto").value.trim();
+      const btn = document.getElementById("btn-enviar-com");
+
+      if (!nombre) { alert("Por favor escribe tu nombre."); return; }
+      if (!texto) { alert("Por favor escribe tu opinión."); return; }
+
+      btn.disabled = true;
+      btn.innerText = "Publicando...";
+
+      try {
+        const { error } = await supabaseClient
+          .from('comentarios')
+          .insert([{
+            negocio_id: negocioActual.id,
+            nombre: nombre,
+            estrellas: estrellas,
+            mensaje: texto
+          }]);
+
+        if (error) throw error;
+
+        document.getElementById("input-com-texto").value = "";
+        await cargarComentarios();
+      } catch (err) {
+        alert("Error al enviar comentario: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-paper-plane text-[10px]"></i> Publicar Comentario';
+      }
+    }
+
     function copiarTarjetaCliente() {
       navigator.clipboard.writeText(MI_TARJETA).then(() => {
         const btn = document.getElementById("btn-copy-pub");
@@ -492,7 +822,6 @@
       window.open(`https://wa.me/${MI_ADMIN_WHATSAPP}?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
-    /* CARRUSEL PROMOCIONAL Y ESTÉTICO (SIN ENLACES NI DIRECCIONES) */
     async function cargarCarruselOtrosNegocios() {
       try {
         const { data, error } = await supabaseClient
@@ -512,19 +841,22 @@
 
         if (otros.length === 0) return;
 
-        // Duplicar para un bucle continuo fluido
         const listaParaCarrusel = [...otros, ...otros];
         const track = document.getElementById("carrusel-track");
 
         let html = '';
         listaParaCarrusel.forEach(n => {
-          const img = n.portada_url || n.logo_url || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=500';
-          const logoIcon = n.logo_url ? `<img src="${n.logo_url}" class="w-6 h-6 rounded-lg object-cover border border-amber-400/40">` : `<div class="w-6 h-6 rounded-lg bg-amber-500/20 text-amber-300 flex items-center justify-center text-[10px]"><i class="fa-solid fa-store"></i></div>`;
+          const rawImg = n.portada_url || n.logo_url || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=500';
+          const freshImg = urlConCacheBuster(rawImg);
+
+          const logoIcon = n.logo_url 
+            ? `<img src="${urlConCacheBuster(n.logo_url)}" class="w-6 h-6 rounded-lg object-cover border border-amber-400/40">` 
+            : `<div class="w-6 h-6 rounded-lg bg-amber-500/20 text-amber-300 flex items-center justify-center text-[10px]"><i class="fa-solid fa-store"></i></div>`;
 
           html += `
             <div class="tarjeta-carrusel">
               <div class="h-24 w-full relative overflow-hidden bg-slate-950">
-                <img src="${img}" class="w-full h-full object-cover" alt="${n.nombre}">
+                <img src="${freshImg}" class="w-full h-full object-cover" alt="${n.nombre}">
                 <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
                 <span class="absolute top-1.5 right-1.5 text-[7px] font-black text-cyan-300 bg-slate-950/80 border border-cyan-500/30 px-1.5 py-0.5 rounded uppercase font-cyber">
                   Activo
@@ -545,7 +877,6 @@
       }
     }
 
-    /* DIRECTORIO INTERACTIVO COMPLETO */
     async function abrirDirectorio() {
       document.getElementById("directory-modal").classList.remove("hidden");
       const listEl = document.getElementById("dir-list");
@@ -586,7 +917,7 @@
       let html = '';
       lista.forEach(n => {
         const esLaMisma = (negocioActual && n.slug === negocioActual.slug);
-        const logoSrc = n.logo_url || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=150';
+        const logoSrc = n.logo_url ? urlConCacheBuster(n.logo_url) : 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=150';
         const fee = n.costo_mensajeria || 250;
         const badgeActual = esLaMisma 
           ? '<span class="text-[9px] font-black text-amber-400 bg-amber-500/20 px-1.5 py-0.5 rounded border border-amber-500/30">TIENDA ACTUAL</span>'
@@ -726,7 +1057,7 @@
       list.forEach(p => {
         const precioCup = Number(p.precio || 0);
         const precioUsd = (precioCup / tasaUSD).toFixed(2);
-        const imagenSrc = p.imagen && p.imagen.trim() !== '' ? p.imagen : 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=300';
+        const imagenSrc = p.imagen && p.imagen.trim() !== '' ? urlConCacheBuster(p.imagen) : 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=300';
         const catName = p.categoria || 'GENERAL';
         const opacidad = (p.disponible === false) ? 'opacity-40 grayscale' : '';
         
