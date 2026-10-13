@@ -4,99 +4,126 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <!-- TÍTULO Y METADATOS PARA WHATSAPP / FACEBOOK -->
-  <title>OFERTAZO - Catálogo Digital Ciego de Ávila</title>
-  <meta name="description" content="Pide fácil, rápido y a domicilio en Ciego de Ávila. Menú digital interactivo en CUP y USD.">
-
-  <!-- ETIQUETAS OPEN GRAPH PARA TARJETA DE WHATSAPP -->
+  <title>OFERTAZO - Catálogo Digital</title>
+  <meta name="description" content="Pide fácil, rápido y a domicilio en Ciego de Ávila. Menú digital interactivo.">
   <meta property="og:type" content="website">
   <meta property="og:title" content="🔥 Catálogo Digital & Pedidos Directos">
   <meta property="og:description" content="Haz tu pedido a domicilio en Ciego de Ávila. Entregas rápidas y pagos en efectivo CUP o USD.">
   <meta property="og:image" content="https://images.unsplash.com/photo-1542838132-92c53300491e?w=800&auto=format&fit=crop&q=80">
-  <meta property="og:image:width" content="800">
-  <meta property="og:image:height" content="500">
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
     .font-cyber { font-family: 'Orbitron', monospace; }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     
-    .card-grid {
-      background: rgba(15, 23, 42, 0.85);
+    .cyber-panel {
+      background: rgba(11, 19, 38, 0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(245, 158, 11, 0.28);
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.8);
+    }
+    .neon-pill-btn {
+      position: relative;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .neon-pill-btn:active {
+      transform: scale(0.95);
+    }
+    .glow-emerald {
+      box-shadow: 0 0 14px rgba(16, 185, 129, 0.35);
+    }
+    .card-product {
+      background: rgba(13, 22, 44, 0.9);
       border: 1px solid rgba(245, 158, 11, 0.22);
-      transition: transform 0.15s ease, border-color 0.2s ease;
+      transition: transform 0.15s ease, border-color 0.2s ease, box-shadow 0.2s ease;
     }
-    .card-grid:active { transform: scale(0.98); }
-    .btn-neon {
-      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.35);
-    }
-    .btn-promo-neon {
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-      box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+    .card-product:active {
+      transform: scale(0.98);
+      border-color: rgba(245, 158, 11, 0.6);
     }
   </style>
 </head>
 <body class="bg-[#05070e] text-slate-100 min-h-screen pb-32 font-sans antialiased selection:bg-amber-500 selection:text-black">
 
+  <!-- Fondo Ambiental Futurista -->
+  <div class="fixed inset-0 pointer-events-none z-0">
+    <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-80 h-80 bg-amber-500/10 rounded-full blur-[100px]"></div>
+    <div class="absolute top-1/3 -right-20 w-72 h-72 bg-cyan-500/10 rounded-full blur-[90px]"></div>
+  </div>
+
   <!-- Portada / Cabecera con imagen si existe -->
-  <div id="biz-portada-box" class="w-full max-w-xl mx-auto h-28 hidden overflow-hidden relative">
+  <div id="biz-portada-box" class="w-full max-w-xl mx-auto h-28 hidden overflow-hidden relative z-10">
     <img id="biz-portada" class="w-full h-full object-cover" alt="Portada">
     <div class="absolute inset-0 bg-gradient-to-t from-[#05070e] via-transparent to-transparent"></div>
   </div>
 
-  <!-- Header Superior -->
-  <header class="bg-[#080d1a]/95 sticky top-0 z-30 px-3.5 py-2.5 border-b border-amber-500/25 shadow-lg backdrop-blur-md">
-    <div class="max-w-xl mx-auto flex justify-between items-center">
-      <div class="flex items-center gap-2">
-        <div id="biz-icon-box" class="w-9 h-9 rounded-xl bg-amber-500 flex items-center justify-center text-slate-950 text-base font-black shadow-md overflow-hidden shrink-0">
-          <i class="fa-solid fa-store" id="biz-default-icon"></i>
-          <img id="biz-logo" class="w-full h-full object-cover hidden" alt="Logo">
-        </div>
-        <div>
-          <h1 id="biz-header-name" class="text-base font-black tracking-wider text-amber-400 font-cyber leading-tight">CARGANDO...</h1>
-          <p id="biz-header-type" class="text-[10px] text-slate-400 font-semibold leading-tight">Ciego de Ávila • Delivery</p>
-        </div>
-      </div>
+  <!-- HEADER FUTURISTA LIMPIO (SIN BOTÓN DE MONEDA) -->
+  <header class="bg-[#080d1a]/95 sticky top-0 z-30 px-3 py-2.5 border-b border-amber-500/30 shadow-2xl backdrop-blur-md">
+    <div class="max-w-xl mx-auto space-y-2">
       
-      <div class="flex items-center gap-1.5">
-        <a id="btn-ir-admin" href="#" title="Acceso de Administración" class="bg-slate-900 hover:bg-slate-800 text-amber-400 w-8 h-8 rounded-xl text-xs font-bold border border-amber-500/40 flex items-center justify-center active:scale-95 transition shadow-sm">
-          <i class="fa-solid fa-gear"></i>
+      <!-- Fila 1: Logo, Nombre del Negocio y Estado Live -->
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div id="biz-icon-box" class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-300 flex items-center justify-center text-slate-950 text-base font-black shadow-[0_0_15px_rgba(245,158,11,0.5)] overflow-hidden shrink-0">
+            <i class="fa-solid fa-store" id="biz-default-icon"></i>
+            <img id="biz-logo" class="w-full h-full object-cover hidden" alt="Logo">
+          </div>
+          <div class="min-w-0">
+            <h1 id="biz-header-name" class="text-base font-black tracking-wider text-amber-400 font-cyber truncate drop-shadow-[0_0_8px_rgba(245,158,11,0.4)]">
+              CARGANDO...
+            </h1>
+            <p id="biz-header-type" class="text-[10px] text-slate-400 font-semibold truncate flex items-center gap-1">
+              <i class="fa-solid fa-location-crosshairs text-cyan-400 text-[9px]"></i> Ciego de Ávila • Delivery
+            </p>
+          </div>
+        </div>
+
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-[9px] font-black text-emerald-400 font-cyber tracking-wider uppercase">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span> Live
+        </span>
+      </div>
+
+      <!-- Fila 2: Solo Acciones Esenciales (Admin, Crear y Difundir) -->
+      <div class="grid grid-cols-3 gap-2 pt-0.5">
+        <!-- 1. Acceso a Panel Admin Propio -->
+        <a id="btn-ir-admin" href="#" class="neon-pill-btn bg-slate-900 border border-amber-500/40 text-amber-300 hover:text-white py-1.5 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1.5 shadow-sm">
+          <i class="fa-solid fa-gear text-amber-400"></i>
+          <span>Admin</span>
         </a>
 
-        <a href="registro.html" class="bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-2.5 py-1.5 rounded-xl text-[10px] font-black border border-emerald-400/40 flex items-center gap-1 active:scale-95 shadow-md">
-          <i class="fa-solid fa-rocket text-amber-300"></i> <span>Crear</span>
+        <!-- 2. Crear Nuevo Catálogo -->
+        <a href="registro.html" class="neon-pill-btn bg-gradient-to-r from-emerald-600 to-teal-600 border border-emerald-400/50 text-white py-1.5 rounded-xl text-[11px] font-black flex items-center justify-center gap-1.5 glow-emerald">
+          <i class="fa-solid fa-rocket text-amber-300"></i>
+          <span>Crear Tienda</span>
         </a>
 
-        <button onclick="alternarMoneda()" class="bg-slate-900 text-amber-300 px-2 py-1.5 rounded-xl text-[11px] font-black border border-amber-500/40 flex items-center gap-1 active:scale-95 shadow-sm">
-          <i class="fa-solid fa-coins text-cyan-400"></i> <span id="label-moneda-actual">CUP</span>
-        </button>
-        <button onclick="abrirCompartir()" class="bg-slate-900 text-amber-400 w-8 h-8 rounded-xl text-xs font-bold border border-amber-500/30 flex items-center justify-center active:scale-95">
-          <i class="fa-solid fa-share-nodes"></i>
-        </button>
-        <button onclick="abrirAcerca()" class="bg-slate-900 text-slate-200 w-8 h-8 rounded-xl text-xs font-bold border border-slate-700 flex items-center justify-center active:scale-95">
-          <i class="fa-solid fa-circle-info text-cyan-400"></i>
+        <!-- 3. Compartir / Difundir Catálogo -->
+        <button onclick="abrirCompartir()" class="neon-pill-btn bg-slate-900 border border-slate-700 text-slate-200 hover:text-amber-400 py-1.5 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1.5 shadow-sm">
+          <i class="fa-solid fa-share-nodes text-amber-400"></i>
+          <span>Difundir</span>
         </button>
       </div>
+
     </div>
   </header>
 
-  <!-- Banner Informativo Específico del Negocio -->
-  <section class="max-w-xl mx-auto px-3 pt-3">
-    <div class="card-grid rounded-2xl p-3 shadow-md space-y-2">
+  <!-- Banner Informativo del Negocio -->
+  <section class="max-w-xl mx-auto px-3 pt-3 relative z-10">
+    <div class="cyber-panel rounded-3xl p-3.5 shadow-xl space-y-2">
       <div class="flex flex-wrap gap-1.5">
-        <span id="badge-delivery" class="bg-amber-500/20 text-amber-300 text-[10px] font-black uppercase px-2 py-0.5 rounded-full border border-amber-500/30">
-          🛵 Domicilio: $250 CUP
+        <span id="badge-delivery" class="bg-amber-500/20 text-amber-300 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full border border-amber-500/40 flex items-center gap-1">
+          <i class="fa-solid fa-motorcycle text-amber-400 text-[9px]"></i> Mensajería: $250 CUP
         </span>
-        <span class="bg-emerald-500/20 text-emerald-300 text-[10px] font-black uppercase px-2 py-0.5 rounded-full border border-emerald-500/30">
-          💵 CUP / USD
+        <span class="bg-emerald-500/20 text-emerald-300 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full border border-emerald-500/40 flex items-center gap-1">
+          <i class="fa-solid fa-money-bill-wave text-emerald-400 text-[9px]"></i> Efectivo CUP / USD
         </span>
-        <span id="badge-tasa" class="bg-cyan-500/20 text-cyan-300 text-[10px] font-black uppercase px-2 py-0.5 rounded-full border border-cyan-500/30">
+        <span id="badge-tasa" class="bg-cyan-500/20 text-cyan-300 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full border border-cyan-500/40 font-cyber">
           1 USD = 320 CUP
         </span>
       </div>
@@ -107,27 +134,27 @@
   </section>
 
   <!-- Categorías Deslizables -->
-  <nav id="nav-categorias" class="sticky top-12 z-20 bg-[#05070e]/95 backdrop-blur-md px-3 py-2 border-b border-slate-900 mt-1.5">
+  <nav id="nav-categorias" class="sticky top-[92px] z-20 bg-[#05070e]/95 backdrop-blur-md px-3 py-2 border-b border-slate-900/80 mt-1">
     <div class="max-w-xl mx-auto flex gap-1.5 overflow-x-auto no-scrollbar" id="categories-bar"></div>
   </nav>
 
-  <!-- Contenedor Principal (Productos o Bloqueo) -->
+  <!-- Contenedor Principal (Rejilla de Productos) -->
   <main class="max-w-xl mx-auto px-3 py-3 relative z-10 space-y-5">
     
-    <!-- PANTALLA DE BLOQUEO POR VENCIMIENTO -->
+    <!-- Pantalla de Bloqueo por Vencimiento -->
     <div id="biz-inactive-notice" class="hidden text-center py-12 px-4 space-y-4">
       <div class="w-16 h-16 rounded-full bg-red-500/10 border border-red-500/30 flex items-center justify-center mx-auto text-red-400 text-2xl">
         <i class="fa-solid fa-triangle-exclamation"></i>
       </div>
       <div>
-        <h2 class="text-base font-bold text-white">Catálogo Fuera de Servicio</h2>
+        <h2 class="text-base font-bold text-white font-cyber">CATÁLOGO FUERA DE SERVICIO</h2>
         <p class="text-xs text-slate-400 max-w-xs mx-auto mt-1">
           El periodo contratado de este catálogo ha expirado. Para reactivar el servicio, realice el pago mensual.
         </p>
       </div>
 
-      <div class="bg-slate-900 border border-amber-500/30 rounded-3xl p-5 text-left space-y-3 max-w-sm mx-auto shadow-2xl">
-        <h3 class="text-xs font-black text-amber-400 uppercase flex items-center gap-1.5">
+      <div class="cyber-panel rounded-3xl p-5 text-left space-y-3 max-w-sm mx-auto shadow-2xl">
+        <h3 class="text-xs font-black text-amber-400 uppercase flex items-center gap-1.5 font-cyber">
           <i class="fa-solid fa-mobile-screen text-cyan-400"></i> Pago por Transfermóvil
         </h3>
         <div class="space-y-1.5 text-xs text-slate-300">
@@ -140,7 +167,7 @@
             </div>
           </div>
         </div>
-        <button onclick="contactarSoporteWA()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-2.5 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2 active:scale-95 transition">
+        <button onclick="contactarSoporteWA()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-2.5 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2 active:scale-95 transition shadow-lg">
           <i class="fa-brands fa-whatsapp text-base"></i> Enviar Comprobante (+53 58960660)
         </button>
       </div>
@@ -150,31 +177,31 @@
     <div id="products-grid" class="grid grid-cols-2 gap-2.5">
       <div class="col-span-2 text-center py-16 text-slate-500 text-xs">
         <i class="fa-solid fa-spinner fa-spin text-2xl text-amber-400 mb-2"></i>
-        <p>Cargando catálogo...</p>
+        <p class="font-cyber tracking-wider text-[11px] text-amber-400/80">SINCRONIZANDO OFERTAS...</p>
       </div>
     </div>
 
-    <!-- BANNER PROMOCIONAL AL FINAL: CREA TU PROPIA TIENDA -->
-    <section class="card-grid rounded-3xl p-5 text-center space-y-3 border-2 border-dashed border-amber-500/40 relative overflow-hidden shadow-2xl">
+    <!-- Banner Promocional: Invita a crear tiendas -->
+    <section class="cyber-panel rounded-3xl p-5 text-center space-y-3 border-2 border-dashed border-amber-500/40 relative overflow-hidden shadow-2xl">
       <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-300 text-slate-950 flex items-center justify-center text-xl font-black mx-auto shadow-lg">
         <i class="fa-solid fa-store"></i>
       </div>
       <div>
-        <span class="text-[9px] font-black uppercase tracking-widest text-emerald-400 bg-emerald-950/60 border border-emerald-800/60 px-2 py-0.5 rounded-full">
+        <span class="text-[9px] font-black uppercase tracking-widest text-emerald-400 bg-emerald-950/60 border border-emerald-800/60 px-2.5 py-0.5 rounded-full font-cyber">
           🎁 10 Días de Prueba Gratis
         </span>
-        <h3 class="text-sm font-black text-white mt-1">¿Tienes un negocio, bar o punto de venta?</h3>
+        <h3 class="text-sm font-black text-white mt-1">¿Tienes un negocio, bar o cafetería?</h3>
         <p class="text-[11px] text-slate-300 max-w-xs mx-auto leading-relaxed mt-0.5">
-          Crea tu propio catálogo digital personalizado con fotos desde tu galería, menú dinámico y pedidos directos a tu WhatsApp.
+          Crea tu propio catálogo digital con pedidos automáticos a tu WhatsApp y fotos desde tu galería.
         </p>
       </div>
       <a href="registro.html" class="inline-flex items-center justify-center gap-2 w-full btn-promo-neon text-white font-black py-3 rounded-2xl text-xs uppercase tracking-wider shadow-xl active:scale-95 transition">
-        <i class="fa-solid fa-bolt"></i> Registrar Mi Negocio Gratis
+        <i class="fa-solid fa-bolt text-amber-300"></i> Registrar Mi Negocio Gratis
       </a>
     </section>
 
-    <!-- ENLACE DIRECTO AL PANEL PARA EL DUEÑO DEL NEGOCIO -->
-    <div class="text-center pt-2 pb-6">
+    <!-- Enlace al Panel para el Dueño -->
+    <div class="text-center pt-1 pb-6">
       <a id="link-pie-admin" href="#" class="text-xs text-slate-400 hover:text-amber-400 underline font-semibold flex items-center justify-center gap-1.5 transition">
         <i class="fa-solid fa-lock text-[10px]"></i> ¿Eres el dueño de este negocio? Administrar catálogo
       </a>
@@ -184,32 +211,32 @@
 
   <!-- Barra Flotante Carrito -->
   <div id="cart-bar" class="fixed bottom-4 left-3 right-3 max-w-xl mx-auto hidden z-40">
-    <button onclick="abrirCarrito()" class="w-full btn-neon text-slate-950 font-black py-3.5 px-5 rounded-2xl shadow-xl flex justify-between items-center active:scale-95 transition">
+    <button onclick="abrirCarrito()" class="w-full btn-neon text-slate-950 font-black py-3.5 px-5 rounded-2xl shadow-[0_0_25px_rgba(245,158,11,0.45)] flex justify-between items-center active:scale-95 transition">
       <span class="flex items-center gap-2">
         <i class="fa-solid fa-basket-shopping text-base"></i>
-        <span id="cart-count" class="bg-slate-950 text-amber-400 text-xs px-2 py-0.5 rounded-full font-black">0</span>
+        <span id="cart-count" class="bg-slate-950 text-amber-400 text-xs px-2.5 py-0.5 rounded-full font-cyber font-black">0</span>
         <span class="text-xs uppercase font-black">Ver mi pedido</span>
       </span>
-      <span id="cart-total-bar" class="font-cyber text-sm font-black">$0 CUP</span>
+      <span id="cart-total-bar" class="font-cyber text-sm font-black tracking-wider">$0 CUP</span>
     </button>
   </div>
 
   <!-- Modal Compartir -->
-  <div id="share-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="card-grid w-full max-w-sm rounded-3xl p-5 border border-slate-800 space-y-3 text-center relative shadow-2xl">
-      <button onclick="cerrarCompartir()" class="absolute top-4 right-4 text-slate-400 text-lg">✕</button>
-      <div class="w-11 h-11 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg mx-auto">
+  <div id="share-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="cyber-panel w-full max-w-sm rounded-3xl p-5 border border-amber-500/40 space-y-3.5 text-center relative shadow-2xl">
+      <button onclick="cerrarCompartir()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">✕</button>
+      <div class="w-11 h-11 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg mx-auto border border-amber-500/30">
         <i class="fa-solid fa-share-nodes"></i>
       </div>
       <div>
-        <h3 id="modal-share-title" class="font-bold text-white text-sm">Compartir Catálogo</h3>
+        <h3 id="modal-share-title" class="font-cyber font-bold text-white text-sm">Compartir Catálogo</h3>
         <p class="text-[11px] text-slate-400">Pasa el catálogo directo a tus contactos</p>
       </div>
       <div class="space-y-2 pt-1">
-        <button onclick="compartirWA()" class="w-full bg-emerald-600 text-white font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 text-xs active:scale-95">
+        <button onclick="compartirWA()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 text-xs active:scale-95 shadow-md">
           <i class="fa-brands fa-whatsapp text-base"></i> Enviar por WhatsApp
         </button>
-        <button onclick="compartirFB()" class="w-full bg-blue-600 text-white font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 text-xs active:scale-95">
+        <button onclick="compartirFB()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 text-xs active:scale-95 shadow-md">
           <i class="fa-brands fa-facebook text-base"></i> Enviar a Facebook
         </button>
         <button onclick="copiarLink()" id="btn-copy" class="w-full bg-slate-800 text-slate-200 font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 border border-slate-700 text-xs active:scale-95">
@@ -219,27 +246,14 @@
     </div>
   </div>
 
-  <!-- Modal Info -->
-  <div id="about-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="card-grid w-full max-w-md rounded-3xl p-5 border border-slate-800 space-y-3 relative shadow-2xl">
-      <button onclick="cerrarAcerca()" class="absolute top-4 right-4 text-slate-400 text-lg">✕</button>
-      <h3 id="modal-about-name" class="font-cyber font-black text-base text-amber-400">DETALLES</h3>
-      <p id="modal-about-desc" class="text-xs text-slate-300"></p>
-      <div class="space-y-1.5 pt-2 border-t border-slate-800 text-xs text-slate-300">
-        <p>📍 <strong>Dirección:</strong> <span id="modal-about-dir">Ciego de Ávila</span></p>
-        <p>🛵 <strong>Mensajería:</strong> <span id="modal-about-delivery">$250 CUP</span></p>
-        <p>💵 <strong>Monedas aceptadas:</strong> CUP y USD en efectivo</p>
-        <p>📱 <strong>WhatsApp del negocio:</strong> +<span id="modal-about-wa"></span></p>
-      </div>
-    </div>
-  </div>
-
   <!-- Modal Carrito & Checkout -->
-  <div id="cart-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="card-grid w-full max-w-lg rounded-t-3xl sm:rounded-3xl max-h-[90vh] flex flex-col border border-slate-800 shadow-2xl">
+  <div id="cart-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="cyber-panel w-full max-w-lg rounded-t-3xl sm:rounded-3xl max-h-[90vh] flex flex-col border border-amber-500/40 shadow-2xl">
       <div class="p-4 border-b border-slate-800 flex justify-between items-center">
-        <h2 class="text-sm font-black text-amber-400">Resumen de tu Compra</h2>
-        <button onclick="cerrarCarrito()" class="text-slate-400 text-lg">✕</button>
+        <h2 class="text-xs font-black text-amber-400 font-cyber flex items-center gap-1.5">
+          <i class="fa-solid fa-cart-shopping"></i> RESUMEN DE COMPRA
+        </h2>
+        <button onclick="cerrarCarrito()" class="text-slate-400 hover:text-white text-lg">✕</button>
       </div>
 
       <div class="p-4 overflow-y-auto flex-1 space-y-3">
@@ -247,19 +261,19 @@
 
         <div class="pt-3 border-t border-slate-800 space-y-2.5">
           <div>
-            <label class="text-[11px] text-slate-400 font-bold">Nombre de quien recibe:</label>
-            <input id="client-name" type="text" placeholder="Ej. Juan" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
+            <label class="text-[10px] text-amber-300 font-bold uppercase">Nombre de quien recibe:</label>
+            <input id="client-name" type="text" placeholder="Ej. Juan" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400 shadow-inner">
           </div>
           <div>
-            <label class="text-[11px] text-slate-400 font-bold">Dirección exacta en Ciego de Ávila:</label>
-            <input id="client-address" type="text" placeholder="Calle, número, entrecalles y reparto" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
+            <label class="text-[10px] text-amber-300 font-bold uppercase">Dirección exacta en Ciego de Ávila:</label>
+            <input id="client-address" type="text" placeholder="Calle, número, entrecalles y reparto" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400 shadow-inner">
           </div>
         </div>
 
         <div class="bg-slate-900/90 p-3 rounded-2xl border border-slate-800 space-y-1.5 text-xs">
           <div class="flex justify-between text-slate-300">
             <span>Subtotal productos:</span>
-            <span id="calc-subtotal" class="font-bold">$0 CUP</span>
+            <span id="calc-subtotal" class="font-bold text-white">$0 CUP</span>
           </div>
           <div class="flex justify-between text-slate-300">
             <span>Mensajería:</span>
@@ -276,8 +290,8 @@
       </div>
 
       <div class="p-4 border-t border-slate-800">
-        <button onclick="enviarPedido()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-3.5 rounded-2xl flex items-center justify-center gap-2 shadow-lg active:scale-95 text-xs uppercase tracking-wider">
-          <i class="fa-brands fa-whatsapp text-lg"></i> Enviar Pedido por WhatsApp
+        <button onclick="enviarPedido()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-3.5 rounded-2xl flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.4)] active:scale-95 text-xs uppercase tracking-wider transition">
+          <i class="fa-brands fa-whatsapp text-lg"></i> Confirmar Pedido por WhatsApp
         </button>
       </div>
     </div>
@@ -300,7 +314,6 @@
     let carrito = [];
     let categoriaSeleccionada = 'todos';
     let tasaUSD = 320;
-    let monedaActual = 'CUP';
 
     async function cargarNegocio() {
       try {
@@ -333,11 +346,6 @@
         document.getElementById("biz-description").innerText = negocioActual.descripcion || `Catálogo oficial de ${negocioActual.nombre}.`;
 
         document.getElementById("modal-share-title").innerText = `Compartir ${negocioActual.nombre}`;
-        document.getElementById("modal-about-name").innerText = negocioActual.nombre;
-        document.getElementById("modal-about-desc").innerText = negocioActual.descripcion || '';
-        document.getElementById("modal-about-dir").innerText = negocioActual.direccion || 'Ciego de Ávila';
-        document.getElementById("modal-about-delivery").innerText = `$${negocioActual.costo_mensajeria || 250} CUP`;
-        document.getElementById("modal-about-wa").innerText = negocioActual.telefono_whatsapp || '';
 
         if (negocioActual.logo_url) {
           const img = document.getElementById("biz-logo");
@@ -423,17 +431,17 @@
       const bar = document.getElementById("categories-bar");
       let html = '<button onclick="filtrarCategoria(\'todos\')" class="' + 
         (categoriaSeleccionada.toLowerCase() === 'todos' 
-          ? 'bg-amber-500 text-slate-950 font-black border-amber-400' 
+          ? 'bg-amber-500 text-slate-950 font-black border-amber-400 shadow-[0_0_12px_rgba(245,158,11,0.4)]' 
           : 'bg-slate-900 text-slate-400 border-slate-800') + 
-        ' px-3.5 py-1.5 rounded-xl text-xs whitespace-nowrap transition border font-bold active:scale-95">🔥 Todos</button>';
+        ' px-3 py-1.5 rounded-xl text-xs whitespace-nowrap transition border font-bold active:scale-95">🔥 Todos</button>';
       
       categorias.forEach(cat => {
         const isAct = categoriaSeleccionada.toLowerCase() === cat.toLowerCase();
         html += '<button onclick="filtrarCategoria(\'' + cat + '\')" class="' + 
           (isAct 
-            ? 'bg-amber-500 text-slate-950 font-black border-amber-400' 
+            ? 'bg-amber-500 text-slate-950 font-black border-amber-400 shadow-[0_0_12px_rgba(245,158,11,0.4)]' 
             : 'bg-slate-900 text-slate-400 border-slate-800') + 
-          ' px-3.5 py-1.5 rounded-xl text-xs whitespace-nowrap transition border font-bold active:scale-95">' + cat + '</button>';
+          ' px-3 py-1.5 rounded-xl text-xs whitespace-nowrap transition border font-bold active:scale-95">' + cat + '</button>';
       });
       bar.innerHTML = html;
     }
@@ -442,13 +450,6 @@
       categoriaSeleccionada = cat;
       renderizarCategorias();
       renderizarProductos();
-    }
-
-    function alternarMoneda() {
-      monedaActual = (monedaActual === 'CUP') ? 'USD' : 'CUP';
-      document.getElementById("label-moneda-actual").innerText = monedaActual;
-      renderizarProductos();
-      actualizarTotales();
     }
 
     function renderizarProductos() {
@@ -480,15 +481,7 @@
             '<i class="fa-solid fa-plus text-[10px]"></i> Agregar</button>'
           : '<div class="w-full text-center py-1 bg-red-950/60 border border-red-800 text-red-400 text-[10px] font-bold rounded-xl">Agotado</div>';
 
-        const displayPrincipal = (monedaActual === 'CUP') 
-          ? '$' + precioCup.toLocaleString() + ' <span class="text-[9px] font-sans text-slate-400">CUP</span>'
-          : '$' + precioUsd + ' <span class="text-[9px] font-sans text-cyan-400">USD</span>';
-
-        const displaySecundario = (monedaActual === 'CUP')
-          ? '≈ $' + precioUsd + ' USD'
-          : '≈ $' + precioCup.toLocaleString() + ' CUP';
-
-        html += '<div class="card-grid rounded-2xl p-2 flex flex-col justify-between ' + opacidad + '">' +
+        html += '<div class="card-product rounded-2xl p-2 flex flex-col justify-between ' + opacidad + '">' +
           '<div>' +
             '<div class="relative w-full aspect-square mb-2 overflow-hidden rounded-xl bg-slate-950 border border-slate-800">' +
               '<img src="' + imagenSrc + '" class="w-full h-full object-cover" alt="' + p.nombre + '">' +
@@ -500,8 +493,8 @@
           
           '<div class="mt-2 pt-1.5 border-t border-slate-800/80">' +
             '<div class="mb-1.5">' +
-              '<div class="font-cyber text-amber-400 font-black text-xs leading-none">' + displayPrincipal + '</div>' +
-              '<div class="text-[9px] text-slate-400 font-semibold mt-0.5">' + displaySecundario + '</div>' +
+              '<div class="font-cyber text-amber-400 font-black text-xs leading-none drop-shadow-[0_0_6px_rgba(245,158,11,0.3)]">$' + precioCup.toLocaleString() + ' <span class="text-[9px] font-sans text-slate-400">CUP</span></div>' +
+              '<div class="text-[9px] text-slate-400 font-semibold mt-0.5">≈ $' + precioUsd + ' USD</div>' +
             '</div>' +
             botonAccion +
           '</div>' +
@@ -544,9 +537,7 @@
       if (totalCount > 0) {
         bar.classList.remove("hidden");
         document.getElementById("cart-count").innerText = totalCount;
-        document.getElementById("cart-total-bar").innerText = (monedaActual === 'CUP')
-          ? '$' + totalFinalCup.toLocaleString() + ' CUP'
-          : '$' + totalFinalUsd + ' USD';
+        document.getElementById("cart-total-bar").innerText = '$' + totalFinalCup.toLocaleString() + ' CUP';
       } else {
         bar.classList.add("hidden");
         cerrarCarrito();
@@ -560,8 +551,6 @@
 
     function abrirCarrito() { document.getElementById("cart-modal").classList.remove("hidden"); renderizarItemsCarrito(); actualizarTotales(); }
     function cerrarCarrito() { document.getElementById("cart-modal").classList.add("hidden"); }
-    function abrirAcerca() { document.getElementById("about-modal").classList.remove("hidden"); }
-    function cerrarAcerca() { document.getElementById("about-modal").classList.add("hidden"); }
     function abrirCompartir() { document.getElementById("share-modal").classList.remove("hidden"); }
     function cerrarCompartir() { document.getElementById("share-modal").classList.add("hidden"); }
 
@@ -596,14 +585,14 @@
       carrito.forEach(i => {
         const subCup = Number(i.precio || 0) * i.cantidad;
         const subUsd = (subCup / tasaUSD).toFixed(2);
-        html += '<div class="flex items-center justify-between bg-slate-800 p-2.5 rounded-xl border border-slate-700 text-xs">' +
+        html += '<div class="flex items-center justify-between bg-slate-900/90 p-2.5 rounded-xl border border-slate-800 text-xs shadow-inner">' +
           '<div>' +
             '<p class="font-bold text-white">' + i.nombre + '</p>' +
             '<p class="text-amber-400 font-bold">$' + subCup.toLocaleString() + ' CUP <span class="text-slate-400 font-normal">($' + subUsd + ' USD)</span></p>' +
           '</div>' +
           '<div class="flex items-center gap-2">' +
-            '<button onclick="cambiarCantidad(' + i.id + ', -1)" class="w-6 h-6 bg-slate-700 text-white rounded font-bold">-</button>' +
-            '<span class="w-4 text-center font-bold text-amber-300">' + i.cantidad + '</span>' +
+            '<button onclick="cambiarCantidad(' + i.id + ', -1)" class="w-6 h-6 bg-slate-800 text-white rounded font-bold">-</button>' +
+            '<span class="w-4 text-center font-bold text-amber-300 font-cyber">' + i.cantidad + '</span>' +
             '<button onclick="cambiarCantidad(' + i.id + ', 1)" class="w-6 h-6 bg-amber-500 text-slate-950 rounded font-bold">+</button>' +
           '</div>' +
         '</div>';
