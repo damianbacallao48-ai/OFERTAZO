@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin - Plataforma Multinegocio</title>
+  <title>SuperAdmin - Control de Negocios y Suscripciones</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -13,39 +13,31 @@
   <header class="flex justify-between items-center py-4 border-b border-slate-800 mb-5">
     <div>
       <h1 class="text-xl font-black text-amber-400">PANEL MAESTRO</h1>
-      <p class="text-xs text-slate-400">Control Multi-Tiendas e Inventarios</p>
+      <p class="text-xs text-slate-400">Control de Pagos y Suscripciones</p>
     </div>
-    <button onclick="abrirTiendaPublica()" class="bg-slate-800 text-xs px-3 py-2 rounded-xl text-amber-400 border border-slate-700 font-bold flex items-center gap-1.5 active:scale-95">
-      <span>Ver Tienda</span> <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
-    </button>
+    <a href="registro.html" target="_blank" class="bg-emerald-600 text-xs px-3 py-1.5 rounded-xl text-white font-bold flex items-center gap-1.5 active:scale-95 shadow">
+      <i class="fa-solid fa-plus"></i> Registro
+    </a>
   </header>
 
-  <!-- SELECTOR DE TIENDA ACTIVA -->
-  <section class="bg-slate-900 border border-amber-500/40 rounded-3xl p-4 mb-5 shadow-xl space-y-3">
-    <div class="flex justify-between items-center">
-      <label class="text-xs font-black text-white flex items-center gap-1.5 uppercase">
-        <i class="fa-solid fa-shop text-amber-400"></i> Negocio en Gestión:
-      </label>
-      <button onclick="toggleModalNuevoNegocio()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 text-[11px] font-black px-2.5 py-1 rounded-xl shadow active:scale-95">
-        + Registrar Negocio
+  <!-- LISTA DE TODOS LOS NEGOCIOS REGISTRADOS -->
+  <section class="space-y-3 mb-6">
+    <div class="flex justify-between items-center px-1">
+      <h2 class="text-xs font-black text-white uppercase tracking-wider flex items-center gap-1.5">
+        <i class="fa-solid fa-users-gear text-amber-400"></i> Negocios Registrados (<span id="total-biz">0</span>)
+      </h2>
+      <button onclick="cargarNegocios()" class="text-xs text-cyan-400 font-bold hover:underline">
+        <i class="fa-solid fa-rotate"></i> Recargar
       </button>
     </div>
-    <select id="select-negocio" onchange="cambiarNegocioActivo()" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-amber-300 font-bold outline-none focus:border-amber-400"></select>
 
-    <!-- Info del Negocio Seleccionado (con control de suscripción mensual) -->
-    <div id="biz-status-box" class="pt-2 border-t border-slate-800 flex justify-between items-center text-xs">
-      <div>
-        <p class="text-[11px] text-slate-400">Enlace del cliente:</p>
-        <span id="biz-slug-url" class="text-cyan-400 font-mono text-[10px]"></span>
-      </div>
-      <button onclick="toggleEstadoNegocio()" id="btn-toggle-biz" class="px-2.5 py-1 rounded-lg text-[10px] font-black border">
-        Cargando...
-      </button>
+    <div id="lista-negocios" class="space-y-3">
+      <div class="text-center py-10 text-slate-500 text-xs">Cargando tiendas...</div>
     </div>
   </section>
 
   <!-- TASA DE CAMBIO USD -->
-  <section class="bg-slate-900 border border-cyan-500/40 rounded-3xl p-4 mb-5 shadow-xl">
+  <section class="bg-slate-900 border border-cyan-500/40 rounded-3xl p-4 shadow-xl">
     <div class="flex items-center justify-between gap-3">
       <div class="flex items-center gap-2">
         <i class="fa-solid fa-money-bill-transfer text-cyan-400 text-lg"></i>
@@ -63,545 +55,125 @@
     </div>
   </section>
 
-  <!-- FORMULARIO DE PRODUCTO -->
-  <section class="bg-slate-900 border border-amber-500/30 rounded-3xl p-5 mb-6 shadow-xl space-y-3.5">
-    <div class="flex items-center justify-between">
-      <h2 id="form-titulo" class="text-sm font-black text-white flex items-center gap-2">
-        <i class="fa-solid fa-circle-plus text-amber-400"></i> AGREGAR PRODUCTO
-      </h2>
-      <button onclick="cancelarEdicion()" id="btn-cancelar-edit" class="hidden text-xs text-red-400 font-bold underline">
-        Cancelar edición
-      </button>
-    </div>
-
-    <input type="hidden" id="edit-id" value="">
-
-    <!-- Nombre -->
-    <div>
-      <label class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Nombre del producto *</label>
-      <input id="p-nombre" type="text" placeholder="Ej. Frijol Colorado (1kg)" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400 mt-1">
-    </div>
-
-    <!-- Precios y Categoría -->
-    <div class="grid grid-cols-2 gap-2.5">
-      <div>
-        <label class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Precio en CUP *</label>
-        <input id="p-precio" type="number" placeholder="1000" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400 mt-1" oninput="calcularUsdPreview(this.value)">
-        <p id="precio-usd-calc" class="text-[10px] text-cyan-400 font-semibold mt-1">≈ $0.00 USD</p>
-      </div>
-      <div>
-        <label class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Categoría *</label>
-        <input id="p-categoria" list="cat-list" type="text" placeholder="Escribe o elige..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400 mt-1 uppercase">
-        <datalist id="cat-list"></datalist>
-      </div>
-    </div>
-
-    <!-- SUBIDA DE FOTO -->
-    <div class="pt-1">
-      <label class="text-[11px] text-amber-300 font-bold uppercase tracking-wider flex items-center gap-1.5">
-        <i class="fa-solid fa-camera"></i> Foto del producto
-      </label>
-      
-      <label class="mt-1.5 w-full bg-slate-800 hover:bg-slate-750 border-2 border-dashed border-amber-500/40 rounded-2xl p-4 flex flex-col items-center justify-center cursor-pointer active:scale-98 transition">
-        <i class="fa-solid fa-cloud-arrow-up text-amber-400 text-2xl mb-1"></i>
-        <span id="file-label-text" class="text-xs font-bold text-white">Elegir foto de tu galería / cámara</span>
-        <span class="text-[10px] text-slate-400">Comprimida automáticamente para cargar rápido</span>
-        <input type="file" id="p-file-input" accept="image/*" class="hidden" onchange="manejarArchivoFoto(event)">
-      </label>
-
-      <input id="p-imagen-url" type="text" placeholder="O pega un enlace de internet: https://..." class="w-full bg-slate-800/60 border border-slate-700/60 rounded-xl p-2 text-[11px] text-slate-300 outline-none focus:border-amber-400 mt-2" oninput="cambiarPorUrl(this.value)">
-
-      <div id="preview-area" class="mt-2.5 hidden flex items-center gap-3 bg-slate-950 p-2.5 rounded-2xl border border-slate-800">
-        <img id="img-preview-tag" class="w-14 h-14 object-cover rounded-xl border border-amber-400" src="">
-        <div class="flex-1 text-xs">
-          <p class="text-emerald-400 font-bold"><i class="fa-solid fa-check"></i> Foto lista</p>
-          <button onclick="eliminarFotoSeleccionada()" type="button" class="text-red-400 text-[11px] underline mt-0.5">Quitar foto</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Descripción -->
-    <div>
-      <label class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Descripción o detalles</label>
-      <input id="p-desc" type="text" placeholder="Detalles, peso, porciones..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400 mt-1">
-    </div>
-
-    <button onclick="guardarProducto()" id="btn-guardar" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-3.5 rounded-xl text-xs uppercase tracking-wider active:scale-95 transition shadow-lg mt-2 flex items-center justify-center gap-2">
-      <i class="fa-solid fa-bolt"></i> <span id="btn-guardar-texto">Guardar Producto en Este Negocio</span>
-    </button>
-  </section>
-
-  <!-- LISTA DE PRODUCTOS -->
-  <section class="space-y-3">
-    <div class="flex justify-between items-center mb-2 px-1">
-      <h2 class="text-sm font-black text-white flex items-center gap-2">
-        <i class="fa-solid fa-boxes-stacked text-amber-400"></i> PRODUCTOS DE ESTA TIENDA
-      </h2>
-      <button onclick="cargarInventario()" class="text-xs text-amber-400 font-bold flex items-center gap-1 hover:text-amber-300">
-        <i class="fa-solid fa-arrows-rotate"></i> Actualizar
-      </button>
-    </div>
-    <div id="lista-admin" class="space-y-2.5">
-      <div class="text-center py-10 text-slate-500 text-xs">Cargando inventario...</div>
-    </div>
-  </section>
-
-  <!-- MODAL REGISTRO DE NUEVO NEGOCIO -->
-  <div id="modal-nuevo-negocio" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-amber-500/40 rounded-3xl p-5 max-w-sm w-full space-y-3 shadow-2xl">
-      <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-        <h3 class="text-sm font-black text-white uppercase">Registrar Nuevo Negocio</h3>
-        <button onclick="toggleModalNuevoNegocio()" class="text-slate-400 text-base">✕</button>
-      </div>
-
-      <div>
-        <label class="text-[10px] text-slate-400 font-bold uppercase">Nombre del Negocio *</label>
-        <input id="new-biz-name" type="text" placeholder="Ej. El Rincón Criollo" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2 text-xs text-white outline-none focus:border-amber-400">
-      </div>
-
-      <div>
-        <label class="text-[10px] text-slate-400 font-bold uppercase">Enlace personalizado (Slug sin espacios) *</label>
-        <input id="new-biz-slug" type="text" placeholder="Ej. el-rincon" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2 text-xs text-white outline-none focus:border-amber-400 lowercase">
-        <p class="text-[9px] text-cyan-400 mt-0.5">Quedará como: index.html?tienda=el-rincon</p>
-      </div>
-
-      <div class="grid grid-cols-2 gap-2">
-        <div>
-          <label class="text-[10px] text-slate-400 font-bold uppercase">WhatsApp (con 53) *</label>
-          <input id="new-biz-wa" type="text" placeholder="5358960660" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2 text-xs text-white outline-none focus:border-amber-400">
-        </div>
-        <div>
-          <label class="text-[10px] text-slate-400 font-bold uppercase">Costo Delivery (CUP)</label>
-          <input id="new-biz-fee" type="number" placeholder="250" value="250" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2 text-xs text-white outline-none focus:border-amber-400">
-        </div>
-      </div>
-
-      <div>
-        <label class="text-[10px] text-slate-400 font-bold uppercase">Tipo de Negocio</label>
-        <input id="new-biz-tipo" type="text" placeholder="Restaurante, Bar, Punto de Venta..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2 text-xs text-white outline-none focus:border-amber-400">
-      </div>
-
-      <div>
-        <label class="text-[10px] text-slate-400 font-bold uppercase">Dirección</label>
-        <input id="new-biz-dir" type="text" placeholder="Calle, reparto, Ciego de Ávila" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2 text-xs text-white outline-none focus:border-amber-400">
-      </div>
-
-      <button onclick="crearNuevoNegocio()" id="btn-crear-biz" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-2.5 rounded-xl text-xs uppercase tracking-wider active:scale-95 transition shadow-lg mt-1">
-        Guardar y Dar de Alta
-      </button>
-    </div>
-  </div>
-
   <script>
     const SUPABASE_URL = "https://qhkqznpgjirvnndriehr.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFoa3F6bnBnamlydm5uZHJpZWhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5MTE5NzQsImV4cCI6MjEwNzQ4Nzk3NH0.AHUdASoGr0FJWUuP0LxS9UJ2_-QzFPwAjmEeWZ3g1Uc";
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    let listaNegocios = [];
-    let negocioSeleccionado = null;
-    let productosCargados = [];
-    let imagenComprimida = "";
-    let tasaUSDActual = 320;
+    let negocios = [];
 
     async function cargarNegocios() {
+      const cont = document.getElementById("lista-negocios");
       const { data, error } = await supabaseClient
         .from('negocios')
         .select('*')
-        .order('id', { ascending: true });
-
-      if (error) {
-        alert("Error cargando lista de tiendas: " + error.message);
-        return;
-      }
-
-      listaNegocios = data || [];
-      const sel = document.getElementById("select-negocio");
-      sel.innerHTML = listaNegocios.map(n => `<option value="${n.id}">${n.nombre} (@${n.slug})</option>`).join('');
-
-      if (listaNegocios.length > 0) {
-        negocioSeleccionado = listaNegocios[0];
-        sel.value = negocioSeleccionado.id;
-        actualizarInfoNegocioSeleccionado();
-        cargarInventario();
-      }
-    }
-
-    function cambiarNegocioActivo() {
-      const selId = parseInt(document.getElementById("select-negocio").value);
-      negocioSeleccionado = listaNegocios.find(n => n.id === selId);
-      actualizarInfoNegocioSeleccionado();
-      cancelarEdicion();
-      cargarInventario();
-    }
-
-    function actualizarInfoNegocioSeleccionado() {
-      if (!negocioSeleccionado) return;
-      document.getElementById("biz-slug-url").innerText = `?tienda=${negocioSeleccionado.slug}`;
-      const btn = document.getElementById("btn-toggle-biz");
-      if (negocioSeleccionado.activo) {
-        btn.innerText = "Suscripción: ACTIVA (En línea)";
-        btn.className = "px-2.5 py-1 rounded-lg text-[10px] font-black border bg-emerald-500/20 text-emerald-300 border-emerald-500/40";
-      } else {
-        btn.innerText = "Suscripción: PAUSADA (Corte)";
-        btn.className = "px-2.5 py-1 rounded-lg text-[10px] font-black border bg-red-500/20 text-red-300 border-red-500/40";
-      }
-    }
-
-    async function toggleEstadoNegocio() {
-      if (!negocioSeleccionado) return;
-      const nuevoEstado = !negocioSeleccionado.activo;
-      const { error } = await supabaseClient
-        .from('negocios')
-        .update({ activo: nuevoEstado })
-        .eq('id', negocioSeleccionado.id);
-
-      if (error) {
-        alert("Error cambiando estado: " + error.message);
-      } else {
-        negocioSeleccionado.activo = nuevoEstado;
-        actualizarInfoNegocioSeleccionado();
-      }
-    }
-
-    function abrirTiendaPublica() {
-      if (!negocioSeleccionado) return;
-      window.open(`index.html?tienda=${negocioSeleccionado.slug}&v=${Date.now()}`, '_blank');
-    }
-
-    function toggleModalNuevoNegocio() {
-      document.getElementById("modal-nuevo-negocio").classList.toggle("hidden");
-    }
-
-    async function crearNuevoNegocio() {
-      const nombre = document.getElementById("new-biz-name").value.trim();
-      let slug = document.getElementById("new-biz-slug").value.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '-');
-      const wa = document.getElementById("new-biz-wa").value.trim();
-      const fee = parseFloat(document.getElementById("new-biz-fee").value) || 250;
-      const tipo = document.getElementById("new-biz-tipo").value.trim() || 'Comercio';
-      const dir = document.getElementById("new-biz-dir").value.trim() || 'Ciego de Ávila';
-
-      if (!nombre || !slug || !wa) {
-        alert("Completa el nombre, enlace (slug) y el teléfono de WhatsApp.");
-        return;
-      }
-
-      const btn = document.getElementById("btn-crear-biz");
-      btn.innerText = "Registrando...";
-      btn.disabled = true;
-
-      const { data, error } = await supabaseClient
-        .from('negocios')
-        .insert([{
-          nombre,
-          slug,
-          telefono_whatsapp: wa,
-          costo_mensajeria: fee,
-          tipo,
-          direccion: dir,
-          activo: true
-        }])
-        .select();
-
-      btn.innerText = "Guardar y Dar de Alta";
-      btn.disabled = false;
-
-      if (error) {
-        alert("Error al crear negocio: " + error.message);
-      } else {
-        alert(`¡Negocio ${nombre} registrado con éxito! Su enlace será: index.html?tienda=${slug}`);
-        toggleModalNuevoNegocio();
-        await cargarNegocios();
-        if (data && data[0]) {
-          document.getElementById("select-negocio").value = data[0].id;
-          cambiarNegocioActivo();
-        }
-      }
-    }
-
-    async function cargarTasaUSD() {
-      try {
-        const { data } = await supabaseClient
-          .from('configuracion')
-          .select('*')
-          .eq('clave', 'tasa_usd')
-          .single();
-        if (data && data.valor) {
-          tasaUSDActual = parseFloat(data.valor) || 320;
-          document.getElementById("input-tasa-usd").value = tasaUSDActual;
-        }
-      } catch (e) {
-        document.getElementById("input-tasa-usd").value = tasaUSDActual;
-      }
-    }
-
-    async function guardarTasaUSD() {
-      const nuevaTasa = parseFloat(document.getElementById("input-tasa-usd").value);
-      if (!nuevaTasa || nuevaTasa <= 0) {
-        alert("Escribe una tasa de cambio válida (ej. 320).");
-        return;
-      }
-      const btn = document.getElementById("btn-tasa");
-      btn.innerText = "...";
-      btn.disabled = true;
-
-      const { error } = await supabaseClient
-        .from('configuracion')
-        .upsert({ clave: 'tasa_usd', valor: String(nuevaTasa) });
-
-      btn.innerText = "Actualizar";
-      btn.disabled = false;
-
-      if (error) {
-        alert("Error actualizando tasa: " + error.message);
-      } else {
-        tasaUSDActual = nuevaTasa;
-        alert("¡Tasa del dólar actualizada para todas las tiendas a: " + nuevaTasa + " CUP!");
-        cargarInventario();
-      }
-    }
-
-    function calcularUsdPreview(val) {
-      const num = parseFloat(val);
-      const span = document.getElementById("precio-usd-calc");
-      if (!num || isNaN(num)) {
-        span.innerText = "≈ $0.00 USD";
-      } else {
-        span.innerText = "≈ $" + (num / tasaUSDActual).toFixed(2) + " USD";
-      }
-    }
-
-    function manejarArchivoFoto(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      document.getElementById("file-label-text").innerText = "Procesando foto...";
-
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const img = new Image();
-        img.onload = function() {
-          const canvas = document.createElement("canvas");
-          const maxDim = 500;
-          let w = img.width;
-          let h = img.height;
-          if (w > h) {
-            if (w > maxDim) { h *= maxDim / w; w = maxDim; }
-          } else {
-            if (h > maxDim) { w *= maxDim / h; h = maxDim; }
-          }
-          canvas.width = w;
-          canvas.height = h;
-          const ctx = canvas.getContext("2d");
-          ctx.drawImage(img, 0, 0, w, h);
-
-          imagenComprimida = canvas.toDataURL("image/jpeg", 0.70);
-          document.getElementById("p-imagen-url").value = "";
-          mostrarPreview(imagenComprimida);
-          document.getElementById("file-label-text").innerText = "Foto seleccionada (Toca para cambiar)";
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function cambiarPorUrl(url) {
-      if (url && url.trim() !== "") {
-        imagenComprimida = "";
-        mostrarPreview(url.trim());
-      } else if (!imagenComprimida) {
-        document.getElementById("preview-area").classList.add("hidden");
-      }
-    }
-
-    function mostrarPreview(src) {
-      const p = document.getElementById("preview-area");
-      document.getElementById("img-preview-tag").src = src;
-      p.classList.remove("hidden");
-    }
-
-    function eliminarFotoSeleccionada() {
-      imagenComprimida = "";
-      document.getElementById("p-file-input").value = "";
-      document.getElementById("p-imagen-url").value = "";
-      document.getElementById("file-label-text").innerText = "Elegir foto de tu galería / cámara";
-      document.getElementById("preview-area").classList.add("hidden");
-    }
-
-    async function cargarInventario() {
-      if (!negocioSeleccionado) return;
-      const cont = document.getElementById("lista-admin");
-      const { data, error } = await supabaseClient
-        .from('productos')
-        .select('*')
-        .eq('negocio_id', negocioSeleccionado.id)
         .order('id', { ascending: false });
 
       if (error) {
-        cont.innerHTML = '<div class="text-xs text-red-400 text-center py-4">Error: ' + error.message + '</div>';
+        cont.innerHTML = `<div class="text-xs text-red-400 text-center py-4">${error.message}</div>`;
         return;
       }
 
-      productosCargados = data || [];
+      negocios = data || [];
+      document.getElementById("total-biz").innerText = negocios.length;
 
-      // Categorías en datalist
-      const dl = document.getElementById("cat-list");
-      if (dl && data) {
-        const catSet = new Set();
-        data.forEach(p => { if (p.categoria) catSet.add(p.categoria.toUpperCase()); });
-        dl.innerHTML = Array.from(catSet).map(c => `<option value="${c}">`).join('');
-      }
-
-      if (!data || data.length === 0) {
-        cont.innerHTML = '<div class="text-xs text-slate-500 text-center py-6">Esta tienda aún no tiene productos.</div>';
+      if (negocios.length === 0) {
+        cont.innerHTML = '<div class="text-xs text-slate-500 text-center py-6">Aún no hay negocios registrados.</div>';
         return;
       }
 
+      const ahora = new Date();
       let html = '';
-      data.forEach(p => {
-        const estadoColor = p.disponible ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : 'bg-red-500/20 text-red-300 border-red-500/40';
-        const estadoTexto = p.disponible ? 'Activo' : 'Agotado';
-        const accionTexto = p.disponible ? 'Agotar' : 'Activar';
-        const cup = Number(p.precio || 0);
-        const usd = (cup / tasaUSDActual).toFixed(2);
 
-        html += '<div class="bg-slate-900 border border-slate-800 rounded-2xl p-3 flex items-center justify-between gap-3">' +
-          '<div class="flex items-center gap-3">' +
-            '<img src="' + (p.imagen || 'https://via.placeholder.com/80') + '" class="w-12 h-12 rounded-xl object-cover bg-slate-950 border border-slate-800">' +
-            '<div>' +
-              '<span class="text-[9px] font-bold text-amber-400 uppercase tracking-wider">' + (p.categoria || 'GENERAL') + '</span>' +
-              '<h3 class="text-xs font-bold text-white leading-tight">' + p.nombre + '</h3>' +
-              '<p class="text-xs text-amber-400 font-bold">$' + cup.toLocaleString() + ' CUP <span class="text-cyan-400 text-[10px] font-normal">($' + usd + ' USD)</span></p>' +
-              '<span class="text-[9px] px-2 py-0.5 rounded-full font-bold border ' + estadoColor + '">' + estadoTexto + '</span>' +
-            '</div>' +
-          '</div>' +
-          '<div class="flex items-center gap-1.5">' +
-            '<button onclick="editarProducto(' + p.id + ')" class="bg-blue-600/30 text-blue-400 text-xs p-2 rounded-xl border border-blue-500/40 hover:bg-blue-600/50 active:scale-95"><i class="fa-solid fa-pen-to-square"></i></button>' +
-            '<button onclick="toggleDisponibilidad(' + p.id + ', ' + p.disponible + ')" class="bg-slate-800 text-[11px] px-2.5 py-1.5 rounded-xl border border-slate-700 font-bold hover:bg-slate-700 active:scale-95">' + accionTexto + '</button>' +
-            '<button onclick="eliminarProducto(' + p.id + ')" class="bg-red-950/70 text-red-400 text-xs p-2 rounded-xl border border-red-800 hover:bg-red-900 active:scale-95"><i class="fa-solid fa-trash"></i></button>' +
-          '</div>' +
-        '</div>';
+      negocios.forEach(b => {
+        const vence = new Date(b.fecha_vencimiento);
+        const diffDias = Math.ceil((vence - ahora) / (1000 * 60 * 60 * 24));
+        const estaVencido = diffDias <= 0 || b.activo === false;
+
+        let badgeEstado = '';
+        if (estaVencido) {
+          badgeEstado = `<span class="bg-red-500/20 text-red-400 border border-red-500/40 text-[9px] font-bold px-2 py-0.5 rounded-full">SUSPENDIDO / VENCIDO</span>`;
+        } else if (b.estado_pago === 'prueba') {
+          badgeEstado = `<span class="bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[9px] font-bold px-2 py-0.5 rounded-full">PRUEBA (${diffDias} días)</span>`;
+        } else {
+          badgeEstado = `<span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[9px] font-bold px-2 py-0.5 rounded-full">PAGADO (${diffDias} días)</span>`;
+        }
+
+        html += `<div class="bg-slate-900 border ${estaVencido ? 'border-red-900/60' : 'border-slate-800'} rounded-2xl p-3.5 space-y-2.5 shadow-md">
+          <div class="flex justify-between items-start">
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 class="text-sm font-bold text-white">${b.nombre}</h3>
+                ${badgeEstado}
+              </div>
+              <p class="text-[11px] text-cyan-400 font-mono mt-0.5">?tienda=${b.slug}</p>
+              <p class="text-[10px] text-slate-400">WA: +${b.telefono_whatsapp} • PIN: <strong class="text-amber-300 font-mono">${b.pin_admin}</strong></p>
+            </div>
+            <a href="index.html?tienda=${b.slug}" target="_blank" class="p-2 bg-slate-800 text-amber-400 rounded-xl text-xs"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </div>
+
+          <div class="flex items-center justify-between pt-2 border-t border-slate-800 text-xs">
+            <div class="flex items-center gap-1.5">
+              <button onclick="renovar30Dias(${b.id})" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-2.5 py-1 rounded-xl text-[10px] active:scale-95 flex items-center gap-1">
+                <i class="fa-solid fa-check-circle"></i> Aprobar +30 Días
+              </button>
+              <button onclick="toggleActivo(${b.id}, ${b.activo})" class="bg-slate-800 text-slate-300 font-bold px-2.5 py-1 rounded-xl text-[10px] border border-slate-700 active:scale-95">
+                ${b.activo ? 'Pausar' : 'Reactivar'}
+              </button>
+            </div>
+            <button onclick="eliminarNegocio(${b.id})" class="text-red-400 text-xs p-1 hover:text-red-300"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        </div>`;
       });
 
       cont.innerHTML = html;
     }
 
-    function editarProducto(id) {
-      const prod = productosCargados.find(p => p.id === id);
-      if (!prod) return;
+    async function renovar30Dias(id) {
+      if (!confirm("¿Confirmas que este cliente pagó y deseas activar/extender 30 días de suscripción?")) return;
 
-      document.getElementById("edit-id").value = prod.id;
-      document.getElementById("p-nombre").value = prod.nombre;
-      document.getElementById("p-precio").value = prod.precio;
-      document.getElementById("p-categoria").value = prod.categoria || '';
-      document.getElementById("p-desc").value = prod.descripcion || '';
-      
-      calcularUsdPreview(prod.precio);
+      const nuevaFecha = new Date();
+      nuevaFecha.setDate(nuevaFecha.getDate() + 30);
 
-      if (prod.imagen) {
-        if (prod.imagen.startsWith("data:image")) {
-          imagenComprimida = prod.imagen;
-          document.getElementById("p-imagen-url").value = "";
-        } else {
-          imagenComprimida = "";
-          document.getElementById("p-imagen-url").value = prod.imagen;
-        }
-        mostrarPreview(prod.imagen);
-      } else {
-        eliminarFotoSeleccionada();
-      }
-
-      document.getElementById("form-titulo").innerHTML = '<i class="fa-solid fa-pen-to-square text-blue-400"></i> EDITANDO PRODUCTO';
-      document.getElementById("btn-guardar-texto").innerText = "Guardar Cambios del Producto";
-      document.getElementById("btn-cancelar-edit").classList.remove("hidden");
-      window.scrollTo({ top: 350, behavior: 'smooth' });
-    }
-
-    function cancelarEdicion() {
-      document.getElementById("edit-id").value = "";
-      document.getElementById("p-nombre").value = "";
-      document.getElementById("p-precio").value = "";
-      document.getElementById("p-categoria").value = "";
-      document.getElementById("p-desc").value = "";
-      document.getElementById("precio-usd-calc").innerText = "≈ $0.00 USD";
-      eliminarFotoSeleccionada();
-
-      document.getElementById("form-titulo").innerHTML = '<i class="fa-solid fa-circle-plus text-amber-400"></i> AGREGAR PRODUCTO';
-      document.getElementById("btn-guardar-texto").innerText = "Guardar Producto en Este Negocio";
-      document.getElementById("btn-cancelar-edit").classList.add("hidden");
-    }
-
-    async function guardarProducto() {
-      if (!negocioSeleccionado) {
-        alert("Selecciona o crea un negocio primero.");
-        return;
-      }
-
-      const editId = document.getElementById("edit-id").value;
-      const nombre = document.getElementById("p-nombre").value.trim();
-      const precio = parseFloat(document.getElementById("p-precio").value);
-      const categoria = document.getElementById("p-categoria").value.trim().toUpperCase() || 'GENERAL';
-      const imagenUrlInput = document.getElementById("p-imagen-url").value.trim();
-      const descripcion = document.getElementById("p-desc").value.trim();
-
-      const fotoFinal = imagenComprimida || imagenUrlInput || '';
-
-      if (!nombre || isNaN(precio)) {
-        alert("Por favor introduce el nombre y el precio en CUP.");
-        return;
-      }
-
-      const btn = document.getElementById("btn-guardar");
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...';
-      btn.disabled = true;
-
-      const payload = {
-        negocio_id: negocioSeleccionado.id,
-        nombre: nombre,
-        precio: precio,
-        categoria: categoria,
-        imagen: fotoFinal,
-        descripcion: descripcion
-      };
-
-      let res;
-      if (editId) {
-        res = await supabaseClient
-          .from('productos')
-          .update(payload)
-          .eq('id', editId);
-      } else {
-        payload.disponible = true;
-        res = await supabaseClient
-          .from('productos')
-          .insert([payload]);
-      }
-
-      btn.innerHTML = '<i class="fa-solid fa-bolt"></i> <span id="btn-guardar-texto">' + (editId ? "Guardar Cambios del Producto" : "Guardar Producto en Este Negocio") + '</span>';
-      btn.disabled = false;
-
-      if (res.error) {
-        alert("Error al guardar: " + res.error.message);
-      } else {
-        cancelarEdicion();
-        cargarInventario();
-      }
-    }
-
-    async function toggleDisponibilidad(id, actual) {
-      await supabaseClient
-        .from('productos')
-        .update({ disponible: !actual })
+      const { error } = await supabaseClient
+        .from('negocios')
+        .update({
+          activo: true,
+          estado_pago: 'pagado',
+          fecha_vencimiento: nuevaFecha.toISOString()
+        })
         .eq('id', id);
-      cargarInventario();
+
+      if (error) {
+        alert("Error renovando: " + error.message);
+      } else {
+        alert("¡Negocio renovado exitosamente por 30 días!");
+        cargarNegocios();
+      }
     }
 
-    async function eliminarProducto(id) {
-      if (!confirm("¿Deseas eliminar este producto del inventario?")) return;
-      await supabaseClient
-        .from('productos')
-        .delete()
-        .eq('id', id);
-      cargarInventario();
+    async function toggleActivo(id, act) {
+      await supabaseClient.from('negocios').update({ activo: !act }).eq('id', id);
+      cargarNegocios();
+    }
+
+    async function eliminarNegocio(id) {
+      if (!confirm("¿Deseas eliminar este negocio y todos sus productos?")) return;
+      await supabaseClient.from('negocios').delete().eq('id', id);
+      cargarNegocios();
+    }
+
+    async function cargarTasaUSD() {
+      try {
+        const { data } = await supabaseClient.from('configuracion').select('*').eq('clave', 'tasa_usd').single();
+        if (data && data.valor) document.getElementById("input-tasa-usd").value = data.valor;
+      } catch (e) {}
+    }
+
+    async function guardarTasaUSD() {
+      const v = document.getElementById("input-tasa-usd").value;
+      await supabaseClient.from('configuracion').upsert({ clave: 'tasa_usd', valor: String(v) });
+      alert("Tasa actualizada.");
     }
 
     cargarTasaUSD();
