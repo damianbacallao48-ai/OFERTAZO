@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Administración - Menú</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="firebase-config.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-950 text-gray-100 min-h-screen p-4 pb-16">
+
+  <!-- Pantalla de Login -->
+  <div id="login-section" class="max-w-md mx-auto mt-16 bg-gray-900 p-6 rounded-2xl border border-gray-800 shadow-2xl">
+    <div class="text-center mb-6">
+      <div class="w-12 h-12 bg-amber-500 text-gray-950 rounded-xl flex items-center justify-center mx-auto text-xl font-bold mb-2">
+        <i class="fa-solid fa-lock"></i>
+      </div>
+      <h2 class="text-xl font-bold">Acceso Administrativo</h2>
+      <p class="text-xs text-gray-400">Control de inventario en tiempo real</p>
+    </div>
+    
+    <div class="space-y-4">
+      <div>
+        <label class="text-xs text-gray-400 font-semibold">Correo de Administrador</label>
+        <input id="login-email" type="email" placeholder="admin@menu.com" class="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 text-sm mt-1 focus:border-amber-400 outline-none">
+      </div>
+      <div>
+        <label class="text-xs text-gray-400 font-semibold">Contraseña</label>
+        <input id="login-password" type="password" placeholder="••••••••" class="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 text-sm mt-1 focus:border-amber-400 outline-none">
+      </div>
+      <button onclick="iniciarSesion()" class="w-full bg-amber-500 hover:bg-amber-400 text-gray-950 font-bold py-3 rounded-xl transition">
+        Entrar al Panel
+      </button>
+      <p id="login-error" class="text-red-400 text-xs text-center hidden"></p>
+    </div>
+  </div>
+
+  <!-- Panel Principal (Oculto hasta autenticarse) -->
+  <div id="admin-panel" class="max-w-2xl mx-auto hidden space-y-6">
+    
+    <!-- Barra Superior -->
+    <header class="flex justify-between items-center bg-gray-900 p-4 rounded-2xl border border-gray-800">
+      <div>
+        <h1 class="text-lg font-bold text-amber-400 flex items-center gap-2">
+          <i class="fa-solid fa-sliders"></i> Panel de Control
+        </h1>
+        <p class="text-xs text-gray-400" id="user-display">Conectado</p>
+      </div>
+      <button onclick="cerrarSesion()" class="bg-gray-800 hover:bg-red-950 text-red-400 px-3 py-1.5 rounded-lg text-xs font-semibold border border-red-900/40">
+        <i class="fa-solid fa-right-from-bracket"></i> Salir
+      </button>
+    </header>
+
+    <!-- Formulario para Añadir Nuevo Producto -->
+    <section class="bg-gray-900 p-5 rounded-2xl border border-gray-800 shadow-md">
+      <h2 class="text-sm font-bold text-gray-200 mb-3 flex items-center gap-2">
+        <i class="fa-solid fa-plus-circle text-amber-400"></i> Agregar Nuevo Plato / Bebida
+      </h2>
+      <form id="add-product-form" onsubmit="guardarProducto(event)" class="space-y-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="text-xs text-gray-400">Nombre del producto</label>
+            <input id="prod-name" required type="text" placeholder="Ej. Lomo Ahumado" class="w-full bg-gray-800 border border-gray-700 rounded-xl p-2.5 text-sm mt-1 focus:border-amber-400 outline-none">
+          </div>
+          <div>
+            <label class="text-xs text-gray-400">Precio (CUP)</label>
+            <input id="prod-price" required type="number" placeholder="Ej. 1350" class="w-full bg-gray-800 border border-gray-700 rounded-xl p-2.5 text-sm mt-1 focus:border-amber-400 outline-none">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="text-xs text-gray-400">Categoría</label>
+            <select id="prod-category" class="w-full bg-gray-800 border border-gray-700 rounded-xl p-2.5 text-sm mt-1 focus:border-amber-400 outline-none">
+              <option value="platos">Platos Fuertes</option>
+              <option value="bebidas">Bebidas</option>
+              <option value="postres">Postres</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-xs text-gray-400">URL de Imagen (Opcional)</label>
+            <input id="prod-img" type="url" placeholder="https://..." class="w-full bg-gray-800 border border-gray-700 rounded-xl p-2.5 text-sm mt-1 focus:border-amber-400 outline-none">
+          </div>
+        </div>
+
+        <div>
+          <label class="text-xs text-gray-400">Descripción / Acompañamiento</label>
+          <textarea id="prod-desc" rows="2" placeholder="Detalles del plato..." class="w-full bg-gray-800 border border-gray-700 rounded-xl p-2.5 text-sm mt-1 focus:border-amber-400 outline-none"></textarea>
+        </div>
+
+        <button type="submit" class="w-full bg-amber-500 hover:bg-amber-400 text-gray-950 font-bold py-2.5 rounded-xl transition text-sm">
+          Guardar y Publicar al Instante
+        </button>
+      </form>
+    </section>
+
+    <!-- Lista de Inventario Actual -->
+    <section class="space-y-3">
+      <h2 class="text-sm font-bold text-gray-300">Gestión de Platos Activos</h2>
+      <div id="admin-products-list" class="space-y-2.5">
+        <!-- Render dinámico -->
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // Control de Sesión
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        document.getElementById("login-section").classList.add("hidden");
+        document.getElementById("admin-panel").classList.remove("hidden");
+        document.getElementById("user-display").innerText = user.email;
+        escucharInventario();
+      } else {
+        document.getElementById("login-section").classList.remove("hidden");
+        document.getElementById("admin-panel").classList.add("hidden");
+      }
+    });
+
+    function iniciarSesion() {
+      const email = document.getElementById("login-email").value;
+      const pass = document.getElementById("login-password").value;
+      const errBox = document.getElementById("login-error");
+
+      auth.signInWithEmailAndPassword(email, pass)
+        .catch(error => {
+          errBox.innerText = "Error: " + error.message;
+          errBox.classList.remove("hidden");
+        });
+    }
+
+    function cerrarSesion() {
+      auth.signOut();
+    }
+
+    // Escuchar cambios de Firestore en tiempo real
+    function escucharInventario() {
+      db.collection("productos").onSnapshot(snapshot => {
+        const contenedor = document.getElementById("admin-products-list");
+        if (snapshot.empty) {
+          contenedor.innerHTML = `<div class="p-6 text-center text-gray-500 bg-gray-900 rounded-xl">No hay productos creados aún. Agrega el primero arriba.</div>`;
+          return;
+        }
+
+        let html = '';
+        snapshot.forEach(doc => {
+          const item = doc.data();
+          const id = doc.id;
+          html += `
+            <div class="bg-gray-900 p-3.5 rounded-xl border border-gray-800 flex items-center justify-between gap-3">
+              <div class="flex-1">
+                <div class="flex items-center gap-2">
+                  <h3 class="font-bold text-sm text-gray-100">${item.nombre}</h3>
+                  <span class="text-xs px-2 py-0.5 rounded ${item.disponible ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-red-950 text-red-400 border border-red-800'}">
+                    ${item.disponible ? 'Disponible' : 'Agotado'}
+                  </span>
+                </div>
+                <div class="flex items-center gap-2 mt-1">
+                  <span class="text-xs text-amber-400 font-extrabold">$${item.precio} CUP</span>
+                  <span class="text-[10px] text-gray-500 uppercase tracking-wider">${item.categoria}</span>
+                </div>
+              </div>
+
+              <!-- Controles de acción rápida -->
+              <div class="flex items-center gap-2">
+                <button onclick="cambiarPrecio('${id}', ${item.precio})" class="bg-gray-800 hover:bg-gray-700 text-gray-200 text-xs px-2.5 py-1.5 rounded-lg border border-gray-700 font-semibold" title="Editar precio">
+                  <i class="fa-solid fa-dollar-sign"></i> Precio
+                </button>
+                <button onclick="toggleDisponibilidad('${id}', ${item.disponible})" class="${item.disponible ? 'bg-amber-600/30 text-amber-400 border-amber-600/50' : 'bg-emerald-600/30 text-emerald-400 border-emerald-600/50'} text-xs px-2.5 py-1.5 rounded-lg border font-semibold">
+                  ${item.disponible ? 'Agotar' : 'Activar'}
+                </button>
+                <button onclick="eliminarProducto('${id}')" class="bg-red-950/40 text-red-400 hover:bg-red-900 text-xs px-2.5 py-1.5 rounded-lg border border-red-900/60 font-semibold">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          `;
+        });
+        contenedor.innerHTML = html;
+      });
+    }
+
+    // Agregar Producto
+    function guardarProducto(e) {
+      e.preventDefault();
+      const nombre = document.getElementById("prod-name").value.trim();
+      const precio = parseFloat(document.getElementById("prod-price").value);
+      const categoria = document.getElementById("prod-category").value;
+      const descripcion = document.getElementById("prod-desc").value.trim();
+      const imagen = document.getElementById("prod-img").value.trim();
+
+      db.collection("productos").add({
+        nombre,
+        precio,
+        categoria,
+        descripcion,
+        imagen: imagen || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&auto=format&fit=crop&q=60',
+        disponible: true,
+        fechaCreacion: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(() => {
+        document.getElementById("add-product-form").reset();
+      });
+    }
+
+    // Cambiar Disponibilidad (1 toque)
+    function toggleDisponibilidad(id, actual) {
+      db.collection("productos").doc(id).update({
+        disponible: !actual
+      });
+    }
+
+    // Actualizar Precio Rápido
+    function cambiarPrecio(id, precioActual) {
+      const nuevo = prompt("Introduce el nuevo precio en CUP:", precioActual);
+      if (nuevo !== null && !isNaN(nuevo) && nuevo.trim() !== "") {
+        db.collection("productos").doc(id).update({
+          precio: parseFloat(nuevo)
+        });
+      }
+    }
+
+    // Eliminar Producto
+    function eliminarProducto(id) {
+      if (confirm("¿Seguro que deseas eliminar este producto?")) {
+        db.collection("productos").doc(id).delete();
+      }
+    }
+  </script>
+</body>
+</html>
