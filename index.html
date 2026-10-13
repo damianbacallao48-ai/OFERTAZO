@@ -44,4 +44,262 @@
       <div class="relative z-10 space-y-2">
         <div class="flex flex-wrap gap-2">
           <span class="inline-flex items-center gap-1 bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full animate-badge">
-            🛵 Mensajería fija
+            🛵 Mensajería fija: $250 CUP
+          </span>
+          <span class="inline-flex items-center gap-1 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full">
+            💵 Pago Efectivo CUP
+          </span>
+        </div>
+        <h2 class="text-xl font-black text-white">Directo a la puerta de tu casa</h2>
+        <p class="text-xs text-slate-300">Envíos en Ciego de Ávila • Lunes a Sábado de 9:00 AM a 5:00 PM</p>
+        <div class="inline-flex items-center gap-1.5 bg-slate-900/80 px-2.5 py-1 rounded-xl border border-slate-700 text-[11px] text-amber-300">
+          <i class="fa-solid fa-clock"></i> Entrega estimada: de 2 a 3 horas
+        </div>
+      </div>
+      <div class="absolute -right-4 -bottom-6 opacity-15 text-8xl text-amber-400 pointer-events-none">
+        <i class="fa-solid fa-truck-fast"></i>
+      </div>
+    </div>
+  </section>
+
+  <!-- Selector de Categorías -->
+  <nav class="sticky top-16 z-20 bg-slate-950/95 backdrop-blur-md px-4 py-3 border-b border-slate-900 mt-2">
+    <div class="max-w-xl mx-auto flex gap-2 overflow-x-auto no-scrollbar" id="categories-bar">
+      <button onclick="filtrarCategoria('todos')" class="cat-pill active bg-amber-500 text-slate-950 font-black px-4 py-1.5 rounded-2xl text-xs whitespace-nowrap transition shadow-md shadow-amber-500/20">
+        🔥 Todos
+      </button>
+    </div>
+  </nav>
+
+  <!-- Lista de Productos -->
+  <main class="max-w-xl mx-auto px-4 py-4 space-y-3.5" id="products-list">
+    <div class="text-center py-16 text-slate-500 space-y-3">
+      <i class="fa-solid fa-spinner fa-spin text-3xl text-amber-400"></i>
+      <p class="text-sm font-semibold">Cargando catálogo en tiempo real...</p>
+    </div>
+  </main>
+
+  <!-- Barra Flotante de Carrito -->
+  <div id="cart-bar" class="fixed bottom-4 left-4 right-4 max-w-xl mx-auto hidden z-40">
+    <button onclick="abrirModalCarrito()" class="w-full bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black py-4 px-6 rounded-2xl shadow-2xl shadow-amber-500/20 flex justify-between items-center transition active:scale-95">
+      <span class="flex items-center gap-2.5">
+        <i class="fa-solid fa-basket-shopping text-xl"></i>
+        <span id="cart-count" class="bg-slate-950 text-amber-400 text-xs px-2.5 py-0.5 rounded-full font-black">0</span>
+        <span>Ver mi pedido</span>
+      </span>
+      <span id="cart-total-bar" class="text-lg font-black tracking-tight">$0 CUP</span>
+    </button>
+  </div>
+
+  <!-- Modal Acerca de la Plataforma -->
+  <div id="about-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 w-full max-w-md rounded-3xl p-6 border border-slate-800 space-y-4 shadow-2xl relative">
+      <button onclick="cerrarModalAcerca()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl">✕</button>
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-yellow-300 text-slate-950 flex items-center justify-center text-xl font-black">
+          <i class="fa-solid fa-store"></i>
+        </div>
+        <div>
+          <h3 class="font-black text-lg text-white">OFERTAZO</h3>
+          <p class="text-xs text-amber-400 font-semibold">Catálogo y Envíos a Domicilio</p>
+        </div>
+      </div>
+      <p class="text-xs text-slate-300 leading-relaxed">
+        Plataforma online para compras y pedidos rápidos a domicilio en Ciego de Ávila. Solo contamos con servicio de entrega en la puerta de tu casa.
+      </p>
+      <div class="space-y-2.5 pt-2 border-t border-slate-800 text-xs text-slate-300">
+        <div class="flex items-center gap-2.5">
+          <i class="fa-solid fa-location-dot text-amber-400 text-sm"></i>
+          <span><strong>Ubicación:</strong> Ciego de Ávila</span>
+        </div>
+        <div class="flex items-center gap-2.5">
+          <i class="fa-solid fa-clock text-amber-400 text-sm"></i>
+          <span><strong>Horario:</strong> Lunes a Sábado de 9:00 AM a 5:00 PM</span>
+        </div>
+        <div class="flex items-center gap-2.5">
+          <i class="fa-solid fa-hourglass-half text-amber-400 text-sm"></i>
+          <span><strong>Tiempo de entrega:</strong> De 2 a 3 horas</span>
+        </div>
+        <div class="flex items-center gap-2.5">
+          <i class="fa-solid fa-money-bill-wave text-amber-400 text-sm"></i>
+          <span><strong>Método de pago:</strong> Efectivo CUP al recibir</span>
+        </div>
+        <div class="flex items-center gap-2.5">
+          <i class="fa-solid fa-motorcycle text-amber-400 text-sm"></i>
+          <span><strong>Mensajería:</strong> $250 CUP fijos</span>
+        </div>
+        <div class="flex items-center gap-2.5">
+          <i class="fa-brands fa-whatsapp text-emerald-400 text-sm"></i>
+          <span><strong>WhatsApp:</strong> +53 58960660</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Checkout / Carrito -->
+  <div id="cart-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-slate-900 w-full max-w-lg rounded-t-3xl sm:rounded-3xl max-h-[92vh] flex flex-col border border-slate-800 shadow-2xl">
+      <div class="p-4 border-b border-slate-800 flex justify-between items-center">
+        <h2 class="text-base font-black text-amber-400 flex items-center gap-2">
+          <i class="fa-solid fa-receipt"></i> Resumen de tu Compra
+        </h2>
+        <button onclick="cerrarModalCarrito()" class="text-slate-400 hover:text-white text-xl">✕</button>
+      </div>
+
+      <div class="p-4 overflow-y-auto flex-1 space-y-4">
+        <!-- Lista de Items -->
+        <div id="cart-items" class="space-y-2.5"></div>
+
+        <!-- Formulario del Cliente -->
+        <div class="pt-4 border-t border-slate-800 space-y-3">
+          <div>
+            <label class="text-xs text-slate-400 font-semibold">Nombre de quien recibe:</label>
+            <input id="client-name" type="text" placeholder="Ej. Damian" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm mt-1 focus:border-amber-400 outline-none">
+          </div>
+
+          <div>
+            <label class="text-xs text-slate-400 font-semibold">Dirección exacta en Ciego de Ávila:</label>
+            <input id="client-address" type="text" placeholder="Calle, número, entrecalles y reparto" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm mt-1 focus:border-amber-400 outline-none">
+          </div>
+
+          <div>
+            <label class="text-xs text-slate-400 font-semibold">Modalidad de entrega:</label>
+            <div class="w-full bg-slate-800/80 border border-amber-500/30 rounded-xl p-3 text-xs text-amber-300 flex items-center justify-between mt-1">
+              <span class="flex items-center gap-2"><i class="fa-solid fa-motorcycle text-amber-400 text-sm"></i> Mensajería a domicilio</span>
+              <span class="font-black bg-amber-500/20 px-2 py-0.5 rounded-md">$250 CUP</span>
+            </div>
+          </div>
+
+          <!-- Aviso de tiempo de entrega -->
+          <div class="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-center gap-2 text-xs text-amber-300">
+            <i class="fa-solid fa-clock-rotate-left text-amber-400 text-sm"></i>
+            <span><strong>Tiempo estimado:</strong> El pedido puede demorar de 2 a 3 horas en llegar.</span>
+          </div>
+
+          <div>
+            <label class="text-xs text-slate-400 font-semibold">Método de pago:</label>
+            <div class="w-full bg-slate-800/80 border border-slate-700 rounded-xl p-3 text-xs text-slate-200 flex items-center justify-between mt-1">
+              <span class="flex items-center gap-2"><i class="fa-solid fa-money-bill-wave text-emerald-400"></i> Efectivo (CUP)</span>
+              <span class="text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded-full font-bold">Al recibir</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Desglose Claro de Costos -->
+        <div class="bg-slate-850 p-4 rounded-2xl border border-slate-700 space-y-2 text-xs">
+          <div class="flex justify-between text-slate-300">
+            <span>Subtotal de productos:</span>
+            <span id="calc-subtotal" class="font-bold text-slate-100">$0 CUP</span>
+          </div>
+          <div class="flex justify-between text-slate-300">
+            <span>Costo de domicilio:</span>
+            <span class="font-bold text-amber-400">+$250 CUP</span>
+          </div>
+          <div class="flex justify-between text-base font-black text-white pt-2.5 border-t border-slate-700">
+            <span>Total a pagar en efectivo:</span>
+            <span id="calc-total" class="text-amber-400 font-black">$0 CUP</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-4 border-t border-slate-800 bg-slate-900/90">
+        <button onclick="finalizarYEnviarWhatsApp()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-3.5 px-4 rounded-2xl flex items-center justify-center gap-2 shadow-xl shadow-emerald-900/40 active:scale-95 transition">
+          <i class="fa-brands fa-whatsapp text-2xl"></i> Enviar Pedido a WhatsApp
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const MI_WHATSAPP = "5358960660";
+    const COSTO_MENSAJERIA = 250;
+
+    let productos = [];
+    let categorias = [];
+    let carrito = [];
+    let categoriaSeleccionada = 'todos';
+
+    // Cargar Categorías
+    db.collection("categorias").onSnapshot(snapshot => {
+      categorias = [];
+      snapshot.forEach(doc => categorias.push(doc.data().nombre));
+      renderizarBarraCategorias();
+    });
+
+    // Cargar Productos
+    db.collection("productos").onSnapshot(snapshot => {
+      productos = [];
+      snapshot.forEach(doc => productos.push({ id: doc.id, ...doc.data() }));
+      renderizarProductos();
+    });
+
+    function renderizarBarraCategorias() {
+      const bar = document.getElementById("categories-bar");
+      bar.innerHTML = `
+        <button onclick="filtrarCategoria('todos')" class="cat-pill ${categoriaSeleccionada === 'todos' ? 'active bg-amber-500 text-slate-950 font-black shadow-md shadow-amber-500/20' : 'bg-slate-900 text-slate-400'} px-4 py-1.5 rounded-2xl text-xs whitespace-nowrap transition border border-slate-800">
+          🔥 Todos
+        </button>
+        ${categorias.map(cat => `
+          <button onclick="filtrarCategoria('${cat}')" class="cat-pill ${categoriaSeleccionada === cat ? 'active bg-amber-500 text-slate-950 font-black shadow-md shadow-amber-500/20' : 'bg-slate-900 text-slate-400'} px-4 py-1.5 rounded-2xl text-xs whitespace-nowrap transition border border-slate-800">
+            ${cat}
+          </button>
+        `).join('')}
+      `;
+    }
+
+    function filtrarCategoria(cat) {
+      categoriaSeleccionada = cat;
+      renderizarBarraCategorias();
+      renderizarProductos();
+    }
+
+    function renderizarProductos() {
+      const contenedor = document.getElementById("products-list");
+      const filtrados = categoriaSeleccionada === 'todos'
+        ? productos
+        : productos.filter(p => p.categoria === categoriaSeleccionada);
+
+      if (filtrados.length === 0) {
+        contenedor.innerHTML = `<div class="text-center py-12 text-slate-500 text-sm">No hay productos disponibles por ahora.</div>`;
+        return;
+      }
+
+      contenedor.innerHTML = filtrados.map(prod => `
+        <div class="bg-slate-900/90 rounded-3xl p-3.5 flex gap-3.5 border border-slate-800/80 shadow-md ${!prod.disponible ? 'opacity-40' : ''}">
+          <img src="${prod.imagen || 'https://via.placeholder.com/150'}" class="w-24 h-24 object-cover rounded-2xl bg-slate-850" alt="${prod.nombre}">
+          <div class="flex-1 flex flex-col justify-between">
+            <div>
+              <span class="text-[10px] font-bold text-amber-400/80 uppercase tracking-wider">${prod.categoria || 'Producto'}</span>
+              <h3 class="font-bold text-slate-100 text-sm leading-snug">${prod.nombre}</h3>
+              <p class="text-xs text-slate-400 line-clamp-2 mt-0.5">${prod.descripcion || ''}</p>
+            </div>
+            <div class="flex items-center justify-between mt-2 pt-1">
+              <span class="text-amber-400 font-black text-base">$${prod.precio} CUP</span>
+              ${prod.disponible 
+                ? `<button onclick="agregarAlCarrito('${prod.id}')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 px-3.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 transition active:scale-95 shadow-md shadow-amber-500/10">
+                    <i class="fa-solid fa-plus"></i> Agregar
+                   </button>`
+                : `<span class="text-red-400 text-xs font-bold bg-red-950/40 px-2 py-1 rounded-lg border border-red-900/50">Agotado</span>`
+              }
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function agregarAlCarrito(id) {
+      const prod = productos.find(p => p.id === id);
+      const existe = carrito.find(item => item.id === id);
+      if (existe) {
+        existe.cantidad += 1;
+      } else {
+        carrito.push({ ...prod, cantidad: 1 });
+      }
+      actualizarTotales();
+    }
+
+    function cambiarCantidad(id, delta) {
+      const item = carrito.find(p => p.id === id);
+      if (!item) return;
+      item.cantidad += delta;
+      if (item.cantidad <= 0) carrito
