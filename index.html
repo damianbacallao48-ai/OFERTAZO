@@ -3,7 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Catálogo Digital</title>
+  
+  <!-- TÍTULO Y METADATOS PARA WHATSAPP / FACEBOOK -->
+  <title>OFERTAZO - Catálogo Digital Ciego de Ávila</title>
+  <meta name="description" content="Pide fácil, rápido y a domicilio en Ciego de Ávila. Menú digital interactivo en CUP y USD.">
+
+  <!-- ETIQUETAS OPEN GRAPH PARA TARJETA DE WHATSAPP -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="🔥 Catálogo Digital & Pedidos Directos">
+  <meta property="og:description" content="Haz tu pedido a domicilio en Ciego de Ávila. Entregas rápidas y pagos en efectivo CUP o USD.">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1542838132-92c53300491e?w=800&auto=format&fit=crop&q=80">
+  <meta property="og:image:width" content="800">
+  <meta property="og:image:height" content="500">
+
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -53,17 +65,14 @@
       </div>
       
       <div class="flex items-center gap-1.5">
-        <!-- BOTÓN DE RETORNO A SU PROPIA ADMINISTRACIÓN -->
         <a id="btn-ir-admin" href="#" title="Acceso de Administración" class="bg-slate-900 hover:bg-slate-800 text-amber-400 w-8 h-8 rounded-xl text-xs font-bold border border-amber-500/40 flex items-center justify-center active:scale-95 transition shadow-sm">
           <i class="fa-solid fa-gear"></i>
         </a>
 
-        <!-- Botón para crear nuevo catálogo -->
         <a href="registro.html" class="bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-2.5 py-1.5 rounded-xl text-[10px] font-black border border-emerald-400/40 flex items-center gap-1 active:scale-95 shadow-md">
           <i class="fa-solid fa-rocket text-amber-300"></i> <span>Crear</span>
         </a>
 
-        <!-- Selector de moneda -->
         <button onclick="alternarMoneda()" class="bg-slate-900 text-amber-300 px-2 py-1.5 rounded-xl text-[11px] font-black border border-amber-500/40 flex items-center gap-1 active:scale-95 shadow-sm">
           <i class="fa-solid fa-coins text-cyan-400"></i> <span id="label-moneda-actual">CUP</span>
         </button>
@@ -310,12 +319,10 @@
 
         if (!negocioActual) throw new Error("No se pudo cargar la tienda.");
 
-        // CONFIGURAR ENLACE DINÁMICO AL PANEL DE ADMINISTRACIÓN DE ESTA TIENDA
         const panelUrl = `panel.html?tienda=${negocioActual.slug}`;
         document.getElementById("btn-ir-admin").href = panelUrl;
         document.getElementById("link-pie-admin").href = panelUrl;
 
-        // Tomar la tasa de cambio individual del negocio
         tasaUSD = parseFloat(negocioActual.tasa_usd) || 320;
         document.getElementById("badge-tasa").innerText = `1 USD = ${tasaUSD} CUP`;
 
@@ -345,7 +352,6 @@
           box.classList.remove("hidden");
         }
 
-        // Regla de corte
         const ahora = new Date();
         const fechaVence = negocioActual.fecha_vencimiento ? new Date(negocioActual.fecha_vencimiento) : null;
         const expiradoPorFecha = (fechaVence && fechaVence < ahora);
@@ -559,18 +565,24 @@
     function abrirCompartir() { document.getElementById("share-modal").classList.remove("hidden"); }
     function cerrarCompartir() { document.getElementById("share-modal").classList.add("hidden"); }
 
+    function obtenerEnlaceLimpio() {
+      const base = window.location.origin + window.location.pathname;
+      return `${base}?tienda=${negocioActual ? negocioActual.slug : 'ofertazo'}`;
+    }
+
     function compartirWA() {
       const name = negocioActual ? negocioActual.nombre : 'OFERTAZO';
-      const txt = encodeURIComponent(`🔥 ¡Pide en ${name}! Catálogo digital directo:\n` + window.location.href);
+      const enlaceLimpio = obtenerEnlaceLimpio();
+      const txt = encodeURIComponent(`🔥 ¡Pide en ${name}! Catálogo digital directo:\n${enlaceLimpio}`);
       window.open("https://api.whatsapp.com/send?text=" + txt, '_blank');
     }
 
     function compartirFB() {
-      window.open("https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(window.location.href), '_blank');
+      window.open("https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(obtenerEnlaceLimpio()), '_blank');
     }
 
     function copiarLink() {
-      navigator.clipboard.writeText(window.location.href).then(() => {
+      navigator.clipboard.writeText(obtenerEnlaceLimpio()).then(() => {
         const b = document.getElementById("btn-copy");
         b.innerHTML = '<i class="fa-solid fa-check text-emerald-400"></i> ¡Copiado!';
         setTimeout(() => { b.innerHTML = '<i class="fa-solid fa-link text-amber-400"></i> Copiar Enlace'; }, 2000);
