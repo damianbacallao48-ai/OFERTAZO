@@ -28,17 +28,23 @@
 </head>
 <body class="bg-[#05070e] text-slate-100 min-h-screen pb-32 font-sans antialiased selection:bg-amber-500 selection:text-black">
 
-  <!-- Header Superior Dinámico -->
+  <!-- Portada / Cabecera con imagen si existe -->
+  <div id="biz-portada-box" class="w-full max-w-xl mx-auto h-28 hidden overflow-hidden relative">
+    <img id="biz-portada" class="w-full h-full object-cover" alt="Portada">
+    <div class="absolute inset-0 bg-gradient-to-t from-[#05070e] via-transparent to-transparent"></div>
+  </div>
+
+  <!-- Header Superior -->
   <header class="bg-[#080d1a]/95 sticky top-0 z-30 px-3.5 py-2.5 border-b border-amber-500/25 shadow-lg backdrop-blur-md">
     <div class="max-w-xl mx-auto flex justify-between items-center">
       <div class="flex items-center gap-2">
-        <div id="biz-icon-box" class="w-9 h-9 rounded-xl bg-amber-500 flex items-center justify-center text-slate-950 text-base font-black shadow-md overflow-hidden">
+        <div id="biz-icon-box" class="w-9 h-9 rounded-xl bg-amber-500 flex items-center justify-center text-slate-950 text-base font-black shadow-md overflow-hidden shrink-0">
           <i class="fa-solid fa-store" id="biz-default-icon"></i>
           <img id="biz-logo" class="w-full h-full object-cover hidden" alt="Logo">
         </div>
         <div>
-          <h1 id="biz-header-name" class="text-base font-black tracking-wider text-amber-400 font-cyber">CARGANDO...</h1>
-          <p id="biz-header-type" class="text-[10px] text-slate-400 font-semibold">Ciego de Ávila • Delivery</p>
+          <h1 id="biz-header-name" class="text-base font-black tracking-wider text-amber-400 font-cyber leading-tight">CARGANDO...</h1>
+          <p id="biz-header-type" class="text-[10px] text-slate-400 font-semibold leading-tight">Ciego de Ávila • Delivery</p>
         </div>
       </div>
       
@@ -81,7 +87,7 @@
     <div class="max-w-xl mx-auto flex gap-1.5 overflow-x-auto no-scrollbar" id="categories-bar"></div>
   </nav>
 
-  <!-- Contenedor Principal (Productos o Bloqueo con Datos de Transfermóvil) -->
+  <!-- Contenedor Principal (Productos o Bloqueo) -->
   <main class="max-w-xl mx-auto px-3 py-3 relative z-10">
     
     <!-- PANTALLA DE BLOQUEO POR VENCIMIENTO -->
@@ -96,7 +102,6 @@
         </p>
       </div>
 
-      <!-- Cuadro de Pago para el dueño -->
       <div class="bg-slate-900 border border-amber-500/30 rounded-3xl p-5 text-left space-y-3 max-w-sm mx-auto shadow-2xl">
         <h3 class="text-xs font-black text-amber-400 uppercase flex items-center gap-1.5">
           <i class="fa-solid fa-mobile-screen text-cyan-400"></i> Pago por Transfermóvil
@@ -243,22 +248,8 @@
     let categorias = [];
     let carrito = [];
     let categoriaSeleccionada = 'todos';
-    let tasaUSD = 320;
+    let tasaUSD = 320; // Se sobreescribe con la tasa propia del negocio
     let monedaActual = 'CUP';
-
-    async function cargarConfiguracion() {
-      try {
-        const { data } = await supabaseClient
-          .from('configuracion')
-          .select('*')
-          .eq('clave', 'tasa_usd')
-          .single();
-        if (data && data.valor) {
-          tasaUSD = parseFloat(data.valor) || 320;
-          document.getElementById("badge-tasa").innerText = `1 USD = ${tasaUSD} CUP`;
-        }
-      } catch (e) {}
-    }
 
     async function cargarNegocio() {
       try {
@@ -275,7 +266,11 @@
           negocioActual = data;
         }
 
-        if (!negocioActual) throw new Error("No se pudo cargar la información de la tienda.");
+        if (!negocioActual) throw new Error("No se pudo cargar la tienda.");
+
+        // Tomar la tasa de cambio individual del negocio
+        tasaUSD = parseFloat(negocioActual.tasa_usd) || 320;
+        document.getElementById("badge-tasa").innerText = `1 USD = ${tasaUSD} CUP`;
 
         document.title = `${negocioActual.nombre} - Catálogo Digital`;
         document.getElementById("biz-header-name").innerText = negocioActual.nombre;
@@ -297,9 +292,13 @@
           document.getElementById("biz-default-icon").classList.add("hidden");
         }
 
-        // ==========================================
-        // REGLA DE CORTE: FECHA DE VENCIMIENTO Y ESTADO
-        // ==========================================
+        if (negocioActual.portada_url) {
+          const box = document.getElementById("biz-portada-box");
+          document.getElementById("biz-portada").src = negocioActual.portada_url;
+          box.classList.remove("hidden");
+        }
+
+        // Regla de corte
         const ahora = new Date();
         const fechaVence = negocioActual.fecha_vencimiento ? new Date(negocioActual.fecha_vencimiento) : null;
         const expiradoPorFecha = (fechaVence && fechaVence < ahora);
@@ -335,7 +334,6 @@
     }
 
     async function cargarCatalogo() {
-      await cargarConfiguracion();
       const activo = await cargarNegocio();
       if (!activo) return;
 
