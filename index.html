@@ -238,7 +238,11 @@
             <div>
               <span class="text-[10px] font-bold text-amber-400 uppercase">${p.categoria || 'Producto'}</span>
               <h3 class="font-bold text-slate-100 text-sm leading-snug">${p.nombre}</h3>
-              <p class="text-xs text-slate-400 line-clamp-2 mt-0.5">${p.descripcion \vert{}\vert{} ''}</p> </div> <div class="flex items-center justify-between mt-2 pt-1"> <span class="text-amber-400 font-black text-base">$${Number(p.precio).toLocaleString()} CUP</span>${p.disponible 
+              <p class="text-xs text-slate-400 line-clamp-2 mt-0.5">${p.descripcion || ''}</p>
+            </div>
+            <div class="flex items-center justify-between mt-2 pt-1">
+              <span class="text-amber-400 font-black text-base">$${Number(p.precio).toLocaleString()} CUP</span>
+              ${p.disponible 
                 ? `<button onclick="agregar('${p.id}')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 px-3.5 py-1.5 rounded-xl text-xs font-black active:scale-95">
                     + Agregar
                    </button>`
@@ -315,7 +319,8 @@
       c.innerHTML = carrito.map(i => `
         <div class="flex items-center justify-between bg-slate-800 p-2.5 rounded-xl border border-slate-700 text-xs">
           <div>
-            <p class="font-bold text-white">${i.nombre}</p> <p class="text-amber-400 font-bold">$${(Number(i.precio) * i.cantidad).toLocaleString()} CUP</p>
+            <p class="font-bold text-white">${i.nombre}</p>
+            <p class="text-amber-400 font-bold">$${(Number(i.precio) * i.cantidad).toLocaleString()} CUP</p>
           </div>
           <div class="flex items-center gap-2">
             <button onclick="cambiarCantidad('${i.id}', -1)" class="w-6 h-6 bg-slate-750 text-white rounded font-bold">-</button>
@@ -339,4 +344,25 @@
       let msg = `⚡📦 *¡NUEVO PEDIDO OFERTAZO!* 📦⚡\n`;
       msg += `📍 *Ciego de Ávila*\n\n`;
       msg += `👤 *Cliente:* ${nombre}\n`;
-      msg += `🏠 *Dirección:* ${direccion
+      msg += `🏠 *Dirección:* ${direccion}\n`;
+      msg += `🛵 *Entrega:* A Domicilio\n`;
+      msg += `💵 *Método de Pago:* Efectivo CUP (al recibir)\n`;
+      msg += `⏱️ *Tiempo estimado de entrega:* 2 a 3 horas\n\n`;
+      msg += `📋 *DETALLE DE PRODUCTOS:*\n`;
+
+      carrito.forEach(i => {
+        msg += `  ▪️ ${i.cantidad}x ${i.nombre} ➔ $${(Number(i.precio) * i.cantidad).toLocaleString()} CUP\n`;
+      });
+
+      msg += `\n━━━━━━━━━━━━━━━━━━━\n`;
+      msg += `🛒 *Subtotal Productos:* $${subtotal.toLocaleString()} CUP\n`;
+      msg += `🛵 *Costo Domicilio:* $${COSTO_MENSAJERIA} CUP\n`;
+      msg += `💰 *TOTAL A PAGAR:* $${totalGeneral.toLocaleString()} CUP\n`;
+      msg += `━━━━━━━━━━━━━━━━━━━\n\n`;
+      msg += `⚠️ _El pedido puede demorar de 2 a 3 horas en llegar a su destino._`;
+
+      window.open(`https://wa.me/${MI_WHATSAPP}?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+  </script>
+</body>
+</html>
