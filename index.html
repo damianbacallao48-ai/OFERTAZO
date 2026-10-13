@@ -3,10 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OFERTAZO - Catálogo Ciego de Ávila</title>
+  <title>OFERTAZO - Catálogo Digital Ciego de Ávila</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <script src="firebase-config.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -17,7 +16,7 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen pb-36 font-sans antialiased">
 
-  <!-- Header -->
+  <!-- Header Superior -->
   <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-30 px-4 py-3 shadow-xl">
     <div class="max-w-xl mx-auto flex justify-between items-center">
       <div class="flex items-center gap-2.5">
@@ -60,22 +59,13 @@
     </div>
   </section>
 
-  <!-- Barra Categorías -->
+  <!-- Barra de Categorías -->
   <nav class="sticky top-14 z-20 bg-slate-950 px-4 py-3 border-b border-slate-900 mt-2">
-    <div class="max-w-xl mx-auto flex gap-2 overflow-x-auto no-scrollbar" id="categories-bar">
-      <button onclick="filtrarCategoria('todos')" class="cat-pill active bg-amber-500 text-slate-950 font-black px-4 py-1.5 rounded-2xl text-xs whitespace-nowrap">
-        🔥 Todos
-      </button>
-    </div>
+    <div class="max-w-xl mx-auto flex gap-2 overflow-x-auto no-scrollbar" id="categories-bar"></div>
   </nav>
 
   <!-- Lista de Productos -->
-  <main class="max-w-xl mx-auto px-4 py-4 space-y-3.5" id="products-list">
-    <div class="text-center py-16 text-slate-500 text-sm">
-      <i class="fa-solid fa-spinner fa-spin text-2xl text-amber-400 mb-2"></i>
-      <p>Cargando catálogo...</p>
-    </div>
-  </main>
+  <main class="max-w-xl mx-auto px-4 py-4 space-y-3.5" id="products-list"></main>
 
   <!-- Barra Carrito Flotante -->
   <div id="cart-bar" class="fixed bottom-4 left-4 right-4 max-w-xl mx-auto hidden z-40">
@@ -181,21 +171,240 @@
   </div>
 
   <script>
-    const MI_WHATSAPP = "5358960660";
-    const COSTO_MENSAJERIA = 250;
+    var MI_WHATSAPP = "5358960660";
+    var COSTO_MENSAJERIA = 250;
 
-    // Productos de respaldo directo (si Firebase se demora o falla por red móvil)
-    const PRODUCTOS_BASE = [
-      { id: "p1", nombre: "Frijol (1kg)", precio: 1000, categoria: "General", disponible: true, descripcion: "Grano seleccionado de alta calidad.", imagen: "https://images.unsplash.com/photo-1588615419957-61c40fcae475?w=300" },
-      { id: "p2", nombre: "Refresco lata", precio: 500, categoria: "General", disponible: true, descripcion: "Lata fría lista para entrega.", imagen: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=300" },
-      { id: "p3", nombre: "Arroz (1kg)", precio: 880, categoria: "Platos", disponible: true, descripcion: "Arroz blanco de primera calidad.", imagen: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=300" },
-      { id: "p4", nombre: "Mantequilla", precio: 950, categoria: "General", disponible: true, descripcion: "Mantequilla fresca para el hogar.", imagen: "https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?w=300" }
+    // Productos iniciales precargados (se muestran instantáneamente sin esperar respuesta de red)
+    var productos = [
+      { id: "p1", nombre: "Frijol(1kg)", precio: 1000, categoria: "GENERAL", disponible: true, descripcion: "Grano seleccionado de alta calidad.", imagen: "https://images.unsplash.com/photo-1588615419957-61c40fcae475?w=300" },
+      { id: "p2", nombre: "Refresco lata", precio: 500, categoria: "GENERAL", disponible: true, descripcion: "Lata fría lista para entrega.", imagen: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=300" },
+      { id: "p3", nombre: "Arroz (1kg)", precio: 880, categoria: "PLATOS", disponible: true, descripcion: "Arroz blanco de primera calidad.", imagen: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=300" },
+      { id: "p4", nombre: "Mantequilla", precio: 950, categoria: "GENERAL", disponible: true, descripcion: "Mantequilla fresca para el hogar.", imagen: "https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?w=300" }
     ];
 
-    let productos = [];
-    let categorias = ["General", "Platos"];
-    let carrito = [];
-    let categoriaSeleccionada = 'todos';
-    let datosCargados = false;
+    var categorias = ["GENERAL", "PLATOS"];
+    var carrito = [];
+    var categoriaSeleccionada = 'todos';
 
-    //
+    // 1. Dibujar todo en pantalla inmediatamente
+    renderizarCategorias();
+    renderizarProductos();
+
+    // 2. Intentar actualizar desde Firebase en segundo plano si hay conexión disponible
+    try {
+      if (typeof db !== 'undefined') {
+        db.collection("productos").get().then(function(snap) {
+          if (!snap.empty) {
+            productos = [];
+            snap.forEach(function(doc) {
+              productos.push(Object.assign({ id: doc.id }, doc.data()));
+            });
+            renderizarProductos();
+          }
+        }).catch(function(e) {
+          console.log("Modo offline activo");
+        });
+
+        db.collection("categorias").get().then(function(snap) {
+          if (!snap.empty) {
+            categorias = [];
+            snap.forEach(function(doc) {
+              var d = doc.data();
+              if (d && d.nombre) categorias.push(d.nombre);
+            });
+            renderizarCategorias();
+          }
+        }).catch(function(e) {});
+      }
+    } catch (e) {
+      console.log("Firebase omitido");
+    }
+
+    function renderizarCategorias() {
+      var bar = document.getElementById("categories-bar");
+      if (!bar) return;
+      var html = '<button onclick="filtrarCategoria(\'todos\')" class="cat-pill ' + 
+        (categoriaSeleccionada.toLowerCase() === 'todos' ? 'active bg-amber-500 text-slate-950 font-black' : 'bg-slate-900 text-slate-400') + 
+        ' px-4 py-1.5 rounded-2xl text-xs whitespace-nowrap transition border border-slate-800">🔥 Todos</button>';
+      
+      categorias.forEach(function(cat) {
+        html += '<button onclick="filtrarCategoria(\'' + cat + '\')" class="cat-pill ' + 
+          (categoriaSeleccionada.toLowerCase() === cat.toLowerCase() ? 'active bg-amber-500 text-slate-950 font-black' : 'bg-slate-900 text-slate-400') + 
+          ' px-4 py-1.5 rounded-2xl text-xs whitespace-nowrap transition border border-slate-800">' + cat + '</button>';
+      });
+      bar.innerHTML = html;
+    }
+
+    function filtrarCategoria(cat) {
+      categoriaSeleccionada = cat;
+      renderizarCategorias();
+      renderizarProductos();
+    }
+
+    function renderizarProductos() {
+      var cont = document.getElementById("products-list");
+      if (!cont) return;
+
+      var list = (categoriaSeleccionada.toLowerCase() === 'todos')
+        ? productos
+        : productos.filter(function(p) {
+            return (p.categoria || '').trim().toLowerCase() === categoriaSeleccionada.trim().toLowerCase();
+          });
+
+      if (list.length === 0) {
+        cont.innerHTML = '<div class="text-center py-14 text-slate-500 text-xs">No hay productos en esta categoría.</div>';
+        return;
+      }
+
+      var html = '';
+      list.forEach(function(p) {
+        var precioNum = Number(p.precio || 0).toLocaleString();
+        var imagenSrc = p.imagen || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=200';
+        var catName = p.categoria || 'GENERAL';
+        var opacidad = (p.disponible === false) ? 'opacity-40' : '';
+        
+        var botonAccion = (p.disponible !== false)
+          ? '<button onclick="agregar(\'' + p.id + '\')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 px-3.5 py-1.5 rounded-xl text-xs font-black active:scale-95 transition">+ Agregar</button>'
+          : '<span class="text-red-400 text-xs font-bold">Agotado</span>';
+
+        html += '<div class="bg-slate-900 rounded-3xl p-3.5 flex gap-3.5 border border-slate-800 ' + opacidad + '">' +
+          '<img src="' + imagenSrc + '" class="w-24 h-24 object-cover rounded-2xl bg-slate-800 border border-slate-700/50" alt="' + p.nombre + '">' +
+          '<div class="flex-1 flex flex-col justify-between">' +
+            '<div>' +
+              '<span class="text-[10px] font-bold text-amber-400 uppercase tracking-wider">' + catName + '</span>' +
+              '<h3 class="font-bold text-slate-100 text-sm leading-snug">' + p.nombre + '</h3>' +
+              '<p class="text-xs text-slate-400 line-clamp-2 mt-0.5">' + (p.descripcion || '') + '</p>' +
+            '</div>' +
+            '<div class="flex items-center justify-between mt-2 pt-1 border-t border-slate-800/60">' +
+              '<span class="text-amber-400 font-black text-base">$' + precioNum + ' CUP</span>' +
+              botonAccion +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      });
+
+      cont.innerHTML = html;
+    }
+
+    function agregar(id) {
+      var prod = productos.find(function(p) { return p.id === id; });
+      var existe = carrito.find(function(item) { return item.id === id; });
+      if (existe) {
+        existe.cantidad += 1;
+      } else {
+        carrito.push(Object.assign({}, prod, { cantidad: 1 }));
+      }
+      actualizarTotales();
+    }
+
+    function cambiarCantidad(id, delta) {
+      var item = carrito.find(function(p) { return p.id === id; });
+      if (!item) return;
+      item.cantidad += delta;
+      if (item.cantidad <= 0) {
+        carrito = carrito.filter(function(p) { return p.id !== id; });
+      }
+      actualizarTotales();
+      renderizarItemsCarrito();
+    }
+
+    function actualizarTotales() {
+      var totalCount = carrito.reduce(function(sum, item) { return sum + item.cantidad; }, 0);
+      var subtotal = carrito.reduce(function(sum, item) { return sum + (Number(item.precio || 0) * item.cantidad); }, 0);
+      var totalFinal = subtotal + COSTO_MENSAJERIA;
+
+      var bar = document.getElementById("cart-bar");
+      if (totalCount > 0) {
+        bar.classList.remove("hidden");
+        document.getElementById("cart-count").innerText = totalCount;
+        document.getElementById("cart-total-bar").innerText = '$' + totalFinal.toLocaleString() + ' CUP';
+      } else {
+        bar.classList.add("hidden");
+        cerrarCarrito();
+      }
+
+      document.getElementById("calc-subtotal").innerText = '$' + subtotal.toLocaleString() + ' CUP';
+      document.getElementById("calc-total").innerText = '$' + totalFinal.toLocaleString() + ' CUP';
+    }
+
+    function abrirCarrito() { document.getElementById("cart-modal").classList.remove("hidden"); renderizarItemsCarrito(); actualizarTotales(); }
+    function cerrarCarrito() { document.getElementById("cart-modal").classList.add("hidden"); }
+    function abrirAcerca() { document.getElementById("about-modal").classList.remove("hidden"); }
+    function cerrarAcerca() { document.getElementById("about-modal").classList.add("hidden"); }
+    function abrirCompartir() { document.getElementById("share-modal").classList.remove("hidden"); }
+    function cerrarCompartir() { document.getElementById("share-modal").classList.add("hidden"); }
+
+    function compartirWA() {
+      var txt = encodeURIComponent("¡Pide en OFERTAZO! Catálogo digital en vivo en Ciego de Ávila:\n" + window.location.href);
+      window.open("https://api.whatsapp.com/send?text=" + txt, '_blank');
+    }
+
+    function compartirFB() {
+      window.open("https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(window.location.href), '_blank');
+    }
+
+    function copiarLink() {
+      navigator.clipboard.writeText(window.location.href).then(function() {
+        var b = document.getElementById("btn-copy");
+        b.innerHTML = '<i class="fa-solid fa-check text-emerald-400"></i> ¡Copiado!';
+        setTimeout(function() { b.innerHTML = '<i class="fa-solid fa-link text-amber-400"></i> Copiar Enlace'; }, 2000);
+      });
+    }
+
+    function renderizarItemsCarrito() {
+      var c = document.getElementById("cart-items");
+      if (carrito.length === 0) { cerrarCarrito(); return; }
+      var html = '';
+      carrito.forEach(function(i) {
+        var subItem = (Number(i.precio || 0) * i.cantidad).toLocaleString();
+        html += '<div class="flex items-center justify-between bg-slate-800 p-2.5 rounded-xl border border-slate-700 text-xs">' +
+          '<div>' +
+            '<p class="font-bold text-white">' + i.nombre + '</p>' +
+            '<p class="text-amber-400 font-bold">$' + subItem + ' CUP</p>' +
+          '</div>' +
+          '<div class="flex items-center gap-2">' +
+            '<button onclick="cambiarCantidad(\'' + i.id + '\', -1)" class="w-6 h-6 bg-slate-700 text-white rounded font-bold">-</button>' +
+            '<span class="w-4 text-center font-bold">' + i.cantidad + '</span>' +
+            '<button onclick="cambiarCantidad(\'' + i.id + '\', 1)" class="w-6 h-6 bg-amber-500 text-slate-950 rounded font-bold">+</button>' +
+          '</div>' +
+        '</div>';
+      });
+      c.innerHTML = html;
+    }
+
+    function enviarPedido() {
+      var nombre = document.getElementById("client-name").value.trim();
+      var direccion = document.getElementById("client-address").value.trim();
+
+      if (!nombre) { alert("Por favor escribe tu nombre."); return; }
+      if (!direccion) { alert("Por favor escribe la dirección de entrega."); return; }
+
+      var subtotal = carrito.reduce(function(sum, item) { return sum + (Number(item.precio || 0) * item.cantidad); }, 0);
+      var totalGeneral = subtotal + COSTO_MENSAJERIA;
+
+      var msg = "⚡📦 *¡NUEVO PEDIDO OFERTAZO!* 📦⚡\n" +
+        "📍 *Ciego de Ávila*\n\n" +
+        "👤 *Cliente:* " + nombre + "\n" +
+        "🏠 *Dirección:* " + direccion + "\n" +
+        "🛵 *Entrega:* A Domicilio\n" +
+        "💵 *Método de Pago:* Efectivo CUP (al recibir)\n" +
+        "⏱️ *Tiempo estimado de entrega:* 2 a 3 horas\n\n" +
+        "📋 *DETALLE DE PRODUCTOS:*\n";
+
+      carrito.forEach(function(i) {
+        var subItem = (Number(i.precio || 0) * i.cantidad).toLocaleString();
+        msg += "  ▪️ " + i.cantidad + "x " + i.nombre + " ➔ $" + subItem + " CUP\n";
+      });
+
+      msg += "\n━━━━━━━━━━━━━━━━━━━\n" +
+        "🛒 *Subtotal Productos:* $" + subtotal.toLocaleString() + " CUP\n" +
+        "🛵 *Costo Domicilio:* $" + COSTO_MENSAJERIA + " CUP\n" +
+        "💰 *TOTAL A PAGAR:* $" + totalGeneral.toLocaleString() + " CUP\n" +
+        "━━━━━━━━━━━━━━━━━━━\n\n" +
+        "⚠️ _El pedido puede demorar de 2 a 3 horas en llegar a su destino._";
+
+      window.open("https://wa.me/" + MI_WHATSAPP + "?text=" + encodeURIComponent(msg), '_blank');
+    }
+  </script>
+</body>
+</html>
