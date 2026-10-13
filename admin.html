@@ -3,119 +3,145 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Panel de Administración - Menú</title>
-  <!-- Tailwind CSS -->
+  <title>Panel Administrativo - OFERTAZO</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="firebase-config.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-gray-950 text-gray-100 min-h-screen p-4 pb-16">
+<body class="bg-slate-950 text-slate-100 min-h-screen p-4 pb-20 font-sans">
 
-  <!-- Pantalla de Login -->
-  <div id="login-section" class="max-w-md mx-auto mt-16 bg-gray-900 p-6 rounded-2xl border border-gray-800 shadow-2xl">
+  <!-- Login -->
+  <div id="login-section" class="max-w-md mx-auto mt-16 bg-slate-900/90 backdrop-blur p-6 rounded-3xl border border-slate-800 shadow-2xl">
     <div class="text-center mb-6">
-      <div class="w-12 h-12 bg-amber-500 text-gray-950 rounded-xl flex items-center justify-center mx-auto text-xl font-bold mb-2">
-        <i class="fa-solid fa-lock"></i>
+      <div class="w-14 h-14 bg-gradient-to-tr from-amber-500 to-yellow-300 text-slate-950 rounded-2xl flex items-center justify-center mx-auto text-2xl font-black mb-3 shadow-lg shadow-amber-500/20">
+        <i class="fa-solid fa-store"></i>
       </div>
-      <h2 class="text-xl font-bold">Acceso Administrativo</h2>
-      <p class="text-xs text-gray-400">Control de inventario en tiempo real</p>
+      <h2 class="text-2xl font-black text-amber-400">OFERTAZO ADMIN</h2>
+      <p class="text-xs text-slate-400 mt-1">Gestión rápida desde tu móvil</p>
     </div>
     
     <div class="space-y-4">
       <div>
-        <label class="text-xs text-gray-400 font-semibold">Correo de Administrador</label>
-        <input id="login-email" type="email" placeholder="admin@menu.com" class="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 text-sm mt-1 focus:border-amber-400 outline-none">
+        <label class="text-xs text-slate-400 font-semibold">Correo de Administrador</label>
+        <input id="login-email" type="email" placeholder="admin@menu.com" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm mt-1 focus:border-amber-400 outline-none">
       </div>
       <div>
-        <label class="text-xs text-gray-400 font-semibold">Contraseña</label>
-        <input id="login-password" type="password" placeholder="••••••••" class="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 text-sm mt-1 focus:border-amber-400 outline-none">
+        <label class="text-xs text-slate-400 font-semibold">Contraseña</label>
+        <input id="login-password" type="password" placeholder="••••••••" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm mt-1 focus:border-amber-400 outline-none">
       </div>
-      <button onclick="iniciarSesion()" class="w-full bg-amber-500 hover:bg-amber-400 text-gray-950 font-bold py-3 rounded-xl transition">
+      <button onclick="iniciarSesion()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-3.5 rounded-xl transition shadow-lg shadow-amber-500/20">
         Entrar al Panel
       </button>
       <p id="login-error" class="text-red-400 text-xs text-center hidden"></p>
     </div>
   </div>
 
-  <!-- Panel Principal (Oculto hasta autenticarse) -->
+  <!-- Panel -->
   <div id="admin-panel" class="max-w-2xl mx-auto hidden space-y-6">
-    
-    <!-- Barra Superior -->
-    <header class="flex justify-between items-center bg-gray-900 p-4 rounded-2xl border border-gray-800">
+    <!-- Barra Superior con Botón Directo al Menú -->
+    <header class="flex flex-col sm:flex-row sm:items-center justify-between bg-slate-900 p-4 rounded-2xl border border-slate-800 gap-3 shadow-lg">
       <div>
-        <h1 class="text-lg font-bold text-amber-400 flex items-center gap-2">
+        <h1 class="text-lg font-black text-amber-400 flex items-center gap-2">
           <i class="fa-solid fa-sliders"></i> Panel de Control
         </h1>
-        <p class="text-xs text-gray-400" id="user-display">Conectado</p>
+        <p class="text-xs text-slate-400" id="user-display">Conectado</p>
       </div>
-      <button onclick="cerrarSesion()" class="bg-gray-800 hover:bg-red-950 text-red-400 px-3 py-1.5 rounded-lg text-xs font-semibold border border-red-900/40">
-        <i class="fa-solid fa-right-from-bracket"></i> Salir
-      </button>
+
+      <div class="flex items-center gap-2">
+        <!-- Acceso directo a la tienda en vivo -->
+        <a href="index.html" target="_blank" class="bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 text-slate-950 px-3.5 py-2 rounded-xl text-xs font-black flex items-center gap-1.5 shadow-md shadow-amber-500/20 active:scale-95 transition">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i> Ver Tienda en Vivo
+        </a>
+
+        <!-- Botón de Salir -->
+        <button onclick="cerrarSesion()" class="bg-red-950/40 text-red-400 px-3 py-2 rounded-xl text-xs font-bold border border-red-900/60 hover:bg-red-900 transition">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
+      </div>
     </header>
 
-    <!-- Formulario para Añadir Nuevo Producto -->
-    <section class="bg-gray-900 p-5 rounded-2xl border border-gray-800 shadow-md">
-      <h2 class="text-sm font-bold text-gray-200 mb-3 flex items-center gap-2">
-        <i class="fa-solid fa-plus-circle text-amber-400"></i> Agregar Nuevo Plato / Bebida
+    <!-- Gestionar Categorías -->
+    <section class="bg-slate-900 p-5 rounded-3xl border border-slate-800">
+      <h2 class="text-sm font-bold text-slate-200 mb-3 flex items-center gap-2">
+        <i class="fa-solid fa-tags text-amber-400"></i> Agregar Nueva Categoría
       </h2>
-      <form id="add-product-form" onsubmit="guardarProducto(event)" class="space-y-3">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label class="text-xs text-gray-400">Nombre del producto</label>
-            <input id="prod-name" required type="text" placeholder="Ej. Lomo Ahumado" class="w-full bg-gray-800 border border-gray-700 rounded-xl p-2.5 text-sm mt-1 focus:border-amber-400 outline-none">
-          </div>
-          <div>
-            <label class="text-xs text-gray-400">Precio (CUP)</label>
-            <input id="prod-price" required type="number" placeholder="Ej. 1350" class="w-full bg-gray-800 border border-gray-700 rounded-xl p-2.5 text-sm mt-1 focus:border-amber-400 outline-none">
-          </div>
-        </div>
+      <div class="flex gap-2">
+        <input id="new-cat-name" type="text" placeholder="Ej. Abarrotes, Combos, Bebidas..." class="flex-1 bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-sm focus:border-amber-400 outline-none">
+        <button onclick="agregarCategoria()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-xs whitespace-nowrap">
+          + Agregar
+        </button>
+      </div>
+      <div id="categories-tags" class="flex flex-wrap gap-2 mt-3"></div>
+    </section>
 
+    <!-- Formulario Producto con Foto de Galería -->
+    <section class="bg-slate-900 p-5 rounded-3xl border border-slate-800 shadow-md">
+      <h2 class="text-sm font-bold text-slate-200 mb-3 flex items-center gap-2">
+        <i class="fa-solid fa-plus-circle text-amber-400"></i> Agregar Producto
+      </h2>
+      <form id="add-product-form" onsubmit="guardarProducto(event)" class="space-y-4">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label class="text-xs text-gray-400">Categoría</label>
-            <select id="prod-category" class="w-full bg-gray-800 border border-gray-700 rounded-xl p-2.5 text-sm mt-1 focus:border-amber-400 outline-none">
-              <option value="platos">Platos Fuertes</option>
-              <option value="bebidas">Bebidas</option>
-              <option value="postres">Postres</option>
-            </select>
+            <label class="text-xs text-slate-400">Nombre del producto</label>
+            <input id="prod-name" required type="text" placeholder="Ej. Paquete de Galletas" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-sm mt-1 focus:border-amber-400 outline-none">
           </div>
           <div>
-            <label class="text-xs text-gray-400">URL de Imagen (Opcional)</label>
-            <input id="prod-img" type="url" placeholder="https://..." class="w-full bg-gray-800 border border-gray-700 rounded-xl p-2.5 text-sm mt-1 focus:border-amber-400 outline-none">
+            <label class="text-xs text-slate-400">Precio (CUP)</label>
+            <input id="prod-price" required type="number" placeholder="Ej. 650" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-sm mt-1 focus:border-amber-400 outline-none">
           </div>
         </div>
 
         <div>
-          <label class="text-xs text-gray-400">Descripción / Acompañamiento</label>
-          <textarea id="prod-desc" rows="2" placeholder="Detalles del plato..." class="w-full bg-gray-800 border border-gray-700 rounded-xl p-2.5 text-sm mt-1 focus:border-amber-400 outline-none"></textarea>
+          <label class="text-xs text-slate-400">Categoría</label>
+          <select id="prod-category" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-sm mt-1 focus:border-amber-400 outline-none">
+            <!-- Dinámico -->
+          </select>
         </div>
 
-        <button type="submit" class="w-full bg-amber-500 hover:bg-amber-400 text-gray-950 font-bold py-2.5 rounded-xl transition text-sm">
+        <!-- Subida Rápida de Imagen desde Galería -->
+        <div>
+          <label class="text-xs text-slate-400 font-semibold mb-1 block">Foto del producto</label>
+          <div class="flex items-center gap-3">
+            <label class="flex-1 flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-750 border border-dashed border-slate-600 rounded-2xl p-3 cursor-pointer text-xs text-slate-300 font-bold transition">
+              <i class="fa-solid fa-image text-amber-400 text-lg"></i>
+              <span>Elegir de Galería</span>
+              <input id="prod-file" type="file" accept="image/*" class="hidden" onchange="procesarFotoLocal(this)">
+            </label>
+            <img id="img-preview" src="" class="w-14 h-14 object-cover rounded-xl bg-slate-800 border border-slate-700 hidden">
+          </div>
+        </div>
+
+        <div>
+          <label class="text-xs text-slate-400">Descripción / Detalles</label>
+          <textarea id="prod-desc" rows="2" placeholder="Presentación, peso, detalles..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-sm mt-1 focus:border-amber-400 outline-none"></textarea>
+        </div>
+
+        <button type="submit" id="save-btn" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-3 rounded-xl transition text-sm shadow-lg shadow-amber-500/20">
           Guardar y Publicar al Instante
         </button>
       </form>
     </section>
 
-    <!-- Lista de Inventario Actual -->
+    <!-- Lista de Productos -->
     <section class="space-y-3">
-      <h2 class="text-sm font-bold text-gray-300">Gestión de Platos Activos</h2>
-      <div id="admin-products-list" class="space-y-2.5">
-        <!-- Render dinámico -->
-      </div>
+      <h2 class="text-sm font-bold text-slate-300">Inventario Activo</h2>
+      <div id="admin-products-list" class="space-y-2.5"></div>
     </section>
   </div>
 
   <script>
-    // Control de Sesión
+    let categorias = [];
+    let imagenBase64 = "";
+
     auth.onAuthStateChanged(user => {
       if (user) {
         document.getElementById("login-section").classList.add("hidden");
         document.getElementById("admin-panel").classList.remove("hidden");
         document.getElementById("user-display").innerText = user.email;
+        escucharCategorias();
         escucharInventario();
       } else {
         document.getElementById("login-section").classList.remove("hidden");
@@ -127,57 +153,106 @@
       const email = document.getElementById("login-email").value;
       const pass = document.getElementById("login-password").value;
       const errBox = document.getElementById("login-error");
-
-      auth.signInWithEmailAndPassword(email, pass)
-        .catch(error => {
-          errBox.innerText = "Error: " + error.message;
-          errBox.classList.remove("hidden");
-        });
+      auth.signInWithEmailAndPassword(email, pass).catch(err => {
+        errBox.innerText = "Error: " + err.message;
+        errBox.classList.remove("hidden");
+      });
     }
 
-    function cerrarSesion() {
-      auth.signOut();
+    function cerrarSesion() { auth.signOut(); }
+
+    function procesarFotoLocal(input) {
+      if (input.files && input.files[0]) {
+        const file = input.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = new Image();
+          img.src = e.target.result;
+          img.onload = function() {
+            const canvas = document.createElement("canvas");
+            const maxDim = 600;
+            let width = img.width;
+            let height = img.height;
+            if (width > height) {
+              if (width > maxDim) { height *= maxDim / width; width = maxDim; }
+            } else {
+              if (height > maxDim) { width *= maxDim / height; height = maxDim; }
+            }
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, width, height);
+            imagenBase64 = canvas.toDataURL("image/jpeg", 0.7);
+            const preview = document.getElementById("img-preview");
+            preview.src = imagenBase64;
+            preview.classList.remove("hidden");
+          };
+        };
+        reader.readAsDataURL(file);
+      }
     }
 
-    // Escuchar cambios de Firestore en tiempo real
+    function escucharCategorias() {
+      db.collection("categorias").onSnapshot(snapshot => {
+        categorias = [];
+        snapshot.forEach(doc => categorias.push({ id: doc.id, ...doc.data() }));
+        
+        const select = document.getElementById("prod-category");
+        select.innerHTML = categorias.map(c => `<option value="${c.nombre}">${c.nombre}</option>`).join('');
+
+        const tags = document.getElementById("categories-tags");
+        tags.innerHTML = categorias.map(c => `
+          <span class="bg-slate-800 border border-slate-700 px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 text-slate-300">
+            ${c.nombre}
+            <button onclick="eliminarCategoria('${c.id}')" class="text-red-400 hover:text-red-300 text-xs">✕</button>
+          </span>
+        `).join('');
+      });
+    }
+
+    function agregarCategoria() {
+      const input = document.getElementById("new-cat-name");
+      const nombre = input.value.trim();
+      if (!nombre) return;
+      db.collection("categorias").add({ nombre }).then(() => input.value = "");
+    }
+
+    function eliminarCategoria(id) {
+      if (confirm("¿Eliminar esta categoría?")) db.collection("categorias").doc(id).delete();
+    }
+
     function escucharInventario() {
       db.collection("productos").onSnapshot(snapshot => {
         const contenedor = document.getElementById("admin-products-list");
         if (snapshot.empty) {
-          contenedor.innerHTML = `<div class="p-6 text-center text-gray-500 bg-gray-900 rounded-xl">No hay productos creados aún. Agrega el primero arriba.</div>`;
+          contenedor.innerHTML = `<div class="p-6 text-center text-slate-500 bg-slate-900 rounded-2xl">No hay productos aún.</div>`;
           return;
         }
-
         let html = '';
         snapshot.forEach(doc => {
           const item = doc.data();
           const id = doc.id;
           html += `
-            <div class="bg-gray-900 p-3.5 rounded-xl border border-gray-800 flex items-center justify-between gap-3">
+            <div class="bg-slate-900 p-3 rounded-2xl border border-slate-800 flex items-center justify-between gap-3">
+              <img src="${item.imagen || 'https://via.placeholder.com/100'}" class="w-14 h-14 object-cover rounded-xl bg-slate-800">
               <div class="flex-1">
                 <div class="flex items-center gap-2">
-                  <h3 class="font-bold text-sm text-gray-100">${item.nombre}</h3>
-                  <span class="text-xs px-2 py-0.5 rounded ${item.disponible ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-red-950 text-red-400 border border-red-800'}">
-                    ${item.disponible ? 'Disponible' : 'Agotado'}
+                  <h3 class="font-bold text-sm text-slate-100">${item.nombre}</h3>
+                  <span class="text-[10px] px-2 py-0.5 rounded font-bold ${item.disponible ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-red-950 text-red-400 border border-red-800'}">
+                    ${item.disponible ? 'Activo' : 'Agotado'}
                   </span>
                 </div>
                 <div class="flex items-center gap-2 mt-1">
-                  <span class="text-xs text-amber-400 font-extrabold">$${item.precio} CUP</span>
-                  <span class="text-[10px] text-gray-500 uppercase tracking-wider">${item.categoria}</span>
+                  <span class="text-xs text-amber-400 font-black">$${item.precio.toLocaleString()} CUP</span>
+                  <span class="text-[10px] text-slate-500 uppercase">${item.categoria || 'General'}</span>
                 </div>
               </div>
-
-              <!-- Controles de acción rápida -->
-              <div class="flex items-center gap-2">
-                <button onclick="cambiarPrecio('${id}', ${item.precio})" class="bg-gray-800 hover:bg-gray-700 text-gray-200 text-xs px-2.5 py-1.5 rounded-lg border border-gray-700 font-semibold" title="Editar precio">
-                  <i class="fa-solid fa-dollar-sign"></i> Precio
-                </button>
-                <button onclick="toggleDisponibilidad('${id}', ${item.disponible})" class="${item.disponible ? 'bg-amber-600/30 text-amber-400 border-amber-600/50' : 'bg-emerald-600/30 text-emerald-400 border-emerald-600/50'} text-xs px-2.5 py-1.5 rounded-lg border font-semibold">
+              <div class="flex items-center gap-1.5">
+                <button onclick="cambiarPrecio('${id}', ${item.precio})" class="bg-slate-800 text-slate-200 text-xs px-2.5 py-1.5 rounded-lg border border-slate-700 font-bold">$</button>
+                <button onclick="toggleDisponibilidad('${id}', ${item.disponible})" class="${item.disponible ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' : 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'} text-xs px-2.5 py-1.5 rounded-lg border font-bold">
                   ${item.disponible ? 'Agotar' : 'Activar'}
                 </button>
-                <button onclick="eliminarProducto('${id}')" class="bg-red-950/40 text-red-400 hover:bg-red-900 text-xs px-2.5 py-1.5 rounded-lg border border-red-900/60 font-semibold">
-                  <i class="fa-solid fa-trash"></i>
-                </button>
+                <button onclick="eliminarProducto('${id}')" class="bg-red-950/40 text-red-400 text-xs px-2 py-1.5 rounded-lg border border-red-900/60 font-bold">✕</button>
               </div>
             </div>
           `;
@@ -186,50 +261,39 @@
       });
     }
 
-    // Agregar Producto
     function guardarProducto(e) {
       e.preventDefault();
       const nombre = document.getElementById("prod-name").value.trim();
       const precio = parseFloat(document.getElementById("prod-price").value);
       const categoria = document.getElementById("prod-category").value;
       const descripcion = document.getElementById("prod-desc").value.trim();
-      const imagen = document.getElementById("prod-img").value.trim();
 
       db.collection("productos").add({
         nombre,
         precio,
-        categoria,
+        categoria: categoria || 'General',
         descripcion,
-        imagen: imagen || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&auto=format&fit=crop&q=60',
+        imagen: imagenBase64 || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&auto=format&fit=crop&q=60',
         disponible: true,
         fechaCreacion: firebase.firestore.FieldValue.serverTimestamp()
       }).then(() => {
         document.getElementById("add-product-form").reset();
+        document.getElementById("img-preview").classList.add("hidden");
+        imagenBase64 = "";
       });
     }
 
-    // Cambiar Disponibilidad (1 toque)
     function toggleDisponibilidad(id, actual) {
-      db.collection("productos").doc(id).update({
-        disponible: !actual
-      });
+      db.collection("productos").doc(id).update({ disponible: !actual });
     }
 
-    // Actualizar Precio Rápido
-    function cambiarPrecio(id, precioActual) {
-      const nuevo = prompt("Introduce el nuevo precio en CUP:", precioActual);
-      if (nuevo !== null && !isNaN(nuevo) && nuevo.trim() !== "") {
-        db.collection("productos").doc(id).update({
-          precio: parseFloat(nuevo)
-        });
-      }
+    function cambiarPrecio(id, actual) {
+      const nuevo = prompt("Nuevo precio CUP:", actual);
+      if (nuevo && !isNaN(nuevo)) db.collection("productos").doc(id).update({ precio: parseFloat(nuevo) });
     }
 
-    // Eliminar Producto
     function eliminarProducto(id) {
-      if (confirm("¿Seguro que deseas eliminar este producto?")) {
-        db.collection("productos").doc(id).delete();
-      }
+      if (confirm("¿Eliminar producto?")) db.collection("productos").doc(id).delete();
     }
   </script>
 </body>
