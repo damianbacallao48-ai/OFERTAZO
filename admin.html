@@ -3,298 +3,177 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Panel Administrativo - OFERTAZO</title>
+  <title>Admin - OFERTAZO</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-  <script src="firebase-config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen p-4 pb-20 font-sans">
+<body class="bg-slate-950 text-slate-100 min-h-screen p-4 pb-20 font-sans max-w-lg mx-auto">
 
-  <!-- Login -->
-  <div id="login-section" class="max-w-md mx-auto mt-16 bg-slate-900/90 backdrop-blur p-6 rounded-3xl border border-slate-800 shadow-2xl">
-    <div class="text-center mb-6">
-      <div class="w-14 h-14 bg-gradient-to-tr from-amber-500 to-yellow-300 text-slate-950 rounded-2xl flex items-center justify-center mx-auto text-2xl font-black mb-3 shadow-lg shadow-amber-500/20">
-        <i class="fa-solid fa-store"></i>
-      </div>
-      <h2 class="text-2xl font-black text-amber-400">OFERTAZO ADMIN</h2>
-      <p class="text-xs text-slate-400 mt-1">Gestión rápida desde tu móvil</p>
+  <header class="flex justify-between items-center py-4 border-b border-slate-800 mb-6">
+    <div>
+      <h1 class="text-xl font-black text-amber-400">OFERTAZO ADMIN</h1>
+      <p class="text-xs text-slate-400">Control de Inventario en Tiempo Real</p>
     </div>
-    
-    <div class="space-y-4">
-      <div>
-        <label class="text-xs text-slate-400 font-semibold">Correo de Administrador</label>
-        <input id="login-email" type="email" placeholder="admin@menu.com" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm mt-1 focus:border-amber-400 outline-none">
-      </div>
-      <div>
-        <label class="text-xs text-slate-400 font-semibold">Contraseña</label>
-        <input id="login-password" type="password" placeholder="••••••••" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm mt-1 focus:border-amber-400 outline-none">
-      </div>
-      <button onclick="iniciarSesion()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-3.5 rounded-xl transition shadow-lg shadow-amber-500/20">
-        Entrar al Panel
-      </button>
-      <p id="login-error" class="text-red-400 text-xs text-center hidden"></p>
+    <a href="index.html" target="_blank" class="bg-slate-800 text-xs px-3 py-2 rounded-xl text-amber-400 border border-slate-700 font-bold">
+      Ver Tienda ➔
+    </a>
+  </header>
+
+  <!-- Formulario Nuevo Producto -->
+  <section class="bg-slate-900 border border-slate-800 rounded-3xl p-5 mb-6 shadow-xl space-y-3.5">
+    <h2 class="text-sm font-black text-white flex items-center gap-2">
+      <i class="fa-solid fa-plus-circle text-amber-400"></i> Nuevo Producto
+    </h2>
+
+    <div>
+      <label class="text-[11px] text-slate-400 font-bold">Nombre del producto *</label>
+      <input id="p-nombre" type="text" placeholder="Ej. Frijol Negro (1kg)" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
     </div>
-  </div>
 
-  <!-- Panel -->
-  <div id="admin-panel" class="max-w-2xl mx-auto hidden space-y-6">
-    <!-- Barra Superior con Botón Directo al Menú -->
-    <header class="flex flex-col sm:flex-row sm:items-center justify-between bg-slate-900 p-4 rounded-2xl border border-slate-800 gap-3 shadow-lg">
+    <div class="grid grid-cols-2 gap-2.5">
       <div>
-        <h1 class="text-lg font-black text-amber-400 flex items-center gap-2">
-          <i class="fa-solid fa-sliders"></i> Panel de Control
-        </h1>
-        <p class="text-xs text-slate-400" id="user-display">Conectado</p>
+        <label class="text-[11px] text-slate-400 font-bold">Precio (CUP) *</label>
+        <input id="p-precio" type="number" placeholder="1000" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
       </div>
-
-      <div class="flex items-center gap-2">
-        <!-- Acceso directo a la tienda en vivo -->
-        <a href="index.html" target="_blank" class="bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 text-slate-950 px-3.5 py-2 rounded-xl text-xs font-black flex items-center gap-1.5 shadow-md shadow-amber-500/20 active:scale-95 transition">
-          <i class="fa-solid fa-arrow-up-right-from-square"></i> Ver Tienda en Vivo
-        </a>
-
-        <!-- Botón de Salir -->
-        <button onclick="cerrarSesion()" class="bg-red-950/40 text-red-400 px-3 py-2 rounded-xl text-xs font-bold border border-red-900/60 hover:bg-red-900 transition">
-          <i class="fa-solid fa-right-from-bracket"></i>
-        </button>
+      <div>
+        <label class="text-[11px] text-slate-400 font-bold">Categoría *</label>
+        <input id="p-categoria" type="text" placeholder="GENERAL, BEBIDAS..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
       </div>
-    </header>
+    </div>
 
-    <!-- Gestionar Categorías -->
-    <section class="bg-slate-900 p-5 rounded-3xl border border-slate-800">
-      <h2 class="text-sm font-bold text-slate-200 mb-3 flex items-center gap-2">
-        <i class="fa-solid fa-tags text-amber-400"></i> Agregar Nueva Categoría
-      </h2>
-      <div class="flex gap-2">
-        <input id="new-cat-name" type="text" placeholder="Ej. Abarrotes, Combos, Bebidas..." class="flex-1 bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-sm focus:border-amber-400 outline-none">
-        <button onclick="agregarCategoria()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-xs whitespace-nowrap">
-          + Agregar
-        </button>
-      </div>
-      <div id="categories-tags" class="flex flex-wrap gap-2 mt-3"></div>
-    </section>
+    <div>
+      <label class="text-[11px] text-slate-400 font-bold">URL de la imagen (Link)</label>
+      <input id="p-imagen" type="text" placeholder="https://..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
+    </div>
 
-    <!-- Formulario Producto con Foto de Galería -->
-    <section class="bg-slate-900 p-5 rounded-3xl border border-slate-800 shadow-md">
-      <h2 class="text-sm font-bold text-slate-200 mb-3 flex items-center gap-2">
-        <i class="fa-solid fa-plus-circle text-amber-400"></i> Agregar Producto
-      </h2>
-      <form id="add-product-form" onsubmit="guardarProducto(event)" class="space-y-4">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label class="text-xs text-slate-400">Nombre del producto</label>
-            <input id="prod-name" required type="text" placeholder="Ej. Paquete de Galletas" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-sm mt-1 focus:border-amber-400 outline-none">
-          </div>
-          <div>
-            <label class="text-xs text-slate-400">Precio (CUP)</label>
-            <input id="prod-price" required type="number" placeholder="Ej. 650" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-sm mt-1 focus:border-amber-400 outline-none">
-          </div>
-        </div>
+    <div>
+      <label class="text-[11px] text-slate-400 font-bold">Descripción / Detalles</label>
+      <input id="p-desc" type="text" placeholder="Presentación, peso, detalles..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
+    </div>
 
-        <div>
-          <label class="text-xs text-slate-400">Categoría</label>
-          <select id="prod-category" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-sm mt-1 focus:border-amber-400 outline-none">
-            <!-- Dinámico -->
-          </select>
-        </div>
+    <button onclick="guardarProducto()" id="btn-guardar" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-3 rounded-xl text-xs active:scale-95 transition shadow-lg mt-2">
+      Guardar y Publicar al Instante
+    </button>
+  </section>
 
-        <!-- Subida Rápida de Imagen desde Galería -->
-        <div>
-          <label class="text-xs text-slate-400 font-semibold mb-1 block">Foto del producto</label>
-          <div class="flex items-center gap-3">
-            <label class="flex-1 flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-750 border border-dashed border-slate-600 rounded-2xl p-3 cursor-pointer text-xs text-slate-300 font-bold transition">
-              <i class="fa-solid fa-image text-amber-400 text-lg"></i>
-              <span>Elegir de Galería</span>
-              <input id="prod-file" type="file" accept="image/*" class="hidden" onchange="procesarFotoLocal(this)">
-            </label>
-            <img id="img-preview" src="" class="w-14 h-14 object-cover rounded-xl bg-slate-800 border border-slate-700 hidden">
-          </div>
-        </div>
-
-        <div>
-          <label class="text-xs text-slate-400">Descripción / Detalles</label>
-          <textarea id="prod-desc" rows="2" placeholder="Presentación, peso, detalles..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-sm mt-1 focus:border-amber-400 outline-none"></textarea>
-        </div>
-
-        <button type="submit" id="save-btn" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-3 rounded-xl transition text-sm shadow-lg shadow-amber-500/20">
-          Guardar y Publicar al Instante
-        </button>
-      </form>
-    </section>
-
-    <!-- Lista de Productos -->
-    <section class="space-y-3">
-      <h2 class="text-sm font-bold text-slate-300">Inventario Activo</h2>
-      <div id="admin-products-list" class="space-y-2.5"></div>
-    </section>
-  </div>
+  <!-- Lista de Productos -->
+  <section class="space-y-3">
+    <div class="flex justify-between items-center mb-2">
+      <h2 class="text-sm font-black text-white">Inventario Activo</h2>
+      <button onclick="cargarInventario()" class="text-xs text-amber-400"><i class="fa-solid fa-rotate"></i> Actualizar</button>
+    </div>
+    <div id="lista-admin" class="space-y-2.5">
+      <div class="text-center py-8 text-slate-500 text-xs">Cargando inventario...</div>
+    </div>
+  </section>
 
   <script>
-    let categorias = [];
-    let imagenBase64 = "";
+    const SUPABASE_URL = "https://qhkqznpgjirvnndriehr.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFoa3F6bnBnamlydm5uZHJpZWhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5MTE5NzQsImV4cCI6MjEwNzQ4Nzk3NH0.AHUdASoGr0FJWUuP0LxS9UJ2_-QzFPwAjmEeWZ3g1Uc";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    auth.onAuthStateChanged(user => {
-      if (user) {
-        document.getElementById("login-section").classList.add("hidden");
-        document.getElementById("admin-panel").classList.remove("hidden");
-        document.getElementById("user-display").innerText = user.email;
-        escucharCategorias();
-        escucharInventario();
+    async function cargarInventario() {
+      const cont = document.getElementById("lista-admin");
+      const { data, error } = await supabaseClient
+        .from('productos')
+        .select('*')
+        .order('id', { ascending: false });
+
+      if (error) {
+        cont.innerHTML = '<div class="text-xs text-red-400 text-center">Error: ' + error.message + '</div>';
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        cont.innerHTML = '<div class="text-xs text-slate-500 text-center py-6">No hay productos guardados.</div>';
+        return;
+      }
+
+      let html = '';
+      data.forEach(p => {
+        const estadoColor = p.disponible ? 'bg-emerald-500/20 text-emerald-300' : 'bg-red-500/20 text-red-300';
+        const estadoTexto = p.disponible ? 'Activo' : 'Agotado';
+        const accionTexto = p.disponible ? 'Agotar' : 'Activar';
+
+        html += '<div class="bg-slate-900 border border-slate-800 rounded-2xl p-3 flex items-center justify-between gap-3">' +
+          '<div class="flex items-center gap-3">' +
+            '<img src="' + (p.imagen || 'https://via.placeholder.com/80') + '" class="w-12 h-12 rounded-xl object-cover bg-slate-800">' +
+            '<div>' +
+              '<h3 class="text-xs font-bold text-white">' + p.nombre + '</h3>' +
+              '<p class="text-[11px] text-amber-400 font-black">$' + Number(p.precio).toLocaleString() + ' CUP</p>' +
+              '<span class="text-[9px] px-2 py-0.5 rounded-full font-bold ' + estadoColor + '">' + estadoTexto + '</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="flex items-center gap-1.5">' +
+            '<button onclick="toggleDisponibilidad(' + p.id + ', ' + p.disponible + ')" class="bg-slate-800 text-xs px-2.5 py-1.5 rounded-xl border border-slate-700 font-bold hover:bg-slate-700">' + accionTexto + '</button>' +
+            '<button onclick="eliminarProducto(' + p.id + ')" class="bg-red-950/60 text-red-400 text-xs px-2.5 py-1.5 rounded-xl border border-red-800 hover:bg-red-900 font-bold"><i class="fa-solid fa-trash"></i></button>' +
+          '</div>' +
+        '</div>';
+      });
+
+      cont.innerHTML = html;
+    }
+
+    async function guardarProducto() {
+      const nombre = document.getElementById("p-nombre").value.trim();
+      const precio = parseFloat(document.getElementById("p-precio").value);
+      const categoria = document.getElementById("p-categoria").value.trim().toUpperCase() || 'GENERAL';
+      const imagen = document.getElementById("p-imagen").value.trim();
+      const descripcion = document.getElementById("p-desc").value.trim();
+
+      if (!nombre || isNaN(precio)) {
+        alert("Por favor completa el nombre y el precio.");
+        return;
+      }
+
+      const btn = document.getElementById("btn-guardar");
+      btn.innerText = "Guardando...";
+      btn.disabled = true;
+
+      const { error } = await supabaseClient
+        .from('productos')
+        .insert([{
+          nombre: nombre,
+          precio: precio,
+          categoria: categoria,
+          imagen: imagen,
+          descripcion: descripcion,
+          disponible: true
+        }]);
+
+      btn.innerText = "Guardar y Publicar al Instante";
+      btn.disabled = false;
+
+      if (error) {
+        alert("Error al guardar: " + error.message);
       } else {
-        document.getElementById("login-section").classList.remove("hidden");
-        document.getElementById("admin-panel").classList.add("hidden");
-      }
-    });
-
-    function iniciarSesion() {
-      const email = document.getElementById("login-email").value;
-      const pass = document.getElementById("login-password").value;
-      const errBox = document.getElementById("login-error");
-      auth.signInWithEmailAndPassword(email, pass).catch(err => {
-        errBox.innerText = "Error: " + err.message;
-        errBox.classList.remove("hidden");
-      });
-    }
-
-    function cerrarSesion() { auth.signOut(); }
-
-    function procesarFotoLocal(input) {
-      if (input.files && input.files[0]) {
-        const file = input.files[0];
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          const img = new Image();
-          img.src = e.target.result;
-          img.onload = function() {
-            const canvas = document.createElement("canvas");
-            const maxDim = 600;
-            let width = img.width;
-            let height = img.height;
-            if (width > height) {
-              if (width > maxDim) { height *= maxDim / width; width = maxDim; }
-            } else {
-              if (height > maxDim) { width *= maxDim / height; height = maxDim; }
-            }
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext("2d");
-            ctx.drawImage(img, 0, 0, width, height);
-            imagenBase64 = canvas.toDataURL("image/jpeg", 0.7);
-            const preview = document.getElementById("img-preview");
-            preview.src = imagenBase64;
-            preview.classList.remove("hidden");
-          };
-        };
-        reader.readAsDataURL(file);
+        document.getElementById("p-nombre").value = "";
+        document.getElementById("p-precio").value = "";
+        document.getElementById("p-imagen").value = "";
+        document.getElementById("p-desc").value = "";
+        cargarInventario();
       }
     }
 
-    function escucharCategorias() {
-      db.collection("categorias").onSnapshot(snapshot => {
-        categorias = [];
-        snapshot.forEach(doc => categorias.push({ id: doc.id, ...doc.data() }));
-        
-        const select = document.getElementById("prod-category");
-        select.innerHTML = categorias.map(c => `<option value="${c.nombre}">${c.nombre}</option>`).join('');
-
-        const tags = document.getElementById("categories-tags");
-        tags.innerHTML = categorias.map(c => `
-          <span class="bg-slate-800 border border-slate-700 px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 text-slate-300">
-            ${c.nombre}
-            <button onclick="eliminarCategoria('${c.id}')" class="text-red-400 hover:text-red-300 text-xs">✕</button>
-          </span>
-        `).join('');
-      });
+    async function toggleDisponibilidad(id, actual) {
+      await supabaseClient
+        .from('productos')
+        .update({ disponible: !actual })
+        .eq('id', id);
+      cargarInventario();
     }
 
-    function agregarCategoria() {
-      const input = document.getElementById("new-cat-name");
-      const nombre = input.value.trim();
-      if (!nombre) return;
-      db.collection("categorias").add({ nombre }).then(() => input.value = "");
+    async function eliminarProducto(id) {
+      if (!confirm("¿Seguro que deseas eliminar este producto?")) return;
+      await supabaseClient
+        .from('productos')
+        .delete()
+        .eq('id', id);
+      cargarInventario();
     }
 
-    function eliminarCategoria(id) {
-      if (confirm("¿Eliminar esta categoría?")) db.collection("categorias").doc(id).delete();
-    }
-
-    function escucharInventario() {
-      db.collection("productos").onSnapshot(snapshot => {
-        const contenedor = document.getElementById("admin-products-list");
-        if (snapshot.empty) {
-          contenedor.innerHTML = `<div class="p-6 text-center text-slate-500 bg-slate-900 rounded-2xl">No hay productos aún.</div>`;
-          return;
-        }
-        let html = '';
-        snapshot.forEach(doc => {
-          const item = doc.data();
-          const id = doc.id;
-          html += `
-            <div class="bg-slate-900 p-3 rounded-2xl border border-slate-800 flex items-center justify-between gap-3">
-              <img src="${item.imagen || 'https://via.placeholder.com/100'}" class="w-14 h-14 object-cover rounded-xl bg-slate-800">
-              <div class="flex-1">
-                <div class="flex items-center gap-2">
-                  <h3 class="font-bold text-sm text-slate-100">${item.nombre}</h3>
-                  <span class="text-[10px] px-2 py-0.5 rounded font-bold ${item.disponible ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-red-950 text-red-400 border border-red-800'}">
-                    ${item.disponible ? 'Activo' : 'Agotado'}
-                  </span>
-                </div>
-                <div class="flex items-center gap-2 mt-1">
-                  <span class="text-xs text-amber-400 font-black">$${item.precio.toLocaleString()} CUP</span>
-                  <span class="text-[10px] text-slate-500 uppercase">${item.categoria || 'General'}</span>
-                </div>
-              </div>
-              <div class="flex items-center gap-1.5">
-                <button onclick="cambiarPrecio('${id}', ${item.precio})" class="bg-slate-800 text-slate-200 text-xs px-2.5 py-1.5 rounded-lg border border-slate-700 font-bold">$</button>
-                <button onclick="toggleDisponibilidad('${id}', ${item.disponible})" class="${item.disponible ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' : 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'} text-xs px-2.5 py-1.5 rounded-lg border font-bold">
-                  ${item.disponible ? 'Agotar' : 'Activar'}
-                </button>
-                <button onclick="eliminarProducto('${id}')" class="bg-red-950/40 text-red-400 text-xs px-2 py-1.5 rounded-lg border border-red-900/60 font-bold">✕</button>
-              </div>
-            </div>
-          `;
-        });
-        contenedor.innerHTML = html;
-      });
-    }
-
-    function guardarProducto(e) {
-      e.preventDefault();
-      const nombre = document.getElementById("prod-name").value.trim();
-      const precio = parseFloat(document.getElementById("prod-price").value);
-      const categoria = document.getElementById("prod-category").value;
-      const descripcion = document.getElementById("prod-desc").value.trim();
-
-      db.collection("productos").add({
-        nombre,
-        precio,
-        categoria: categoria || 'General',
-        descripcion,
-        imagen: imagenBase64 || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&auto=format&fit=crop&q=60',
-        disponible: true,
-        fechaCreacion: firebase.firestore.FieldValue.serverTimestamp()
-      }).then(() => {
-        document.getElementById("add-product-form").reset();
-        document.getElementById("img-preview").classList.add("hidden");
-        imagenBase64 = "";
-      });
-    }
-
-    function toggleDisponibilidad(id, actual) {
-      db.collection("productos").doc(id).update({ disponible: !actual });
-    }
-
-    function cambiarPrecio(id, actual) {
-      const nuevo = prompt("Nuevo precio CUP:", actual);
-      if (nuevo && !isNaN(nuevo)) db.collection("productos").doc(id).update({ precio: parseFloat(nuevo) });
-    }
-
-    function eliminarProducto(id) {
-      if (confirm("¿Eliminar producto?")) db.collection("productos").doc(id).delete();
-    }
+    cargarInventario();
   </script>
 </body>
 </html>
