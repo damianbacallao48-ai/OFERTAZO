@@ -3,104 +3,179 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OFERTAZO - Catálogo Digital Ciego de Ávila</title>
+  <title>OFERTAZO // Catálogo Futurista</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --neon-gold: #f59e0b;
+      --neon-cyan: #06b6d4;
+    }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .font-cyber {
+      font-family: 'Orbitron', monospace;
+    }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    
+    /* Efectos Glassmorphism y Luces de Neón */
+    .cyber-card {
+      background: rgba(15, 23, 42, 0.78);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(245, 158, 11, 0.22);
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .cyber-card:hover {
+      border-color: rgba(245, 158, 11, 0.55);
+      box-shadow: 0 0 25px rgba(245, 158, 11, 0.25), inset 0 0 15px rgba(245, 158, 11, 0.08);
+      transform: translateY(-2px);
+    }
+    .neon-glow-btn {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.45);
+      transition: all 0.25s ease;
+    }
+    .neon-glow-btn:hover {
+      box-shadow: 0 0 30px rgba(245, 158, 11, 0.75);
+      transform: scale(1.02);
+    }
+    .neon-glow-btn:active {
+      transform: scale(0.97);
+    }
+    /* Animación de brillo metálico */
+    .shimmer-effect {
+      position: relative;
+      overflow: hidden;
+    }
+    .shimmer-effect::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -60%;
+      width: 40%;
+      height: 200%;
+      background: linear-gradient(60deg, transparent, rgba(255, 255, 255, 0.18), transparent);
+      transform: rotate(25deg);
+      animation: sweep 4.5s infinite;
+    }
+    @keyframes sweep {
+      0% { left: -70%; }
+      30% { left: 140%; }
+      100% { left: 140%; }
+    }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen pb-36 font-sans antialiased">
+<body class="bg-[#05070e] text-slate-100 min-h-screen pb-36 antialiased selection:bg-amber-500 selection:text-black">
 
-  <!-- Header Superior -->
-  <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-30 px-4 py-3 shadow-xl">
+  <!-- Fondo dinámico con malla y luces -->
+  <div class="fixed inset-0 pointer-events-none z-0">
+    <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-96 h-96 bg-amber-500/10 rounded-full blur-[110px]"></div>
+    <div class="absolute top-1/3 -right-20 w-80 h-80 bg-cyan-500/10 rounded-full blur-[100px]"></div>
+  </div>
+
+  <!-- Header Superior Futurista -->
+  <header class="sticky top-0 z-30 bg-[#080d1a]/85 backdrop-blur-xl border-b border-amber-500/25 px-4 py-3 shadow-2xl">
     <div class="max-w-xl mx-auto flex justify-between items-center">
-      <div class="flex items-center gap-2.5">
-        <div class="w-10 h-10 rounded-2xl bg-amber-500 flex items-center justify-center text-slate-950 text-xl font-black shadow-md">
-          <i class="fa-solid fa-bolt"></i>
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-300 flex items-center justify-center text-slate-950 text-lg font-black shadow-[0_0_15px_rgba(245,158,11,0.6)]">
+          <i class="fa-solid fa-bolt-lightning animate-pulse"></i>
         </div>
         <div>
-          <h1 class="text-lg font-black tracking-wider text-amber-400">OFERTAZO</h1>
-          <p class="text-[11px] text-slate-400 font-medium">Ciego de Ávila • Solo Domicilio</p>
+          <div class="flex items-center gap-2">
+            <h1 class="font-cyber text-lg font-black tracking-wider text-amber-400 drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]">OFERTAZO</h1>
+            <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+          </div>
+          <p class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold flex items-center gap-1">
+            <i class="fa-solid fa-location-crosshairs text-cyan-400"></i> Ciego de Ávila • Delivery
+          </p>
         </div>
       </div>
       
       <div class="flex items-center gap-2">
-        <button onclick="abrirCompartir()" class="bg-amber-500/15 hover:bg-amber-500/25 text-amber-400 px-3 py-1.5 rounded-xl text-xs font-bold border border-amber-500/30 flex items-center gap-1.5 active:scale-95">
-          <i class="fa-solid fa-share-nodes"></i> Compartir
+        <button onclick="abrirCompartir()" class="bg-slate-900/90 hover:bg-slate-800 text-amber-400 px-3 py-1.5 rounded-xl text-xs font-bold border border-amber-500/30 flex items-center gap-1.5 shadow-sm active:scale-95 transition">
+          <i class="fa-solid fa-share-nodes"></i>
         </button>
-        <button onclick="abrirAcerca()" class="bg-slate-800 text-slate-200 px-3 py-1.5 rounded-xl text-xs font-bold border border-slate-700 flex items-center gap-1.5 active:scale-95">
-          <i class="fa-solid fa-store text-amber-400"></i> Info
+        <button onclick="abrirAcerca()" class="bg-slate-900/90 hover:bg-slate-800 text-slate-200 px-3 py-1.5 rounded-xl text-xs font-bold border border-slate-700/80 flex items-center gap-1.5 active:scale-95 transition">
+          <i class="fa-solid fa-circle-info text-cyan-400"></i> Info
         </button>
       </div>
     </div>
   </header>
 
-  <!-- Banner Informativo -->
-  <section class="max-w-xl mx-auto px-4 pt-4">
-    <div class="rounded-3xl bg-slate-900 p-5 border border-amber-500/30 shadow-xl space-y-2.5">
+  <!-- Banner Cyberpunk Informativo -->
+  <section class="max-w-xl mx-auto px-4 pt-4 relative z-10">
+    <div class="cyber-card shimmer-effect rounded-3xl p-5 border border-amber-500/30 shadow-2xl space-y-3 relative overflow-hidden">
       <div class="flex flex-wrap gap-2">
-        <span class="bg-amber-500/20 text-amber-300 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full border border-amber-500/30">
-          🛵 Mensajería fija: $250 CUP
+        <span class="bg-amber-500/20 text-amber-300 text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full border border-amber-500/40 shadow-[0_0_10px_rgba(245,158,11,0.2)] flex items-center gap-1.5">
+          <i class="fa-solid fa-motorcycle text-amber-400"></i> Mensajería Fija: $250 CUP
         </span>
-        <span class="bg-emerald-500/20 text-emerald-300 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full border border-emerald-500/30">
-          💵 Pago Efectivo CUP
+        <span class="bg-emerald-500/20 text-emerald-300 text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full border border-emerald-500/40 flex items-center gap-1.5">
+          <i class="fa-solid fa-money-bill-wave text-emerald-400"></i> Efectivo al Recibir
         </span>
       </div>
-      <h2 class="text-xl font-black text-white">Pide Fácil, Rápido y al Mejor Precio</h2>
-      <p class="text-xs text-slate-300">Entregas a domicilio en Ciego de Ávila • Lunes a Sábado de 9:00 AM a 5:00 PM</p>
-      <div class="inline-flex items-center gap-2 bg-slate-800/80 px-2.5 py-1 rounded-lg text-xs text-amber-300">
-        <i class="fa-solid fa-clock"></i> Entrega estimada: <strong>de 2 a 3 horas</strong>
+      <h2 class="text-xl font-black text-white tracking-tight flex items-center gap-2">
+        Catálogo Digital Express
+      </h2>
+      <p class="text-xs text-slate-300 leading-relaxed">
+        Pide directo y recibe en tu puerta en Ciego de Ávila • Lunes a Sábado de 9:00 AM a 5:00 PM.
+      </p>
+      <div class="inline-flex items-center gap-2 bg-slate-900/90 border border-slate-800 px-3 py-1.5 rounded-xl text-xs text-cyan-300 shadow-inner">
+        <i class="fa-solid fa-satellite-dish animate-pulse text-cyan-400"></i>
+        <span>Tiempo estimado de entrega: <strong class="text-white">2 a 3 horas</strong></span>
       </div>
     </div>
   </section>
 
-  <!-- Categorías -->
-  <nav class="sticky top-14 z-20 bg-slate-950 px-4 py-3 border-b border-slate-900 mt-2">
+  <!-- Barra de Categorías Dinámicas y Animadas -->
+  <nav class="sticky top-14 z-20 bg-[#05070e]/90 backdrop-blur-md px-4 py-3 border-b border-slate-800/80 mt-2">
     <div class="max-w-xl mx-auto flex gap-2 overflow-x-auto no-scrollbar" id="categories-bar"></div>
   </nav>
 
   <!-- Lista de Productos -->
-  <main class="max-w-xl mx-auto px-4 py-4 space-y-3.5" id="products-list">
-    <div class="text-center py-16 text-slate-500 text-sm">
-      <i class="fa-solid fa-spinner fa-spin text-2xl text-amber-400 mb-2"></i>
-      <p>Cargando catálogo en tiempo real...</p>
+  <main class="max-w-xl mx-auto px-4 py-4 space-y-3.5 relative z-10" id="products-list">
+    <div class="text-center py-20 text-slate-500 text-sm">
+      <i class="fa-solid fa-circle-notch fa-spin text-3xl text-amber-400 mb-3"></i>
+      <p class="font-cyber tracking-wider text-xs text-amber-400/80">SINCRONIZANDO INVENTARIO...</p>
     </div>
   </main>
 
-  <!-- Barra Carrito Flotante -->
+  <!-- Barra Flotante del Carrito -->
   <div id="cart-bar" class="fixed bottom-4 left-4 right-4 max-w-xl mx-auto hidden z-40">
-    <button onclick="abrirCarrito()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-4 px-6 rounded-2xl shadow-2xl flex justify-between items-center active:scale-95 transition">
-      <span class="flex items-center gap-2">
-        <i class="fa-solid fa-basket-shopping text-lg"></i>
-        <span id="cart-count" class="bg-slate-950 text-amber-400 text-xs px-2 py-0.5 rounded-full font-black">0</span>
-        <span>Ver mi pedido</span>
+    <button onclick="abrirCarrito()" class="w-full neon-glow-btn text-slate-950 font-black py-4 px-6 rounded-2xl shadow-[0_0_35px_rgba(245,158,11,0.5)] flex justify-between items-center active:scale-95 transition">
+      <span class="flex items-center gap-2.5">
+        <i class="fa-solid fa-basket-shopping text-xl"></i>
+        <span id="cart-count" class="bg-slate-950 text-amber-400 text-xs px-2.5 py-0.5 rounded-full font-cyber font-black">0</span>
+        <span class="tracking-wide uppercase text-sm font-black">Ver mi pedido</span>
       </span>
-      <span id="cart-total-bar" class="text-lg font-black">$0 CUP</span>
+      <span id="cart-total-bar" class="font-cyber text-lg font-black tracking-wider">$0 CUP</span>
     </button>
   </div>
 
   <!-- Modal Compartir -->
-  <div id="share-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-slate-900 w-full max-w-sm rounded-3xl p-6 border border-slate-800 space-y-4 text-center relative shadow-2xl">
-      <button onclick="cerrarCompartir()" class="absolute top-4 right-4 text-slate-400 text-lg">✕</button>
-      <div class="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl mx-auto">
+  <div id="share-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="cyber-card w-full max-w-sm rounded-3xl p-6 border border-amber-500/40 space-y-4 text-center relative shadow-2xl">
+      <button onclick="cerrarCompartir()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">✕</button>
+      <div class="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl mx-auto border border-amber-500/30">
         <i class="fa-solid fa-share-nodes"></i>
       </div>
       <div>
-        <h3 class="font-bold text-white text-base">Compartir OFERTAZO</h3>
+        <h3 class="font-cyber font-bold text-white text-base">COMPARTIR OFERTAZO</h3>
         <p class="text-xs text-slate-400">Pasa el catálogo directo a tus contactos</p>
       </div>
       <div class="space-y-2.5 pt-1">
-        <button onclick="compartirWA()" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 text-sm active:scale-95">
+        <button onclick="compartirWA()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 text-xs uppercase tracking-wider active:scale-95 shadow-md">
           <i class="fa-brands fa-whatsapp text-lg"></i> Enviar por WhatsApp
         </button>
-        <button onclick="compartirFB()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 text-sm active:scale-95">
+        <button onclick="compartirFB()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 text-xs uppercase tracking-wider active:scale-95 shadow-md">
           <i class="fa-brands fa-facebook text-lg"></i> Enviar a Facebook
         </button>
-        <button onclick="copiarLink()" id="btn-copy" class="w-full bg-slate-800 text-slate-200 font-bold py-3 rounded-xl flex items-center justify-center gap-2 border border-slate-700 text-sm active:scale-95">
+        <button onclick="copiarLink()" id="btn-copy" class="w-full bg-slate-800 text-slate-200 font-bold py-3 rounded-xl flex items-center justify-center gap-2 border border-slate-700 text-xs uppercase tracking-wider active:scale-95">
           <i class="fa-solid fa-link text-amber-400"></i> Copiar Enlace
         </button>
       </div>
@@ -108,66 +183,73 @@
   </div>
 
   <!-- Modal Info -->
-  <div id="about-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-slate-900 w-full max-w-md rounded-3xl p-6 border border-slate-800 space-y-3 relative shadow-2xl p-5">
-      <button onclick="cerrarAcerca()" class="absolute top-4 right-4 text-slate-400 text-lg">✕</button>
-      <h3 class="font-black text-lg text-amber-400">OFERTAZO</h3>
-      <p class="text-xs text-slate-300">Catálogo oficial con entrega rápida a domicilio en Ciego de Ávila.</p>
+  <div id="about-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="cyber-card w-full max-w-md rounded-3xl p-6 border border-cyan-500/40 space-y-3.5 relative shadow-2xl">
+      <button onclick="cerrarAcerca()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">✕</button>
+      <div class="flex items-center gap-2 text-amber-400">
+        <i class="fa-solid fa-shield-halved text-xl"></i>
+        <h3 class="font-cyber font-black text-lg">OFERTAZO DELIVERY</h3>
+      </div>
+      <p class="text-xs text-slate-300">Catálogo digital automatizado en Ciego de Ávila.</p>
       <div class="space-y-2 pt-2 border-t border-slate-800 text-xs text-slate-300">
         <p>📍 <strong>Ubicación:</strong> Ciego de Ávila</p>
         <p>🕒 <strong>Horario:</strong> Lunes a Sábado de 9:00 AM a 5:00 PM</p>
         <p>⏱️ <strong>Demora estimada:</strong> De 2 a 3 horas</p>
-        <p>🛵 <strong>Mensajería:</strong> $250 CUP fijos</p>
-        <p>💵 <strong>Pago:</strong> Efectivo CUP al recibir</p>
+        <p>🛵 <strong>Mensajería:</strong> $250 CUP fija</p>
+        <p>💵 <strong>Pago:</strong> Efectivo CUP en mano</p>
         <p>📱 <strong>WhatsApp:</strong> +53 58960660</p>
       </div>
     </div>
   </div>
 
-  <!-- Modal Checkout -->
-  <div id="cart-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-slate-900 w-full max-w-lg rounded-t-3xl sm:rounded-3xl max-h-[92vh] flex flex-col border border-slate-800 shadow-2xl">
+  <!-- Modal Carrito & Checkout -->
+  <div id="cart-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="cyber-card w-full max-w-lg rounded-t-3xl sm:rounded-3xl max-h-[92vh] flex flex-col border border-amber-500/40 shadow-2xl">
       <div class="p-4 border-b border-slate-800 flex justify-between items-center">
-        <h2 class="text-sm font-black text-amber-400">Resumen de tu Compra</h2>
-        <button onclick="cerrarCarrito()" class="text-slate-400 text-lg">✕</button>
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-cart-shopping text-amber-400"></i>
+          <h2 class="font-cyber text-sm font-black text-white">RESUMEN DE TU COMPRA</h2>
+        </div>
+        <button onclick="cerrarCarrito()" class="text-slate-400 hover:text-white text-lg">✕</button>
       </div>
 
-      <div class="p-4 overflow-y-auto flex-1 space-y-3">
+      <div class="p-4 overflow-y-auto flex-1 space-y-3.5">
         <div id="cart-items" class="space-y-2"></div>
 
-        <div class="pt-3 border-t border-slate-800 space-y-2.5">
+        <div class="pt-3 border-t border-slate-800/80 space-y-2.5">
           <div>
-            <label class="text-[11px] text-slate-400 font-bold">Nombre de quien recibe:</label>
-            <input id="client-name" type="text" placeholder="Ej. Damian" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
+            <label class="text-[11px] text-amber-300/80 font-bold uppercase tracking-wider">Nombre de quien recibe:</label>
+            <input id="client-name" type="text" placeholder="Ej. Damian" class="w-full bg-slate-900 border border-slate-700/80 rounded-xl p-3 text-xs text-white outline-none focus:border-amber-400 shadow-inner">
           </div>
           <div>
-            <label class="text-[11px] text-slate-400 font-bold">Dirección exacta en Ciego de Ávila:</label>
-            <input id="client-address" type="text" placeholder="Calle, número, entrecalles y reparto" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
+            <label class="text-[11px] text-amber-300/80 font-bold uppercase tracking-wider">Dirección exacta en Ciego de Ávila:</label>
+            <input id="client-address" type="text" placeholder="Calle, número, entrecalles y reparto" class="w-full bg-slate-900 border border-slate-700/80 rounded-xl p-3 text-xs text-white outline-none focus:border-amber-400 shadow-inner">
           </div>
-          <div class="p-2.5 bg-amber-500/10 border border-amber-500/20 rounded-xl text-[11px] text-amber-300">
-            ⏱️ <strong>Demora:</strong> El pedido puede tardar de 2 a 3 horas en llegar.
+          <div class="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-[11px] text-amber-300 flex items-center gap-2">
+            <i class="fa-solid fa-clock text-sm"></i>
+            <span><strong>Demora estimada:</strong> De 2 a 3 horas en llegar a tu puerta.</span>
           </div>
         </div>
 
-        <div class="bg-slate-800/60 p-3 rounded-2xl border border-slate-700 space-y-1.5 text-xs">
+        <div class="bg-slate-900/90 p-4 rounded-2xl border border-slate-800 space-y-2 text-xs">
           <div class="flex justify-between text-slate-300">
             <span>Subtotal productos:</span>
-            <span id="calc-subtotal" class="font-bold">$0 CUP</span>
+            <span id="calc-subtotal" class="font-bold text-white font-cyber">$0 CUP</span>
           </div>
           <div class="flex justify-between text-slate-300">
-            <span>Mensajería:</span>
-            <span class="font-bold text-amber-400">+$250 CUP</span>
+            <span>Costo mensajería fija:</span>
+            <span class="font-bold text-amber-400 font-cyber">+$250 CUP</span>
           </div>
-          <div class="flex justify-between text-sm font-black text-white pt-2 border-t border-slate-700">
+          <div class="flex justify-between text-sm font-black text-white pt-2.5 border-t border-slate-800">
             <span>Total en efectivo:</span>
-            <span id="calc-total" class="text-amber-400 font-black">$0 CUP</span>
+            <span id="calc-total" class="font-cyber text-amber-400 font-black text-base">$0 CUP</span>
           </div>
         </div>
       </div>
 
-      <div class="p-4 border-t border-slate-800">
-        <button onclick="enviarPedido()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-3.5 rounded-2xl flex items-center justify-center gap-2 shadow-lg active:scale-95 text-sm">
-          <i class="fa-brands fa-whatsapp text-xl"></i> Enviar Pedido a WhatsApp
+      <div class="p-4 border-t border-slate-800 bg-[#080d1a]">
+        <button onclick="enviarPedido()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2.5 shadow-[0_0_20px_rgba(16,185,129,0.4)] active:scale-95 text-xs uppercase tracking-wider transition">
+          <i class="fa-brands fa-whatsapp text-xl"></i> Confirmar Pedido por WhatsApp
         </button>
       </div>
     </div>
@@ -192,38 +274,49 @@
         const { data, error } = await supabaseClient
           .from('productos')
           .select('*')
-          .order('id', { ascending: true });
+          .order('id', { ascending: false });
 
         if (error) throw error;
 
         productos = data || [];
         
+        // Extrae categorías dinámicas creadas en el admin
         const catSet = new Set();
         productos.forEach(p => {
-          if (p.categoria) catSet.add(p.categoria.toUpperCase());
+          if (p.categoria && p.categoria.trim() !== '') {
+            catSet.add(p.categoria.trim().toUpperCase());
+          }
         });
         categorias = Array.from(catSet);
 
         renderizarCategorias();
         renderizarProductos();
       } catch (err) {
-        cont.innerHTML = '<div class="p-4 bg-red-950/80 border border-red-800 rounded-2xl text-center text-xs text-red-300">' +
-          'No se pudo conectar a la base de datos.<br>' + err.message +
-          '<br><button onclick="cargarCatalogo()" class="mt-3 bg-amber-500 text-slate-950 font-bold px-3 py-1 rounded-lg">Reintentar</button>' +
+        cont.innerHTML = '<div class="cyber-card p-5 rounded-2xl text-center text-xs text-red-300 border border-red-800/80">' +
+          '<i class="fa-solid fa-triangle-exclamation text-lg text-red-400 mb-1"></i><br>' +
+          'Error cargando productos: ' + err.message +
+          '<br><button onclick="cargarCatalogo()" class="mt-3 bg-amber-500 text-slate-950 font-bold px-4 py-1.5 rounded-xl text-xs">Reintentar</button>' +
           '</div>';
       }
     }
 
     function renderizarCategorias() {
       const bar = document.getElementById("categories-bar");
-      let html = '<button onclick="filtrarCategoria(\'todos\')" class="cat-pill ' + 
-        (categoriaSeleccionada.toLowerCase() === 'todos' ? 'active bg-amber-500 text-slate-950 font-black' : 'bg-slate-900 text-slate-400') + 
-        ' px-4 py-1.5 rounded-2xl text-xs whitespace-nowrap transition border border-slate-800">🔥 Todos</button>';
+      let html = '<button onclick="filtrarCategoria(\'todos\')" class="' + 
+        (categoriaSeleccionada.toLowerCase() === 'todos' 
+          ? 'bg-amber-500 text-slate-950 font-black shadow-[0_0_15px_rgba(245,158,11,0.5)] border-amber-400' 
+          : 'bg-slate-900/80 text-slate-400 border-slate-800') + 
+        ' px-4 py-2 rounded-2xl text-xs whitespace-nowrap transition border font-semibold flex items-center gap-1.5 active:scale-95">' +
+        '<i class="fa-solid fa-fire text-amber-300"></i> Todos</button>';
       
       categorias.forEach(cat => {
-        html += '<button onclick="filtrarCategoria(\'' + cat + '\')" class="cat-pill ' + 
-          (categoriaSeleccionada.toLowerCase() === cat.toLowerCase() ? 'active bg-amber-500 text-slate-950 font-black' : 'bg-slate-900 text-slate-400') + 
-          ' px-4 py-1.5 rounded-2xl text-xs whitespace-nowrap transition border border-slate-800">' + cat + '</button>';
+        const isAct = categoriaSeleccionada.toLowerCase() === cat.toLowerCase();
+        html += '<button onclick="filtrarCategoria(\'' + cat + '\')" class="' + 
+          (isAct 
+            ? 'bg-amber-500 text-slate-950 font-black shadow-[0_0_15px_rgba(245,158,11,0.5)] border-amber-400' 
+            : 'bg-slate-900/80 text-slate-400 border-slate-800') + 
+          ' px-4 py-2 rounded-2xl text-xs whitespace-nowrap transition border font-semibold flex items-center gap-1.5 active:scale-95">' +
+          '<i class="fa-solid fa-tag text-cyan-400"></i> ' + cat + '</button>';
       });
       bar.innerHTML = html;
     }
@@ -241,36 +334,39 @@
         : productos.filter(p => (p.categoria || '').trim().toUpperCase() === categoriaSeleccionada.toUpperCase());
 
       if (productos.length === 0) {
-        cont.innerHTML = '<div class="text-center py-14 text-slate-500 text-xs">No hay productos en inventario.</div>';
+        cont.innerHTML = '<div class="text-center py-16 text-slate-500 text-xs">Aún no hay productos en el inventario.</div>';
         return;
       }
 
       if (list.length === 0) {
-        cont.innerHTML = '<div class="text-center py-14 text-slate-500 text-xs">No hay productos en esta categoría.</div>';
+        cont.innerHTML = '<div class="text-center py-16 text-slate-500 text-xs">No hay productos en esta categoría.</div>';
         return;
       }
 
       let html = '';
       list.forEach(p => {
         const precioNum = Number(p.precio || 0).toLocaleString();
-        const imagenSrc = p.imagen || 'https://via.placeholder.com/150';
+        const imagenSrc = p.imagen && p.imagen.trim() !== '' ? p.imagen : 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=300';
         const catName = p.categoria || 'GENERAL';
-        const opacidad = (p.disponible === false) ? 'opacity-40' : '';
+        const opacidad = (p.disponible === false) ? 'opacity-40 grayscale' : '';
         
         const botonAccion = (p.disponible !== false)
-          ? '<button onclick="agregar(' + p.id + ')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 px-3.5 py-1.5 rounded-xl text-xs font-black active:scale-95 transition">+ Agregar</button>'
-          : '<span class="text-red-400 text-xs font-bold">Agotado</span>';
+          ? '<button onclick="agregar(' + p.id + ')" class="neon-glow-btn text-slate-950 px-4 py-2 rounded-xl text-xs font-black active:scale-95 transition flex items-center gap-1">' +
+            '<i class="fa-solid fa-plus text-[10px]"></i> Agregar</button>'
+          : '<span class="bg-red-500/20 text-red-400 border border-red-500/40 text-[10px] font-bold px-3 py-1 rounded-lg">Agotado</span>';
 
-        html += '<div class="bg-slate-900 rounded-3xl p-3.5 flex gap-3.5 border border-slate-800 ' + opacidad + '">' +
-          '<img src="' + imagenSrc + '" class="w-24 h-24 object-cover rounded-2xl bg-slate-800 border border-slate-700/50" alt="' + p.nombre + '">' +
+        html += '<div class="cyber-card shimmer-effect rounded-3xl p-3.5 flex gap-3.5 border border-amber-500/20 ' + opacidad + '">' +
+          '<div class="relative w-24 h-24 flex-shrink-0">' +
+            '<img src="' + imagenSrc + '" class="w-full h-full object-cover rounded-2xl bg-slate-950 border border-slate-800 shadow-md" alt="' + p.nombre + '">' +
+          '</div>' +
           '<div class="flex-1 flex flex-col justify-between">' +
             '<div>' +
-              '<span class="text-[10px] font-bold text-amber-400 uppercase tracking-wider">' + catName + '</span>' +
-              '<h3 class="font-bold text-slate-100 text-sm leading-snug">' + p.nombre + '</h3>' +
-              '<p class="text-xs text-slate-400 line-clamp-2 mt-0.5">' + (p.descripcion || '') + '</p>' +
+              '<span class="text-[9px] font-black text-cyan-400 uppercase tracking-widest bg-cyan-950/40 border border-cyan-800/40 px-2 py-0.5 rounded-md">' + catName + '</span>' +
+              '<h3 class="font-bold text-slate-100 text-sm leading-snug mt-1.5">' + p.nombre + '</h3>' +
+              '<p class="text-xs text-slate-400 line-clamp-2 mt-0.5 leading-relaxed">' + (p.descripcion || '') + '</p>' +
             '</div>' +
-            '<div class="flex items-center justify-between mt-2 pt-1 border-t border-slate-800/60">' +
-              '<span class="text-amber-400 font-black text-base">$' + precioNum + ' CUP</span>' +
+            '<div class="flex items-center justify-between mt-2.5 pt-2 border-t border-slate-800/80">' +
+              '<span class="font-cyber text-amber-400 font-black text-base drop-shadow-[0_0_8px_rgba(245,158,11,0.4)]">$' + precioNum + ' <span class="text-[10px] font-sans text-slate-400">CUP</span></span>' +
               botonAccion +
             '</div>' +
           '</div>' +
@@ -329,7 +425,7 @@
     function cerrarCompartir() { document.getElementById("share-modal").classList.add("hidden"); }
 
     function compartirWA() {
-      const txt = encodeURIComponent("¡Pide en OFERTAZO! Catálogo digital en vivo en Ciego de Ávila:\n" + window.location.href);
+      const txt = encodeURIComponent("🔥 ¡Pide en OFERTAZO! Catálogo digital en vivo en Ciego de Ávila:\n" + window.location.href);
       window.open("https://api.whatsapp.com/send?text=" + txt, '_blank');
     }
 
@@ -351,15 +447,15 @@
       let html = '';
       carrito.forEach(i => {
         const subItem = (Number(i.precio || 0) * i.cantidad).toLocaleString();
-        html += '<div class="flex items-center justify-between bg-slate-800 p-2.5 rounded-xl border border-slate-700 text-xs">' +
+        html += '<div class="flex items-center justify-between bg-slate-900/90 p-3 rounded-2xl border border-slate-800 text-xs shadow-md">' +
           '<div>' +
             '<p class="font-bold text-white">' + i.nombre + '</p>' +
-            '<p class="text-amber-400 font-bold">$' + subItem + ' CUP</p>' +
+            '<p class="text-amber-400 font-cyber font-bold">$' + subItem + ' CUP</p>' +
           '</div>' +
           '<div class="flex items-center gap-2">' +
-            '<button onclick="cambiarCantidad(' + i.id + ', -1)" class="w-6 h-6 bg-slate-700 text-white rounded font-bold">-</button>' +
-            '<span class="w-4 text-center font-bold">' + i.cantidad + '</span>' +
-            '<button onclick="cambiarCantidad(' + i.id + ', 1)" class="w-6 h-6 bg-amber-500 text-slate-950 rounded font-bold">+</button>' +
+            '<button onclick="cambiarCantidad(' + i.id + ', -1)" class="w-7 h-7 bg-slate-800 text-white rounded-lg font-bold hover:bg-slate-700">-</button>' +
+            '<span class="w-5 text-center font-bold text-amber-300 font-cyber">' + i.cantidad + '</span>' +
+            '<button onclick="cambiarCantidad(' + i.id + ', 1)" class="w-7 h-7 bg-amber-500 text-slate-950 rounded-lg font-bold hover:bg-amber-400">+</button>' +
           '</div>' +
         '</div>';
       });
@@ -371,7 +467,7 @@
       const direccion = document.getElementById("client-address").value.trim();
 
       if (!nombre) { alert("Por favor escribe tu nombre."); return; }
-      if (!direccion) { alert("Por favor escribe la dirección de entrega."); return; }
+      if (!direccion) { alert("Por favor escribe la dirección de entrega en Ciego de Ávila."); return; }
 
       const subtotal = carrito.reduce((sum, item) => sum + (Number(item.precio || 0) * item.cantidad), 0);
       const totalGeneral = subtotal + COSTO_MENSAJERIA;
