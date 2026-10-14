@@ -194,6 +194,17 @@
     </div>
   </section>
 
+  <!-- BARRA DE BÚSQUEDA RÁPIDA -->
+  <div class="max-w-xl mx-auto px-3 pt-2.5 relative z-20">
+    <div class="relative">
+      <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-xs text-amber-400"></i>
+      <input id="input-buscador" type="text" placeholder="Buscar producto, plato o servicio en esta tienda..." oninput="filtrarProductosPorTexto(this.value)" class="w-full bg-[#0b1326] border border-amber-500/30 rounded-2xl pl-10 pr-9 py-2.5 text-xs text-white outline-none focus:border-amber-400 shadow-lg placeholder:text-slate-500">
+      <button onclick="limpiarBuscador()" id="btn-clear-search" class="absolute right-3 top-2.5 text-slate-400 hover:text-white text-xs hidden">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+  </div>
+
   <!-- Categorías Deslizables -->
   <nav id="nav-categorias" class="sticky top-[92px] z-20 bg-[#05070e]/95 backdrop-blur-md px-3 py-2 border-b border-slate-900/80 mt-2">
     <div class="max-w-xl mx-auto flex gap-1.5 overflow-x-auto no-scrollbar" id="categories-bar"></div>
@@ -450,10 +461,10 @@
         <button onclick="compartirConImagenNegocio()" id="btn-wa-con-foto" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-3 rounded-xl flex items-center justify-center gap-2 text-xs active:scale-95 shadow-lg">
           <i class="fa-brands fa-whatsapp text-base"></i> Compartir con Foto del Negocio
         </button>
-        <button onclick="abrirModalQR()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-black py-2.5 rounded-xl flex items-center justify-center gap-2 text-xs active:scale-95 shadow-md">
+        <button onclick="abrirModalQR()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 text-xs active:scale-95 shadow-md">
           <i class="fa-solid fa-qrcode text-base"></i> Ver / Descargar Tarjeta QR
         </button>
-        <button onclick="compartirFB()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-2.5 rounded-xl flex items-center justify-center gap-2 text-xs active:scale-95 shadow-md">
+        <button onclick="compartirFB()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 text-xs active:scale-95 shadow-md">
           <i class="fa-brands fa-facebook text-base"></i> Enviar a Facebook
         </button>
         <button onclick="copiarLink()" id="btn-copy" class="w-full bg-slate-800 text-slate-200 font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 border border-slate-700 text-xs active:scale-95">
@@ -1169,7 +1180,7 @@
       ctx.roundRect ? ctx.roundRect(20, 20, 760, 960, 28) : ctx.rect(20, 20, 760, 960);
       ctx.stroke();
 
-      ctx.fillStyle = "10b981";
+      ctx.fillStyle = "#10b981";
       ctx.font = "800 17px 'Orbitron', sans-serif";
       ctx.fillText(esOfertazoAdmin ? "🎁 CREA TU TIENDA GRATIS 7 DÍAS EN OFERTAZO.CA" : "IMPULSADO POR OFERTAZO.CA • CATÁLOGO DIGITAL", 400, 945);
 
@@ -1250,6 +1261,7 @@
     }
 
     function cerrarModalQR() {
+      document.getElementById("opiniones-modal").classList.add("hidden"); // Asegura cierre limpio
       document.getElementById("qr-modal").classList.add("hidden");
     }
 
@@ -1321,7 +1333,7 @@
       
       categorias.forEach(cat => {
         const isAct = categoriaSeleccionada.toLowerCase() === cat.toLowerCase();
-        html += '<button onclick="filtrarCategoria(\'' + cat + \')" class="' + 
+        html += '<button onclick="filtrarCategoria(\'' + cat + '\')" class="' + 
           (isAct 
             ? 'bg-amber-500 text-slate-950 font-black border-amber-400 shadow-[0_0_12px_rgba(245,158,11,0.4)]' 
             : 'bg-slate-900 text-slate-400 border-slate-800') + 
@@ -1336,11 +1348,43 @@
       renderizarProductos();
     }
 
+    /* FUNCIÓN DE BÚSQUEDA RÁPIDA (FILTRADO EN TIEMPO REAL) */
+    function filtrarProductosPorTexto(texto) {
+      const termino = texto.toLowerCase().trim();
+      const btnClear = document.getElementById("btn-clear-search");
+      
+      if (termino.length > 0) {
+        btnClear.classList.remove("hidden");
+      } else {
+        btnClear.classList.add("hidden");
+      }
+      renderizarProductos();
+    }
+
+    function limpiarBuscador() {
+      const input = document.getElementById("input-buscador");
+      input.value = "";
+      document.getElementById("btn-clear-search").classList.add("hidden");
+      renderizarProductos();
+    }
+
     function renderizarProductos() {
       const grid = document.getElementById("products-grid");
-      const list = (categoriaSeleccionada.toLowerCase() === 'todos')
+      const textoBuscador = (document.getElementById("input-buscador")?.value || "").toLowerCase().trim();
+
+      // 1. Filtrar por categoría seleccionada
+      let list = (categoriaSeleccionada.toLowerCase() === 'todos')
         ? productos
         : productos.filter(p => (p.categoria || '').trim().toUpperCase() === categoriaSeleccionada.toUpperCase());
+
+      // 2. Filtrar por el texto del buscador si el usuario escribió algo
+      if (textoBuscador.length > 0) {
+        list = list.filter(p => 
+          (p.nombre && p.nombre.toLowerCase().includes(textoBuscador)) ||
+          (p.descripcion && p.descripcion.toLowerCase().includes(textoBuscador)) ||
+          (p.categoria && p.categoria.toLowerCase().includes(textoBuscador))
+        );
+      }
 
       if (productos.length === 0) {
         grid.innerHTML = '<div class="col-span-2 text-center py-16 text-slate-500 text-xs">Este negocio aún no tiene productos registrados.</div>';
@@ -1348,7 +1392,7 @@
       }
 
       if (list.length === 0) {
-        grid.innerHTML = '<div class="col-span-2 text-center py-16 text-slate-500 text-xs">No hay productos en esta categoría.</div>';
+        grid.innerHTML = '<div class="col-span-2 text-center py-16 text-slate-500 text-xs">No se encontraron productos con ese nombre.</div>';
         return;
       }
 
@@ -1515,7 +1559,7 @@
         "👤 *Cliente:* " + nombre + "\n" +
         (esDomicilio 
           ? "🛵 *Entrega:* A Domicilio\n🏠 *Dirección:* " + direccion + "\n" 
-          : "🏬 *Entrega:* Recogida en le local (" + (negocioActual.direccion || 'Ciego de Ávila') + ")\n") +
+          : "🏬 *Entrega:* Recogida en el local (" + (negocioActual.direccion || 'Ciego de Ávila') + ")\n") +
         "💵 *Método de Pago:* Efectivo (CUP o USD)\n" +
         "📊 *Tasa aplicada:* 1 USD = " + tasaUSD + " CUP\n\n" +
         "📋 *DETALLE DE PRODUCTOS:*\n";
