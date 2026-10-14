@@ -3,36 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Demo Profesional - OFERTAZO.CA</title>
+    <title>Tutorial en Vivo - OFERTAZO.CA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #030712; overflow: hidden; user-select: none; }
         .font-cyber { font-family: 'Orbitron', monospace; }
-        .glow-box { box-shadow: 0 0 25px rgba(16, 185, 129, 0.2); }
-        .glow-text { text-shadow: 0 0 10px rgba(52, 211, 153, 0.5); }
+        .cyber-panel { background: rgba(11, 19, 38, 0.95); border: 1px solid rgba(245, 158, 11, 0.3); }
+        
+        /* Dedo virtual */
         #virtual-finger {
             position: absolute;
             z-index: 9999;
             transition: all 0.7s cubic-bezier(0.25, 1, 0.5, 1);
             pointer-events: none;
-            filter: drop-shadow(0 12px 20px rgba(0,0,0,0.6));
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.6));
         }
         .pulse-ring {
             position: absolute;
-            width: 50px; height: 50px;
-            background: rgba(16, 185, 129, 0.5);
+            width: 45px; height: 45px;
+            background: rgba(245, 158, 11, 0.5);
             border-radius: 50%;
             animation: ping 1.2s cubic-bezier(0, 0, 0.2, 1) infinite;
             transform: translate(-50%, -50%);
             display: none;
         }
         @keyframes ping {
-            75%, 100% { transform: translate(-50%, -50%) scale(2.8); opacity: 0; }
+            75%, 100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; }
         }
-        .slide-card {
-            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+
+        /* Caja de texto flotante tipo tutorial */
+        #tutorial-bubble {
+            transition: all 0.4s ease;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.7);
         }
     </style>
 </head>
@@ -41,205 +45,204 @@
     <!-- DEDO VIRTUAL ANIMADO -->
     <div id="virtual-finger">
         <div class="pulse-ring" id="finger-ring"></div>
-        <i class="fa-solid fa-hand-pointer text-yellow-400 text-4xl transform -rotate-45"></i>
+        <i class="fa-solid fa-hand-pointer text-amber-400 text-4xl transform -rotate-45"></i>
     </div>
 
-    <!-- HEADER / BARRA SUPERIOR -->
-    <header class="bg-slate-900/90 backdrop-blur-md border-b border-slate-800 p-4 flex justify-between items-center z-20">
+    <!-- CABECERA -->
+    <header class="bg-[#080d1a] border-b border-amber-500/30 p-3.5 flex justify-between items-center z-20">
         <div class="flex items-center space-x-2">
-            <div class="bg-gradient-to-r from-emerald-400 to-cyan-400 p-2 rounded-xl text-slate-950 font-black text-lg font-cyber shadow-lg">
+            <div class="bg-gradient-to-r from-amber-500 to-amber-300 p-1.5 rounded-xl text-slate-950 font-black text-sm font-cyber">
                 ⚡ OFERTAZO
             </div>
-            <div>
-                <span class="text-xs font-bold text-white block">CIEGO DE ÁVILA</span>
-                <span class="text-[9px] text-emerald-400 font-semibold tracking-wider">UNIVERSAL PLATFORM</span>
-            </div>
+            <span class="text-[10px] bg-emerald-500/20 text-emerald-400 font-bold px-2 py-0.5 rounded-full border border-emerald-500/30">CIEGO DE ÁVILA</span>
         </div>
-        <div id="top-badge" class="text-xs font-bold bg-slate-800 px-3.5 py-1.5 rounded-full text-emerald-300 border border-emerald-500/30 flex items-center space-x-2">
-            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-            <span>Demostración en Vivo</span>
+        <div id="top-badge" class="text-[10px] font-bold bg-slate-900 px-3 py-1 rounded-full text-amber-400 border border-amber-500/30 font-cyber">
+            TUTORIAL EN VIVO 🎬
         </div>
     </header>
 
-    <!-- PANTALLA PRINCIPAL / SIMULADOR -->
-    <main class="flex-1 relative flex items-center justify-center p-4">
+    <!-- TEXTO FLOTANTE TIPO TUTOR (EXPLICACIÓN EN VIVO) -->
+    <div class="px-4 pt-2 z-30">
+        <div id="tutorial-bubble" class="cyber-panel rounded-2xl p-3 border-l-4 border-l-amber-500 transform transition-all duration-300">
+            <div class="flex items-center space-x-2 mb-1">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span id="step-title" class="text-[10px] font-black text-amber-400 uppercase font-cyber">Paso 1: Creación del Negocio</span>
+            </div>
+            <p id="step-desc" class="text-xs text-slate-200 font-semibold leading-snug">
+                Cualquier negocio en Ciego de Ávila crea su tienda digital en segundos...
+            </p>
+        </div>
+    </div>
+
+    <!-- CONTENEDOR PRINCIPAL / SIMULADOR MÓVIL -->
+    <main class="flex-1 relative flex items-center justify-center p-3">
         
-        <!-- CONTENEDOR MÓVIL / INTERFAZ -->
-        <div class="w-full max-w-md bg-slate-900/90 border border-slate-700/60 rounded-3xl glow-box overflow-hidden flex flex-col h-[540px] relative">
+        <div class="w-full max-w-md bg-[#0b1326] border border-slate-700/80 rounded-3xl shadow-2xl overflow-hidden flex flex-col h-[460px] relative">
             
-            <!-- NOTIFICACIÓN FLOTANTE DINÁMICA -->
-            <div id="floating-alert" class="absolute top-3 left-3 right-3 bg-slate-800/95 border border-emerald-500/40 p-2.5 rounded-2xl shadow-xl z-30 transform -translate-y-20 opacity-0 transition-all duration-500 flex items-center space-x-3">
-                <div class="bg-emerald-500/20 text-emerald-400 p-2 rounded-xl">
-                    <i class="fa-solid fa-bolt text-sm"></i>
+            <!-- PANTALLA 1: REGISTRO -->
+            <div id="screen-reg" class="absolute inset-0 p-5 flex flex-col justify-between transition-all duration-500 opacity-150">
+                <div class="space-y-3">
+                    <div class="text-center">
+                        <h3 class="text-sm font-black text-amber-400 font-cyber">CREA TU CATÁLOGO</h3>
+                        <p class="text-[10px] text-slate-400">Prueba 7 Días Gratis</p>
+                    </div>
+                    <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-700 text-xs">
+                        <span class="text-[9px] text-slate-400 block font-bold">NEGOCIO:</span>
+                        <strong class="text-white">Boutique & Ropa Elegance</strong>
+                    </div>
+                    <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-700 text-xs">
+                        <span class="text-[9px] text-slate-400 block font-bold">ENLACE:</span>
+                        <strong class="text-cyan-400 font-mono">?tienda=ropa-elegance</strong>
+                    </div>
                 </div>
-                <div class="flex-1">
-                    <p class="text-[11px] font-bold text-white">¡Nuevo Negocio Activado!</p>
-                    <p class="text-[9px] text-slate-400">7 días gratis iniciados en Ciego de Ávila</p>
+                <div id="btn-reg-demo" class="w-full bg-amber-500 text-slate-950 font-black py-3 rounded-xl text-center text-xs uppercase tracking-wider shadow-lg">
+                    Crear Mi Catálogo Ahora
                 </div>
             </div>
 
-            <!-- FASE 1: PANEL DE NEGOCIO (Subir Artículo) -->
-            <div id="view-panel" class="absolute inset-0 p-6 flex flex-col justify-between slide-card opacity-100 translate-x-0">
-                <div>
-                    <div class="flex justify-between items-center mb-3">
-                        <h2 class="text-base font-extrabold text-white flex items-center">
-                            <i class="fa-solid fa-store text-emerald-400 mr-2"></i>Panel de Control
-                        </h2>
-                        <span class="text-[10px] bg-emerald-500/10 text-emerald-300 font-bold px-2.5 py-1 rounded-full border border-emerald-500/20">Plan Universal</span>
+            <!-- PANTALLA 2: PANEL DE CONTROL (SUBIR ARTÍCULO) -->
+            <div id="screen-panel" class="absolute inset-0 p-5 flex flex-col justify-between transition-all duration-500 opacity-0 transform translate-y-full">
+                <div class="space-y-2.5">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xs font-black text-emerald-400 font-cyber"><i class="fa-solid fa-store mr-1"></i> Panel de Control</h3>
+                        <span class="text-[9px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded">Activo</span>
                     </div>
-                    <p class="text-xs text-slate-400 mb-4">Cualquier comercio: Ropa, Tecnología, Ferretería o Servicios.</p>
-                    
-                    <!-- Tarjeta de entrada simulada -->
-                    <div class="space-y-3 bg-slate-950/40 p-4 rounded-2xl border border-slate-800">
+                    <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-700 text-xs space-y-1">
+                        <span class="text-[9px] text-slate-400 font-bold block">ARTÍCULO / PRODUCTO:</span>
+                        <div class="text-white font-bold">Tenis Deportivos Nike Air</div>
+                        <div class="text-amber-400 font-cyber font-bold">$12,500 CUP</div>
+                    </div>
+                </div>
+                <div id="btn-pub-demo" class="w-full bg-emerald-600 text-white font-black py-3 rounded-xl text-center text-xs uppercase tracking-wider shadow-lg">
+                    Publicar Artículo
+                </div>
+            </div>
+
+            <!-- PANTALLA 3: TIENDA / CARRITO DEL CLIENTE -->
+            <div id="screen-store" class="absolute inset-0 p-5 flex flex-col justify-between transition-all duration-500 opacity-0 transform translate-y-full">
+                <div class="space-y-3">
+                    <div class="bg-slate-900 border border-amber-500/30 p-2.5 rounded-xl flex items-center justify-between">
                         <div>
-                            <span class="text-[10px] text-slate-400 font-semibold block mb-1">PRODUCTO / SERVICIO</span>
-                            <div class="bg-slate-900 p-3 rounded-xl border border-slate-700 text-xs font-bold text-emerald-300 flex items-center justify-between">
-                                <span>Reloj Smartwatch Ultra Series</span>
-                                <i class="fa-solid fa-pen text-slate-500 text-xs"></i>
-                            </div>
+                            <h4 class="text-xs font-bold text-white">Tenis Deportivos Nike Air</h4>
+                            <p class="text-[10px] text-amber-400 font-cyber font-bold">$12,500 CUP (≈$39.06 USD)</p>
                         </div>
-                        <div>
-                            <span class="text-[10px] text-slate-400 font-semibold block mb-1">PRECIO OFICIAL</span>
-                            <div class="bg-slate-900 p-3 rounded-xl border border-slate-700 text-xs font-black text-cyan-400">
-                                18,000 CUP
-                            </div>
-                        </div>
+                        <span class="bg-emerald-500 text-slate-950 text-[9px] font-bold px-2 py-0.5 rounded">En Stock</span>
+                    </div>
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-[11px] space-y-1 text-slate-300">
+                        <p class="flex justify-between"><span>Subtotal:</span> <strong class="text-white">$12,500 CUP</strong></p>
+                        <p class="flex justify-between text-amber-300"><span>🛵 Domicilio:</span> <strong>+$250 CUP</strong></p>
+                        <p class="flex justify-between text-sm font-black text-white pt-1 border-t border-slate-800">
+                            <span>Total:</span> <span class="text-amber-400 font-cyber">$12,750 CUP</span>
+                        </p>
                     </div>
                 </div>
-
-                <!-- Botón Publicar Interactivo -->
-                <div id="btn-publicar" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black py-4 rounded-2xl text-center shadow-lg shadow-emerald-500/30 transition-all flex items-center justify-center space-x-2 text-sm cursor-pointer">
-                    <i class="fa-solid fa-cloud-arrow-up text-base"></i>
-                    <span>Publicar en OFERTAZO.CA</span>
+                <div id="btn-wa-demo" class="w-full bg-emerald-600 text-white font-black py-3 rounded-xl text-center text-xs uppercase flex items-center justify-center gap-2 shadow-lg">
+                    <i class="fa-brands fa-whatsapp text-base"></i> Confirmar Pedido por WhatsApp
                 </div>
             </div>
 
-            <!-- FASE 2: TIENDA / CLIENTES (Búsqueda y Visualización) -->
-            <div id="view-store" class="absolute inset-0 p-6 flex flex-col justify-between slide-card opacity-0 translate-y-full">
-                <div>
-                    <!-- Barra de Búsqueda -->
-                    <div class="flex items-center bg-slate-950/60 rounded-2xl px-4 py-3 mb-4 border border-slate-700 shadow-inner">
-                        <i class="fa-solid fa-magnifying-glass text-emerald-400 mr-3"></i>
-                        <span class="text-xs text-slate-200 font-medium">Smartwatch Ciego de Ávila...</span>
-                    </div>
-
-                    <!-- Tarjeta del Producto en el Catálogo -->
-                    <div class="bg-slate-950/50 rounded-2xl p-4 border border-slate-800 shadow-xl relative overflow-hidden">
-                        <div class="absolute top-0 right-0 bg-emerald-500 text-slate-950 font-black text-[9px] px-3 py-1 rounded-bl-xl uppercase tracking-wider">
-                            Destacado
-                        </div>
-                        <div class="bg-slate-900 h-28 rounded-xl mb-3 flex items-center justify-center relative border border-slate-800">
-                            <i class="fa-solid fa-clock text-5xl text-emerald-400/50"></i>
-                            <div class="absolute bottom-2 left-2 bg-slate-950/80 px-2 py-0.5 rounded text-[10px] text-cyan-300 font-bold">
-                                ⚡ Entrega Inmediata
-                            </div>
-                        </div>
-                        <h3 class="font-bold text-sm text-white">Reloj Smartwatch Ultra Series</h3>
-                        <p class="text-emerald-400 font-extrabold text-base mt-1 glow-text">18,000 CUP</p>
-                    </div>
-                </div>
-
-                <!-- Botón Comprar WhatsApp -->
-                <div id="btn-comprar" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold py-4 rounded-2xl text-center shadow-lg shadow-emerald-600/30 flex items-center justify-center space-x-2 text-sm cursor-pointer">
-                    <i class="fa-brands fa-whatsapp text-xl"></i>
-                    <span>Contactar / Comprar por WhatsApp</span>
-                </div>
-            </div>
-
-            <!-- FASE 3: ÉXITO TOTAL (Cierre Comercial) -->
-            <div id="view-success" class="absolute inset-0 p-6 flex flex-col items-center justify-center text-center slide-card opacity-0 scale-90">
-                <div class="w-20 h-20 bg-emerald-500/20 border-2 border-emerald-400 rounded-full flex items-center justify-center text-emerald-400 text-4xl mb-4 shadow-xl shadow-emerald-500/20 animate-bounce">
+            <!-- PANTALLA 4: WHATSAPP EXITOSO -->
+            <div id="screen-success" class="absolute inset-0 p-5 flex flex-col items-center justify-center text-center transition-all duration-500 opacity-0 transform scale-90">
+                <div class="w-16 h-16 bg-emerald-500/20 border-2 border-emerald-400 rounded-full flex items-center justify-center text-emerald-400 text-2xl mb-3 shadow-xl animate-bounce">
                     <i class="fa-solid fa-check"></i>
                 </div>
-                <h3 class="text-xl font-black text-white mb-2 font-cyber">¡Venta Concretada!</h3>
-                <p class="text-xs text-slate-300 max-w-xs mb-6 leading-relaxed">
-                    El cliente conectó directo al WhatsApp del comerciante. Sin intermediarios, rápido y seguro.
+                <h3 class="text-base font-black text-white font-cyber mb-1">¡PEDIDO RECIBIDO AL INSTANTE!</h3>
+                <p class="text-[11px] text-slate-300 max-w-xs mb-4">
+                    Sin intermediarios. El cliente compra y el pedido llega ordenado directo al WhatsApp del negocio.
                 </p>
-                <div class="bg-slate-950/80 px-5 py-2.5 rounded-full text-xs text-emerald-400 border border-emerald-500/30 font-bold shadow-lg">
-                    💎 Suscripción: 2,000 CUP / mes
+                <div class="bg-slate-900 border border-amber-500/40 px-4 py-2 rounded-xl text-[10px] text-amber-400 font-bold font-cyber">
+                    🎁 7 Días Gratis • Solo 2,000 CUP / mes
                 </div>
             </div>
 
         </div>
     </main>
 
-    <!-- FOOTER / BOTÓN DE INICIO -->
-    <footer class="bg-slate-900/90 backdrop-blur-md border-t border-slate-800 p-4 text-center z-20">
-        <button id="start-btn" onclick="iniciarDemo()" class="w-full max-w-md mx-auto bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 text-slate-950 font-black py-4 px-6 rounded-2xl shadow-xl hover:opacity-95 transition-all flex items-center justify-center space-x-3 text-sm">
-            <i class="fa-solid fa-play-circle text-lg"></i>
-            <span>🎬 REPRODUCIR DEMO PROFESIONAL</span>
+    <!-- FOOTER / BOTÓN DE REPRODUCCIÓN -->
+    <footer class="bg-[#080d1a] border-t border-amber-500/30 p-3 text-center z-20">
+        <button id="start-btn" onclick="iniciarTutorial()" class="w-full max-w-md mx-auto bg-gradient-to-r from-amber-500 to-amber-400 text-slate-950 font-black py-3 px-5 rounded-xl shadow-lg font-cyber text-xs uppercase flex items-center justify-center gap-2">
+            <i class="fa-solid fa-play-circle text-base"></i>
+            <span>▶️ REPRODUCIR VÍDEO TUTORIAL (Pulsa para grabar)</span>
         </button>
     </footer>
 
     <script>
         const finger = document.getElementById('virtual-finger');
         const ring = document.getElementById('finger-ring');
-        const viewPanel = document.getElementById('view-panel');
-        const viewStore = document.getElementById('view-store');
-        const viewSuccess = document.getElementById('view-success');
-        const btnPublicar = document.getElementById('btn-publicar');
-        const btnComprar = document.getElementById('btn-comprar');
         const startBtn = document.getElementById('start-btn');
-        const topBadge = document.getElementById('top-badge');
-        const floatingAlert = document.getElementById('floating-alert');
+        const stepTitle = document.getElementById('step-title');
+        const stepDesc = document.getElementById('step-desc');
 
-        function moveFingerTo(el, callback) {
+        function moverDedo(idEl, callback) {
+            const el = document.getElementById(idEl);
+            if (!el) return;
             const rect = el.getBoundingClientRect();
-            finger.style.left = (rect.left + rect.width / 2 - 15) + 'px';
-            finger.style.top = (rect.top + rect.height / 2 - 15) + 'px';
+            finger.style.display = 'flex';
+            finger.style.left = (rect.left + rect.width / 2 - 22) + 'px';
+            finger.style.top = (rect.top + rect.height / 2 - 22) + 'px';
+
             setTimeout(() => {
                 ring.style.display = 'block';
-                el.classList.add('scale-95', 'bg-emerald-500/30', 'border-emerald-400');
+                el.classList.add('scale-95', 'bg-amber-600/40');
                 setTimeout(() => {
                     ring.style.display = 'none';
-                    el.classList.remove('scale-95', 'bg-emerald-500/30', 'border-emerald-400');
+                    el.classList.remove('scale-95', 'bg-amber-600/40');
                     if (callback) callback();
-                }, 450);
-            }, 700);
+                }, 400);
+            }, 600);
         }
 
-        function iniciarDemo() {
-            startBtn.style.opacity = '0.5';
+        function cambiarPaso(titulo, desc, idOcultar, idMostrar) {
+            stepTitle.innerText = titulo;
+            stepDesc.innerText = desc;
+            document.getElementById(idOcultar).classList.remove('opacity-100', 'translate-y-0');
+            document.getElementById(idOcultar).classList.add('opacity-0', '-translate-y-full');
+
+            const mostrar = document.getElementById(idMostrar);
+            mostrar.classList.remove('opacity-0', 'translate-y-full', 'scale-90');
+            mostrar.classList.add('opacity-100', 'translate-y-0', 'scale-100');
+        }
+
+        function iniciarTutorial() {
+            startBtn.style.opacity = '0.4';
             startBtn.style.pointerEvents = 'none';
-            topBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span><span class="text-red-400">Grabando Demostración...</span>`;
 
-            // Mostrar alerta flotante al inicio
+            // PASO 1: Registro
             setTimeout(() => {
-                floatingAlert.classList.remove('-translate-y-20', 'opacity-0');
-                setTimeout(() => {
-                    floatingAlert.classList.add('-translate-y-20', 'opacity-0');
-                }, 3000);
-            }, 500);
+                moverDedo('btn-reg-demo', () => {
+                    cambiarPaso(
+                        "Paso 2: Panel de Control del Dueño",
+                        "El comerciante entra a su panel privado para gestionar su inventario...",
+                        "screen-reg",
+                        "screen-panel"
+                    );
 
-            // Posición inicial del dedo
-            finger.style.left = '50%';
-            finger.style.top = '100%';
-
-            // PASO 1: Tocar Publicar
-            setTimeout(() => {
-                moveFingerTo(btnPublicar, () => {
-                    viewPanel.classList.remove('opacity-100', 'translate-x-0');
-                    viewPanel.classList.add('opacity-0', '-translate-x-full');
-                    
-                    viewStore.classList.remove('opacity-0', 'translate-y-full');
-                    viewStore.classList.add('opacity-100', 'translate-y-0');
-                    topBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span><span class="text-cyan-300">Clientes comprando...</span>`;
-
-                    // PASO 2: Tocar WhatsApp
+                    // PASO 2: Publicar artículo
                     setTimeout(() => {
-                        moveFingerTo(btnComprar, () => {
-                            viewStore.classList.remove('opacity-100');
-                            viewStore.classList.add('opacity-0', 'scale-95');
+                        moverDedo('btn-pub-demo', () => {
+                            cambiarPaso(
+                                "Paso 3: Compra del Cliente",
+                                "Los clientes exploran el catálogo, agregan al carrito y calculan el domicilio...",
+                                "screen-panel",
+                                "screen-store"
+                            );
 
-                            viewSuccess.classList.remove('opacity-0', 'scale-90');
-                            viewSuccess.classList.add('opacity-100', 'scale-100');
-                            topBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400"></span><span class="text-emerald-400">¡Éxito Comercial!</span>`;
-                            
-                            finger.style.display = 'none';
+                            // PASO 3: Enviar a WhatsApp
+                            setTimeout(() => {
+                                moverDedo('btn-wa-demo', () => {
+                                    cambiarPaso(
+                                        "Paso 4: ¡Venta Exitosa!",
+                                        "El pedido llega organizado al instante al WhatsApp del negocio. ¡Así de fácil!",
+                                        "screen-store",
+                                        "screen-success"
+                                    );
+                                    finger.style.display = 'none';
+                                });
+                            }, 2500);
                         });
-                    }, 1800);
+                    }, 2200);
                 });
-            }, 1200);
+            }, 1000);
         }
     </script>
 </body>
