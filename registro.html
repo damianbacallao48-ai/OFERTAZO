@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Crea tu Catálogo Digital - 10 Días Gratis</title>
+  <title>Crea tu Catálogo Digital - 7 Días Gratis</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -18,7 +18,7 @@
         <i class="fa-solid fa-rocket"></i>
       </div>
       <h1 class="text-xl font-black text-amber-400">CREA TU CATÁLOGO</h1>
-      <p class="text-xs text-slate-300">Prueba la plataforma <strong>10 DÍAS GRATIS</strong> sin compromiso</p>
+      <p class="text-xs text-slate-300">Prueba la plataforma <strong>7 DÍAS GRATIS</strong> sin compromiso</p>
     </div>
 
     <!-- Formulario de Registro -->
@@ -105,7 +105,7 @@
       </div>
 
       <div class="p-3 bg-amber-500/10 border border-amber-500/30 rounded-2xl text-[11px] text-amber-300 leading-snug">
-        🎁 <strong>Prueba 100% Gratuita:</strong> Tienes 10 días para usar tu catálogo y recibir pedidos. Al vencer el plazo, podrás contratar el servicio mensual.
+        🎁 <strong>Prueba 100% Gratuita:</strong> Tienes 7 días para usar tu catálogo y recibir pedidos. Al vencer el plazo, podrás contratar el servicio mensual (2,000 CUP).
       </div>
 
       <button onclick="registrarNegocio()" id="btn-reg" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-3 rounded-xl text-xs uppercase tracking-wider active:scale-95 transition shadow-lg">
@@ -120,7 +120,7 @@
       </div>
       <div>
         <h2 class="text-base font-bold text-white">¡Tu catálogo ya está activo!</h2>
-        <p class="text-xs text-slate-300">Tienes 10 días de prueba gratuita activados.</p>
+        <p class="text-xs text-slate-300">Tienes 7 días de prueba gratuita activados.</p>
       </div>
 
       <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800 text-left space-y-2 text-xs">
@@ -306,9 +306,9 @@
 
       btn.innerText = "Creando catálogo...";
 
-      // Calcular fecha de vencimiento a 10 días a partir de hoy
+      // Calcular fecha de vencimiento a 7 días a partir de hoy
       const fechaVence = new Date();
-      fechaVence.setDate(fechaVence.getDate() + 10);
+      fechaVence.setDate(fechaVence.getDate() + 7);
 
       const nuevoNegocio = {
         nombre,
