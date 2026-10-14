@@ -90,6 +90,11 @@
     <div class="absolute top-1/3 -right-20 w-72 h-72 bg-cyan-500/10 rounded-full blur-[90px]"></div>
   </div>
 
+  <!-- Barra descriptiva superior de la plataforma -->
+  <div class="bg-slate-950/90 border-b border-slate-800/80 text-[10px] text-slate-400 py-1 px-3 text-center tracking-wide relative z-20">
+    <span class="text-amber-400 font-bold font-cyber">OFERTAZO.CUBA:</span> Centro Comercial Digital & Catálogos Interactivos en Ciego de Ávila
+  </div>
+
   <!-- Portada del Negocio Actual -->
   <div id="biz-portada-box" class="w-full max-w-xl mx-auto h-28 hidden overflow-hidden relative z-10">
     <img id="biz-portada" class="w-full h-full object-cover" alt="Portada">
@@ -148,6 +153,7 @@
   <section class="max-w-xl mx-auto px-3 pt-3 relative z-10">
     <div class="cyber-panel rounded-3xl p-3.5 shadow-xl space-y-2">
       <div class="flex flex-wrap gap-1.5">
+        <!-- Indicador dinámico de Domicilio o Solo Recogida -->
         <span id="badge-delivery" class="bg-amber-500/20 text-amber-300 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full border border-amber-500/40 flex items-center gap-1">
           <i class="fa-solid fa-motorcycle text-amber-400 text-[9px]"></i> Mensajería: $250 CUP
         </span>
@@ -164,7 +170,7 @@
     </div>
   </section>
 
-  <!-- CARRUSEL "OTROS NEGOCIOS" (ESTÉTICA CONTINUA) -->
+  <!-- CARRUSEL "OTROS NEGOCIOS" -->
   <section id="seccion-otros-negocios" class="max-w-xl mx-auto pt-4 relative z-10 hidden">
     <div class="px-3 flex items-center justify-between mb-2">
       <div class="flex items-center gap-2">
@@ -232,7 +238,7 @@
       </div>
     </div>
 
-    <!-- Banner Promocional para Crear Negocios -->
+    <!-- Banner Promocional para Crear Negocios (10 Días Gratis) -->
     <section class="cyber-panel rounded-3xl p-5 text-center space-y-3 border-2 border-dashed border-amber-500/40 relative overflow-hidden shadow-2xl">
       <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-300 text-slate-950 flex items-center justify-center text-xl font-black mx-auto shadow-lg">
         <i class="fa-solid fa-store"></i>
@@ -247,18 +253,74 @@
         </p>
       </div>
       <a href="registro.html" class="inline-flex items-center justify-center gap-2 w-full btn-promo-neon text-white font-black py-3 rounded-2xl text-xs uppercase tracking-wider shadow-xl active:scale-95 transition">
-        <i class="fa-solid fa-bolt text-amber-300"></i> Registrar Mi Negocio Gratis
+        <i class="fa-solid fa-bolt text-amber-300"></i> Iniciar Gratis por 10 Días
       </a>
     </section>
 
-    <!-- Enlace al Panel Admin para el Dueño -->
-    <div class="text-center pt-1 pb-6">
+    <!-- BOTÓN DE INFORMACIÓN SOLICITADO EXACTAMENTE DEBAJO DEL RECUADRO -->
+    <div class="flex justify-center pt-1">
+      <button onclick="abrirModalInfo()" class="neon-pill-btn bg-slate-900/90 hover:bg-slate-800 border border-cyan-500/40 text-cyan-300 px-5 py-2 rounded-2xl text-xs font-cyber font-bold flex items-center gap-2 shadow-lg active:scale-95 transition">
+        <i class="fa-solid fa-circle-info text-amber-400 text-sm"></i>
+        <span>Información sobre la Plataforma</span>
+      </button>
+    </div>
+
+    <!-- Enlace al Panel Admin para el Dueño & Firma Daemon.pro.adm -->
+    <div class="text-center pt-2 pb-6 space-y-1.5">
       <a id="link-pie-admin" href="#" class="text-xs text-slate-400 hover:text-amber-400 underline font-semibold flex items-center justify-center gap-1.5 transition">
         <i class="fa-solid fa-lock text-[10px]"></i> ¿Eres el dueño de este negocio? Administrar catálogo
       </a>
+      <p class="text-[10px] text-slate-500 font-cyber tracking-widest font-bold">
+        Desarrollo y Supervisión Central: <span class="text-cyan-400">Daemon.pro.adm</span>
+      </p>
     </div>
 
   </main>
+
+  <!-- MODAL: INFORMACIÓN SOBRE LA PLATAFORMA (DETALLES Y VENTAJAS) -->
+  <div id="info-modal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="cyber-panel w-full max-w-md rounded-3xl p-5 border border-cyan-500/40 shadow-2xl space-y-3.5 relative max-h-[88vh] overflow-y-auto no-scrollbar">
+      <button onclick="cerrarModalInfo()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">✕</button>
+      
+      <div class="flex items-center gap-2.5 border-b border-slate-800 pb-2.5">
+        <div class="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg border border-amber-500/30">
+          <i class="fa-solid fa-network-wired"></i>
+        </div>
+        <div>
+          <h3 class="font-cyber font-black text-amber-400 text-xs tracking-wider">OFERTAZO.CUBA</h3>
+          <p class="text-[10px] text-cyan-300 font-cyber">Centro Comercial & Catálogos Digitales</p>
+        </div>
+      </div>
+
+      <div class="space-y-2.5 text-xs text-slate-300 leading-relaxed">
+        <p>
+          <strong class="text-white">OFERTAZO</strong> es la plataforma de comercio digital optimizada para Ciego de Ávila. Permite que emprendedores, cafeterías, ferreterías y puntos de venta cuenten con su catálogo web interactivo sin pagar comisiones por venta.
+        </p>
+
+        <div class="bg-slate-900/80 p-3 rounded-2xl border border-slate-800 space-y-1.5 text-[11px]">
+          <h4 class="font-cyber font-bold text-amber-300 uppercase text-[10px] flex items-center gap-1.5">
+            <i class="fa-solid fa-star text-amber-400"></i> Beneficios Clave:
+          </h4>
+          <ul class="space-y-1 list-disc list-inside text-slate-300">
+            <li>Pedidos automáticos organizados directo al WhatsApp del dueño.</li>
+            <li>Calculadora transparente de tasa (CUP / USD) y servicio a domicilio.</li>
+            <li>Directorio provincial y carrusel continuo para compartir clientes entre negocios.</li>
+            <li>Generador de Código QR en alta resolución listo para imprimir en locales.</li>
+            <li>Control total de productos, fotos y precios desde el móvil con PIN de seguridad.</li>
+          </ul>
+        </div>
+
+        <div class="p-2.5 rounded-xl bg-cyan-950/40 border border-cyan-800/40 text-[10px] text-cyan-300 font-cyber flex items-center justify-between">
+          <span>Administración Central:</span>
+          <strong class="text-amber-400">Daemon.pro.adm</strong>
+        </div>
+      </div>
+
+      <button onclick="cerrarModalInfo()" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-2 rounded-xl text-xs active:scale-95 transition">
+        Entendido
+      </button>
+    </div>
+  </div>
 
   <!-- MODAL: DIRECTORIO COMPLETO INTERACTIVO -->
   <div id="directory-modal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 hidden flex flex-col items-center justify-end sm:justify-center p-0 sm:p-4">
@@ -379,7 +441,7 @@
     </div>
   </div>
 
-  <!-- Modal Carrito & Checkout -->
+  <!-- Modal Carrito & Checkout (Adaptable a Domicilio o Recogida) -->
   <div id="cart-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="cyber-panel w-full max-w-lg rounded-t-3xl sm:rounded-3xl max-h-[90vh] flex flex-col border border-amber-500/40 shadow-2xl">
       <div class="p-4 border-b border-slate-800 flex justify-between items-center">
@@ -394,11 +456,11 @@
 
         <div class="pt-3 border-t border-slate-800 space-y-2.5">
           <div>
-            <label class="text-[10px] text-amber-300 font-bold uppercase">Nombre de quien recibe:</label>
+            <label class="text-[10px] text-amber-300 font-bold uppercase">Nombre de quien realiza el pedido:</label>
             <input id="client-name" type="text" placeholder="Ej. Juan" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400 shadow-inner">
           </div>
-          <div>
-            <label class="text-[10px] text-amber-300 font-bold uppercase">Dirección exacta en Ciego de Ávila:</label>
+          <div id="box-address-field">
+            <label class="text-[10px] text-amber-300 font-bold uppercase">Dirección exacta de entrega:</label>
             <input id="client-address" type="text" placeholder="Calle, número, entrecalles y reparto" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400 shadow-inner">
           </div>
         </div>
@@ -408,8 +470,8 @@
             <span>Subtotal productos:</span>
             <span id="calc-subtotal" class="font-bold text-white">$0 CUP</span>
           </div>
-          <div class="flex justify-between text-slate-300">
-            <span>Mensajería:</span>
+          <div class="flex justify-between text-slate-300" id="row-calc-delivery">
+            <span>Entrega a Domicilio:</span>
             <span id="calc-delivery" class="font-bold text-amber-400">+$250 CUP</span>
           </div>
           <div class="flex justify-between text-sm font-black text-white pt-2 border-t border-slate-800">
@@ -476,10 +538,25 @@
 
         document.title = `${negocioActual.nombre} - Catálogo Digital`;
         document.getElementById("biz-header-name").innerText = negocioActual.nombre;
-        document.getElementById("biz-header-type").innerText = `${negocioActual.direccion || 'Ciego de Ávila'} • ${negocioActual.tipo || 'Catálogo'}`;
-        document.getElementById("badge-delivery").innerText = `🛵 Mensajería: $${negocioActual.costo_mensajeria || 250} CUP`;
-        document.getElementById("biz-description").innerText = negocioActual.descripcion || `Catálogo oficial de ${negocioActual.nombre}.`;
+        
+        // Manejo del servicio a domicilio Sí / No
+        const tieneDomicilio = (negocioActual.tiene_domicilio !== false);
+        const costoFee = Number(negocioActual.costo_mensajeria) || 0;
+        const badgeDeliveryEl = document.getElementById("badge-delivery");
+        
+        if (tieneDomicilio) {
+          badgeDeliveryEl.innerHTML = `<i class="fa-solid fa-motorcycle text-amber-400 text-[9px]"></i> Domicilio: $${costoFee} CUP`;
+          document.getElementById("biz-header-type").innerText = `${negocioActual.direccion || 'Ciego de Ávila'} • Delivery`;
+          document.getElementById("box-address-field").classList.remove("hidden");
+          document.getElementById("row-calc-delivery").classList.remove("hidden");
+        } else {
+          badgeDeliveryEl.innerHTML = `<i class="fa-solid fa-store text-cyan-400 text-[9px]"></i> Solo Recogida en Local`;
+          document.getElementById("biz-header-type").innerText = `${negocioActual.direccion || 'Ciego de Ávila'} • En Local`;
+          document.getElementById("box-address-field").classList.add("hidden");
+          document.getElementById("row-calc-delivery").classList.add("hidden");
+        }
 
+        document.getElementById("biz-description").innerText = negocioActual.descripcion || `Catálogo oficial de ${negocioActual.nombre}.`;
         document.getElementById("modal-share-title").innerText = `Compartir ${negocioActual.nombre}`;
 
         if (negocioActual.logo_url) {
@@ -513,6 +590,9 @@
         return false;
       }
     }
+
+    function abrirModalInfo() { document.getElementById("info-modal").classList.remove("hidden"); }
+    function cerrarModalInfo() { document.getElementById("info-modal").classList.add("hidden"); }
 
     /* CARRUSEL DE OTROS NEGOCIOS */
     async function cargarCarruselOtrosNegocios() {
@@ -610,7 +690,8 @@
       lista.forEach(n => {
         const esLaMisma = (negocioActual && n.slug === negocioActual.slug);
         const logoSrc = n.logo_url || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=150';
-        const fee = n.costo_mensajeria || 250;
+        const tieneDom = (n.tiene_domicilio !== false);
+        const feeTexto = tieneDom ? `Mensajería: $${n.costo_mensajeria || 250} CUP` : `Recogida en local`;
         const badgeActual = esLaMisma 
           ? '<span class="text-[9px] font-black text-amber-400 bg-amber-500/20 px-1.5 py-0.5 rounded border border-amber-500/30">TIENDA ACTUAL</span>'
           : '';
@@ -628,7 +709,7 @@
                   <i class="fa-solid fa-location-dot text-cyan-400 text-[9px]"></i> ${n.direccion || 'Ciego de Ávila'}
                 </p>
                 <div class="flex items-center gap-2 mt-1 text-[9px] text-slate-300">
-                  <span class="text-amber-300 font-bold"><i class="fa-solid fa-motorcycle text-[8px]"></i> Mensajería: $${fee} CUP</span>
+                  <span class="text-amber-300 font-bold"><i class="fa-solid fa-motorcycle text-[8px]"></i> ${feeTexto}</span>
                 </div>
                 <p class="text-[10px] text-slate-300/80 line-clamp-2 mt-1">${n.descripcion || 'Sin descripción disponible.'}</p>
               </div>
@@ -676,7 +757,7 @@
 
       document.getElementById("qr-modal").classList.remove("hidden");
       document.getElementById("qr-modal-nombre").innerText = negocioActual.nombre.toUpperCase();
-      document.getElementById("qr-modal-actividades").innerText = `⚡ ${(negocioActual.tipo || 'Catálogo Comercial & Delivery').toUpperCase()} ⚡`;
+      document.getElementById("qr-modal-actividades").innerText = `⚡ ${(negocioActual.tipo || 'Catálogo Comercial').toUpperCase()} ⚡`;
 
       const enlaceLimpio = obtenerEnlaceLimpio();
       document.getElementById("qr-modal-url").innerText = enlaceLimpio;
@@ -727,7 +808,7 @@
 
       ctx.fillStyle = "#22d3ee";
       ctx.font = "bold 18px 'Plus Jakarta Sans', sans-serif";
-      ctx.fillText((negocioActual.tipo || "Catálogo & Delivery").toUpperCase(), canvas.width / 2, 125);
+      ctx.fillText((negocioActual.tipo || "Catálogo Digital").toUpperCase(), canvas.width / 2, 125);
 
       ctx.fillStyle = "#ffffff";
       ctx.roundRect ? ctx.roundRect(140, 160, 320, 320, 20) : ctx.fillRect(140, 160, 320, 320);
@@ -741,11 +822,11 @@
 
       ctx.fillStyle = "#94a3b8";
       ctx.font = "16px 'Plus Jakarta Sans', sans-serif";
-      ctx.fillText("Envíos directos a tu WhatsApp • Ciego de Ávila", canvas.width / 2, 575);
+      ctx.fillText("Pedidos directos a WhatsApp • Ciego de Ávila", canvas.width / 2, 575);
 
       ctx.fillStyle = "#10b981";
       ctx.font = "bold 16px 'Orbitron', sans-serif";
-      ctx.fillText("OFERTAZO.CUBA • CATÁLOGO DIGITAL", canvas.width / 2, 720);
+      ctx.fillText("OFERTAZO.CUBA • Daemon.pro.adm", canvas.width / 2, 720);
 
       const a = document.createElement("a");
       a.download = `QR_${negocioActual.slug || 'tienda'}.png`;
@@ -911,7 +992,9 @@
     }
 
     function actualizarTotales() {
-      const deliveryFee = Number(negocioActual ? negocioActual.costo_mensajeria : 250) || 0;
+      const tieneDom = (negocioActual && negocioActual.tiene_domicilio !== false);
+      const deliveryFee = tieneDom ? (Number(negocioActual.costo_mensajeria) || 0) : 0;
+      
       const totalCount = carrito.reduce((sum, item) => sum + item.cantidad, 0);
       const subtotalCup = carrito.reduce((sum, item) => sum + (Number(item.precio || 0) * item.cantidad), 0);
       const totalFinalCup = subtotalCup + deliveryFee;
@@ -927,8 +1010,10 @@
         cerrarCarrito();
       }
 
-      document.getElementById("calc-subtotal").innerText = '$' + subtotalCup.toLocaleString() + ' CUP (≈$' + (subtotalCup / tasaUSD).toFixed(2) + ' USD)';
-      document.getElementById("calc-delivery").innerText = '+$' + deliveryFee + ' CUP';
+      document.getElementById("calc-subtotal").innerText = '$' + subtotalCup.toLocaleString() + ' CUP (≈ $' + (subtotalCup / tasaUSD).toFixed(2) + ' USD)';
+      if (tieneDom) {
+        document.getElementById("calc-delivery").innerText = '+$' + deliveryFee + ' CUP';
+      }
       document.getElementById("calc-total-cup").innerText = '$' + totalFinalCup.toLocaleString() + ' CUP';
       document.getElementById("calc-total-usd").innerText = '≈ $' + totalFinalUsd + ' USD';
     }
@@ -986,12 +1071,13 @@
 
     function enviarPedido() {
       const nombre = document.getElementById("client-name").value.trim();
+      const tieneDom = (negocioActual && negocioActual.tiene_domicilio !== false);
       const direccion = document.getElementById("client-address").value.trim();
 
       if (!nombre) { alert("Por favor escribe tu nombre."); return; }
-      if (!direccion) { alert("Por favor escribe la dirección de entrega."); return; }
+      if (tieneDom && !direccion) { alert("Por favor escribe la dirección de entrega."); return; }
 
-      const deliveryFee = Number(negocioActual ? negocioActual.costo_mensajeria : 250) || 0;
+      const deliveryFee = tieneDom ? (Number(negocioActual.costo_mensajeria) || 0) : 0;
       const subtotalCup = carrito.reduce((sum, item) => sum + (Number(item.precio || 0) * item.cantidad), 0);
       const totalGeneralCup = subtotalCup + deliveryFee;
       const totalGeneralUsd = (totalGeneralCup / tasaUSD).toFixed(2);
@@ -1000,8 +1086,7 @@
 
       let msg = `⚡📦 *¡NUEVO PEDIDO A ${bizName.toUpperCase()}!* 📦⚡\n` +
         "👤 *Cliente:* " + nombre + "\n" +
-        "🏠 *Dirección:* " + direccion + "\n" +
-        "🛵 *Entrega:* A Domicilio\n" +
+        (tieneDom ? ("🏠 *Dirección:* " + direccion + "\n🛵 *Modalidad:* Entrega a Domicilio\n") : "🏬 *Modalidad:* Recogida Directa en Local\n") +
         "💵 *Método de Pago:* Efectivo (CUP o USD)\n" +
         "📊 *Tasa aplicada:* 1 USD = " + tasaUSD + " CUP\n\n" +
         "📋 *DETALLE DE PRODUCTOS:*\n";
@@ -1012,9 +1097,13 @@
       });
 
       msg += "\n━━━━━━━━━━━━━━━━━━━\n" +
-        "🛒 *Subtotal Productos:* $" + subtotalCup.toLocaleString() + " CUP\n" +
-        "🛵 *Costo Domicilio:* $" + deliveryFee + " CUP\n" +
-        "💰 *TOTAL A PAGAR:* $" + totalGeneralCup.toLocaleString() + " CUP\n" +
+        "🛒 *Subtotal Productos:* $" + subtotalCup.toLocaleString() + " CUP\n";
+      
+      if (tieneDom) {
+        msg += "🛵 *Costo Domicilio:* $" + deliveryFee + " CUP\n";
+      }
+
+      msg += "💰 *TOTAL A PAGAR:* $" + totalGeneralCup.toLocaleString() + " CUP\n" +
         "💵 *O en USD:* $" + totalGeneralUsd + " USD\n" +
         "━━━━━━━━━━━━━━━━━━━";
 
