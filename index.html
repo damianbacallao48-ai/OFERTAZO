@@ -375,21 +375,44 @@
         <div id="cart-items" class="space-y-2"></div>
 
         <div class="pt-3 border-t border-slate-800 space-y-2.5">
+          <!-- Selector de Tipo de Entrega (Domicilio vs Recogida en Local) -->
+          <div id="box-selector-entrega">
+            <label class="text-[10px] text-amber-300 font-bold uppercase block mb-1">Método de Entrega:</label>
+            <select id="client-delivery-mode" onchange="cambiarModoEntrega(this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white font-bold outline-none focus:border-amber-400">
+              <option value="domicilio" id="opt-domicilio-label">🛵 Entrega a Domicilio</option>
+              <option value="local">🏬 Recoger en el Local ($0 CUP)</option>
+            </select>
+          </div>
+
+          <!-- Aviso cuando el negocio NO tiene domicilio -->
+          <div id="box-sin-domicilio" class="hidden bg-slate-900/90 border border-slate-700 rounded-xl p-2.5 text-[11px] text-amber-300 font-bold flex items-center gap-2">
+            <i class="fa-solid fa-store text-amber-400"></i>
+            <span>Este negocio solo ofrece recogida directa en el local.</span>
+          </div>
+
           <div>
-            <label class="text-[10px] text-amber-300 font-bold uppercase">Nombre de quien recibe:</label>
+            <label class="text-[10px] text-amber-300 font-bold uppercase">Nombre de quien recibe / recoge:</label>
             <input id="client-name" type="text" placeholder="Ej. Juan" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400 shadow-inner">
           </div>
-          <div>
+
+          <div id="box-direccion-cliente">
             <label class="text-[10px] text-amber-300 font-bold uppercase">Dirección exacta en Ciego de Ávila:</label>
             <input id="client-address" type="text" placeholder="Calle, número, entrecalles y reparto" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400 shadow-inner">
           </div>
         </div>
 
+        <!-- Desglose de Costos: Subtotal + Domicilio + Total -->
         <div class="bg-slate-900/90 p-3 rounded-2xl border border-slate-800 space-y-1.5 text-xs">
           <div class="flex justify-between text-slate-300">
             <span>Subtotal productos:</span>
             <span id="calc-subtotal" class="font-bold text-white">$0 CUP</span>
           </div>
+
+          <div id="row-calc-delivery" class="flex justify-between text-slate-300">
+            <span class="flex items-center gap-1"><i class="fa-solid fa-motorcycle text-amber-400 text-[10px]"></i> Servicio a domicilio:</span>
+            <span id="calc-delivery" class="font-bold text-amber-300">$0 CUP</span>
+          </div>
+
           <div class="flex justify-between text-sm font-black text-white pt-2 border-t border-slate-800">
             <span>Total a pagar:</span>
             <div class="text-right">
@@ -425,6 +448,9 @@
     let carrito = [];
     let categoriaSeleccionada = 'todos';
     let tasaUSD = 320;
+    let negocioTieneDomicilio = true;
+    let costoDomicilioNegocio = 0;
+    let modoEntregaSeleccionado = 'domicilio'; // 'domicilio' o 'local'
     let listaTodosNegocios = [];
     let mapaImagenesNegocios = {};
     let qrInstancia = null;
@@ -461,6 +487,12 @@
         document.getElementById("link-pie-admin").href = panelUrl;
 
         tasaUSD = parseFloat(negocioActual.tasa_usd) || 320;
+
+        // Configurar estado y precio de domicilio según lo que decidió el dueño del negocio
+        negocioTieneDomicilio = (negocioActual.tiene_domicilio !== false);
+        costoDomicilioNegocio = negocioTieneDomicilio ? (parseFloat(negocioActual.costo_mensajeria) || 0) : 0;
+
+        configurarInterfazDomicilio();
 
         document.title = `${negocioActual.nombre} - Catálogo Digital`;
         document.getElementById("biz-header-name").innerText = negocioActual.nombre;
@@ -502,7 +534,49 @@
       }
     }
 
-    /* CARRUSEL DE OTROS NEGOCIOS (TOMA PORTADA, LOGO O PRIMER PRODUCTO DE CADA TIENDA) */
+    function configurarInterfazDomicilio() {
+      const boxSelector = document.getElementById("box-selector-entrega");
+      const boxSinDom = document.getElementById("box-sin-domicilio");
+      const boxDireccion = document.getElementById("box-direccion-cliente");
+      const optLabel = document.getElementById("opt-domicilio-label");
+      const selectEl = document.getElementById("client-delivery-mode");
+
+      if (negocioTieneDomicilio) {
+        modoEntregaSeleccionado = 'domicilio';
+        selectEl.value = 'domicilio';
+        boxSelector.classList.remove("hidden");
+        boxSinDom.classList.add("hidden");
+        boxDireccion.classList.remove("hidden");
+        optLabel.innerText = costoDomicilioNegocio > 0 
+          ? `🛵 Entrega a Domicilio (+$${costoDomicilioNegocio.toLocaleString()} CUP)` 
+          : `🛵 Entrega a Domicilio (Gratis)`;
+      } else {
+        modoEntregaSeleccionado = 'local';
+        boxSelector.classList.add("hidden");
+        boxSinDom.classList.remove("hidden");
+        boxDireccion.classList.add("hidden");
+      }
+    }
+
+    function cambiarModoEntrega(modo) {
+      modoEntregaSeleccionado = modo;
+      const boxDireccion = document.getElementById("box-direccion-cliente");
+      if (modo === 'domicilio') {
+        boxDireccion.classList.remove("hidden");
+      } else {
+        boxDireccion.classList.add("hidden");
+      }
+      actualizarTotales();
+    }
+
+    function obtenerCostoEnvioAplicable() {
+      if (negocioTieneDomicilio && modoEntregaSeleccionado === 'domicilio') {
+        return costoDomicilioNegocio;
+      }
+      return 0;
+    }
+
+    /* CARRUSEL DE OTROS NEGOCIOS */
     async function cargarCarruselOtrosNegocios() {
       try {
         const { data, error } = await supabaseClient
@@ -522,7 +596,6 @@
 
         if (otros.length === 0) return;
 
-        // Buscar imágenes de productos de esos negocios por si alguno no subió portada ni logo
         const idsNegocios = otros.map(n => n.id);
         const { data: prodsData } = await supabaseClient
           .from('productos')
@@ -540,7 +613,6 @@
           });
         }
 
-        // Duplicar para animación continua sin cortes
         const listaParaCarrusel = otros.length === 1 ? [...otros, ...otros, ...otros, ...otros] : [...otros, ...otros];
         const track = document.getElementById("carrusel-track");
         const fallbackImg = 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=500';
@@ -551,7 +623,6 @@
           const logo = obtenerLogoNegocio(n);
           const fotoProducto = mapaImagenesNegocios[n.id] || "";
 
-          // Prioridad: 1. Portada -> 2. Logo -> 3. Primer Producto de esa tienda -> 4. Fallback
           const imgPrincipal = portada || logo || fotoProducto || fallbackImg;
           const imgLogoMini = logo || portada || fotoProducto;
 
@@ -927,7 +998,8 @@
     function actualizarTotales() {
       const totalCount = carrito.reduce((sum, item) => sum + item.cantidad, 0);
       const subtotalCup = carrito.reduce((sum, item) => sum + (Number(item.precio || 0) * item.cantidad), 0);
-      const totalFinalCup = subtotalCup;
+      const costoEnvio = totalCount > 0 ? obtenerCostoEnvioAplicable() : 0;
+      const totalFinalCup = subtotalCup + costoEnvio;
       const totalFinalUsd = (totalFinalCup / tasaUSD).toFixed(2);
 
       const bar = document.getElementById("cart-bar");
@@ -941,6 +1013,20 @@
       }
 
       document.getElementById("calc-subtotal").innerText = '$' + subtotalCup.toLocaleString() + ' CUP (≈$' + (subtotalCup / tasaUSD).toFixed(2) + ' USD)';
+      
+      const rowDelivery = document.getElementById("row-calc-delivery");
+      const calcDelivery = document.getElementById("calc-delivery");
+
+      if (negocioTieneDomicilio && modoEntregaSeleccionado === 'domicilio') {
+        rowDelivery.classList.remove("hidden");
+        calcDelivery.innerText = costoEnvio > 0 
+          ? '+$' + costoEnvio.toLocaleString() + ' CUP' 
+          : 'GRATIS ($0 CUP)';
+      } else {
+        rowDelivery.classList.remove("hidden");
+        calcDelivery.innerText = '$0 CUP (Recogida en local)';
+      }
+
       document.getElementById("calc-total-cup").innerText = '$' + totalFinalCup.toLocaleString() + ' CUP';
       document.getElementById("calc-total-usd").innerText = '≈ $' + totalFinalUsd + ' USD';
     }
@@ -999,19 +1085,29 @@
     function enviarPedido() {
       const nombre = document.getElementById("client-name").value.trim();
       const direccion = document.getElementById("client-address").value.trim();
+      const esDomicilio = (negocioTieneDomicilio && modoEntregaSeleccionado === 'domicilio');
 
-      if (!nombre) { alert("Por favor escribe tu nombre."); return; }
-      if (!direccion) { alert("Por favor escribe la dirección de entrega."); return; }
+      if (!nombre) {
+        alert("Por favor escribe tu nombre.");
+        return;
+      }
+      if (esDomicilio && !direccion) {
+        alert("Por favor escribe la dirección de entrega.");
+        return;
+      }
 
       const subtotalCup = carrito.reduce((sum, item) => sum + (Number(item.precio || 0) * item.cantidad), 0);
-      const totalGeneralCup = subtotalCup;
+      const costoEnvio = obtenerCostoEnvioAplicable();
+      const totalGeneralCup = subtotalCup + costoEnvio;
       const totalGeneralUsd = (totalGeneralCup / tasaUSD).toFixed(2);
       const waNumber = (negocioActual && negocioActual.telefono_whatsapp) ? negocioActual.telefono_whatsapp : "5358960660";
       const bizName = negocioActual ? negocioActual.nombre : "OFERTAZO";
 
       let msg = `⚡📦 *¡NUEVO PEDIDO A ${bizName.toUpperCase()}!* 📦⚡\n` +
         "👤 *Cliente:* " + nombre + "\n" +
-        "🏠 *Dirección:* " + direccion + "\n" +
+        (esDomicilio 
+          ? "🛵 *Entrega:* A Domicilio\n🏠 *Dirección:* " + direccion + "\n" 
+          : "🏬 *Entrega:* Recogida en el local (" + (negocioActual.direccion || 'Ciego de Ávila') + ")\n") +
         "💵 *Método de Pago:* Efectivo (CUP o USD)\n" +
         "📊 *Tasa aplicada:* 1 USD = " + tasaUSD + " CUP\n\n" +
         "📋 *DETALLE DE PRODUCTOS:*\n";
@@ -1023,6 +1119,9 @@
 
       msg += "\n━━━━━━━━━━━━━━━━━━━\n" +
         "🛒 *Subtotal Productos:* $" + subtotalCup.toLocaleString() + " CUP\n" +
+        (esDomicilio 
+          ? "🛵 *Costo de Domicilio:* $" + costoEnvio.toLocaleString() + " CUP\n" 
+          : "🏬 *Domicilio:* $0 CUP (Recogida en local)\n") +
         "💰 *TOTAL A PAGAR:* $" + totalGeneralCup.toLocaleString() + " CUP\n" +
         "💵 *O en USD:* $" + totalGeneralUsd + " USD\n" +
         "━━━━━━━━━━━━━━━━━━━";
