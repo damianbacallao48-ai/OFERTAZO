@@ -68,7 +68,7 @@
         onclick="cambiarPestanaPanel('productos')" 
         class="py-2.5 px-3 rounded-xl font-cyber font-black text-[11px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition active:scale-95 bg-transparent text-slate-400 hover:text-white">
         <i class="fa-solid fa-plus-circle"></i>
-        <span>Subir Producto</span>
+        <span>Subir Artículo</span>
       </button>
     </div>
 
@@ -154,16 +154,16 @@
       </div>
     </section>
 
-    <!-- SECCIÓN 2: AGREGAR NUEVO PRODUCTO (PESTAÑA 2 - INICIALMENTE OCULTA) -->
+    <!-- SECCIÓN 2: AGREGAR NUEVO PRODUCTO / ARTÍCULO (PESTAÑA 2) -->
     <section id="seccion-panel-productos" class="hidden bg-[#0b1326] border border-slate-800 rounded-2xl p-4 space-y-3.5 shadow-xl">
       <h2 class="text-xs font-black text-emerald-400 font-cyber flex items-center gap-1.5">
-        <i class="fa-solid fa-plus-circle text-emerald-400"></i> AGREGAR NUEVO PRODUCTO
+        <i class="fa-solid fa-plus-circle text-emerald-400"></i> AGREGAR NUEVO PRODUCTO / ARTÍCULO
       </h2>
 
       <div class="space-y-2.5 text-xs">
         <div>
-          <label class="text-[10px] text-slate-400 font-bold uppercase">Nombre del Producto:</label>
-          <input id="prod-nombre" type="text" placeholder="Ej. Hamburguesa Especial" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white outline-none focus:border-emerald-400">
+          <label class="text-[10px] text-slate-400 font-bold uppercase">Nombre del Producto / Servicio:</label>
+          <input id="prod-nombre" type="text" placeholder="Ej. Camisa, Hamburguesa o Servicio" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white outline-none focus:border-emerald-400">
         </div>
         
         <div class="grid grid-cols-2 gap-2">
@@ -172,30 +172,30 @@
             <input id="prod-precio" type="number" placeholder="Ej. 1200" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white outline-none font-cyber focus:border-emerald-400">
           </div>
           <div>
-            <label class="text-[10px] text-slate-400 font-bold uppercase">Categoría:</label>
-            <input id="prod-categoria" type="text" placeholder="Ej. COMIDAS" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white outline-none uppercase focus:border-emerald-400">
+            <label class="text-[10px] text-slate-400 font-bold uppercase">Categoría / Sección:</label>
+            <input id="prod-categoria" type="text" placeholder="Ej. ROPA o COMIDAS" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white outline-none uppercase focus:border-emerald-400">
           </div>
         </div>
 
         <div>
-          <label class="text-[10px] text-slate-400 font-bold uppercase">Descripción Breve:</label>
-          <input id="prod-desc" type="text" placeholder="Ingredientes, detalles o porciones" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white outline-none focus:border-emerald-400">
+          <label class="text-[10px] text-slate-400 font-bold uppercase">Descripción, Tallas o Detalles:</label>
+          <input id="prod-desc" type="text" placeholder="Características, tallas, materiales o ingredientes" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white outline-none focus:border-emerald-400">
         </div>
 
         <div>
-          <label class="text-[10px] text-slate-400 font-bold uppercase">Foto del Producto (Galería):</label>
+          <label class="text-[10px] text-slate-400 font-bold uppercase">Foto del Artículo (Galería):</label>
           <input id="prod-file" type="file" accept="image/*" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-1.5 text-xs text-slate-400 file:mr-2 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:bg-emerald-500 file:text-slate-950 file:font-bold">
         </div>
 
         <button onclick="crearProducto()" id="btn-crear-prod" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-2.5 rounded-xl text-xs uppercase tracking-wider active:scale-95 transition shadow-lg">
-          Publicar Producto
+          Publicar Artículo
         </button>
       </div>
     </section>
 
     <!-- SECCIÓN 3: PRODUCTOS REGISTRADOS -->
     <section class="space-y-2">
-      <h2 class="text-xs font-black text-amber-400 font-cyber">PRODUCTOS REGISTRADOS</h2>
+      <h2 class="text-xs font-black text-amber-400 font-cyber">PRODUCTOS / ARTÍCULOS REGISTRADOS</h2>
       <div id="panel-productos-list" class="space-y-2">
         <p class="text-xs text-slate-500 text-center py-6">Cargando productos...</p>
       </div>
@@ -268,7 +268,6 @@
 
       const pinReal = obtenerPinNegocio();
 
-      // Solo acepta exclusivamente la contraseña personal configurada para este negocio
       if (pinReal !== "" && pinIngresado === pinReal) {
         mostrarPanel();
       } else {
@@ -421,7 +420,6 @@
           }
         }
 
-        // Respaldo garantizado en Base64 ligero si Storage falla
         return optimizado.base64;
       } catch (err) {
         console.error("Fallo al procesar imagen:", err);
@@ -557,13 +555,13 @@
         const resultadoImg = await subirArchivoOptimizado(fileInput.files[0]);
         if (!resultadoImg) {
           btn.disabled = false;
-          btn.innerText = "Publicar Producto";
+          btn.innerText = "Publicar Artículo";
           return;
         }
         imagenUrl = resultadoImg;
       }
 
-      btn.innerText = "Publicando producto...";
+      btn.innerText = "Publicando artículo...";
 
       const { error } = await supabaseClient.from('productos').insert([{
         negocio_id: negocioActual.id,
@@ -583,11 +581,11 @@
         document.getElementById("prod-desc").value = "";
         fileInput.value = "";
         await cargarProductos();
-        alert("¡Producto publicado exitosamente!");
+        alert("¡Artículo publicado exitosamente!");
       }
 
       btn.disabled = false;
-      btn.innerText = "Publicar Producto";
+      btn.innerText = "Publicar Artículo";
     }
 
     async function alternarDisponible(id, estadoActual) {
@@ -607,7 +605,6 @@
 
       const pinReal = obtenerPinNegocio();
 
-      // Solo permite eliminar si coincide exactamente con el PIN propio del negocio
       if (pinReal === "" || pinConfirm.trim() !== pinReal) {
         alert("Contraseña incorrecta.");
         return;
@@ -627,7 +624,7 @@
       }
     }
 
-    function cerrarSesion() {
+    fn cerrarSesion() {
       location.reload();
     }
 
