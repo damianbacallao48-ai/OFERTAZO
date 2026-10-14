@@ -53,7 +53,7 @@
       </div>
     </header>
 
-    <!-- BARRA DE PESTAÑAS: SEPARACIÓN DE AJUSTES Y SUBIR PRODUCTOS -->
+    <!-- BARRA DE PESTAÑAS: SEPARACIÓN DE AJUSTES Y SUBIR ARTÍCULOS -->
     <div class="grid grid-cols-2 gap-2 bg-[#080d1a] p-1 rounded-2xl border border-slate-800">
       <button 
         id="tab-btn-ajustes" 
@@ -420,6 +420,7 @@
           }
         }
 
+        // Respaldo garantizado en Base64 ligero si Storage falla
         return optimizado.base64;
       } catch (err) {
         console.error("Fallo al procesar imagen:", err);
@@ -624,7 +625,7 @@
       }
     }
 
-    fn cerrarSesion() {
+    function cerrarSesion() {
       location.reload();
     }
 
