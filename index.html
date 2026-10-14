@@ -219,7 +219,7 @@
           <i class="fa-solid fa-mobile-screen text-cyan-400"></i> Pago por Transfermóvil
         </h3>
         <div class="space-y-1.5 text-xs text-slate-300">
-          <p class="flex justify-between"><span>Monto mensual:</span> <strong class="text-amber-400 font-bold">$1,500 CUP</strong></p>
+          <p class="flex justify-between"><span>Monto mensual:</span> <strong class="text-amber-400 font-bold">$2,000 CUP</strong></p>
           <div class="pt-2 border-t border-slate-800">
             <span class="text-[10px] text-slate-400 uppercase font-bold">Transferir a Tarjeta:</span>
             <div class="flex items-center justify-between mt-1">
@@ -249,7 +249,7 @@
       </div>
       <div>
         <span class="text-[9px] font-black uppercase tracking-widest text-emerald-400 bg-emerald-950/60 border border-emerald-800/60 px-2.5 py-0.5 rounded-full font-cyber">
-          🎁 10 Días de Prueba Gratis
+          🎁 7 Días de Prueba Gratis
         </span>
         <h3 class="text-sm font-black text-white mt-1">¿Tienes un negocio, bar o cafetería?</h3>
         <p class="text-[11px] text-slate-300 max-w-xs mx-auto leading-relaxed mt-0.5">
@@ -450,10 +450,10 @@
         <button onclick="compartirConImagenNegocio()" id="btn-wa-con-foto" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-3 rounded-xl flex items-center justify-center gap-2 text-xs active:scale-95 shadow-lg">
           <i class="fa-brands fa-whatsapp text-base"></i> Compartir con Foto del Negocio
         </button>
-        <button onclick="abrirModalQR()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 text-xs active:scale-95 shadow-md">
+        <button onclick="abrirModalQR()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-black py-2.5 rounded-xl flex items-center justify-center gap-2 text-xs active:scale-95 shadow-md">
           <i class="fa-solid fa-qrcode text-base"></i> Ver / Descargar Tarjeta QR
         </button>
-        <button onclick="compartirFB()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 text-xs active:scale-95 shadow-md">
+        <button onclick="compartirFB()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-2.5 rounded-xl flex items-center justify-center gap-2 text-xs active:scale-95 shadow-md">
           <i class="fa-brands fa-facebook text-base"></i> Enviar a Facebook
         </button>
         <button onclick="copiarLink()" id="btn-copy" class="w-full bg-slate-800 text-slate-200 font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 border border-slate-700 text-xs active:scale-95">
@@ -890,7 +890,7 @@
           .order('nombre', { ascending: true });
 
         if (error || !data) {
-          listEl.innerHTML = '<div class="text-xs text-red-400 text-center py-8">No se pudo cargar la lista de tiendas.</div>';
+          listEl.innerHTML = '<div class="text-xs text-red-400 text-center py-8">No se pudo cargar la tienda.</div>';
           return;
         }
 
@@ -1064,7 +1064,7 @@
         gradNoBanner.addColorStop(0.5, "#1e1b4b");
         gradNoBanner.addColorStop(1, "#0b1326");
         ctx.fillStyle = gradNoBanner;
-        ctx.fillRect(24, 24, 752, 280);
+        ctx.fillRect(24, 24, 776, 304);
       }
       ctx.restore();
 
@@ -1169,9 +1169,9 @@
       ctx.roundRect ? ctx.roundRect(20, 20, 760, 960, 28) : ctx.rect(20, 20, 760, 960);
       ctx.stroke();
 
-      ctx.fillStyle = "#10b981";
+      ctx.fillStyle = "10b981";
       ctx.font = "800 17px 'Orbitron', sans-serif";
-      ctx.fillText(esOfertazoAdmin ? "🎁 CREA TU TIENDA GRATIS 10 DÍAS EN OFERTAZO.CA" : "IMPULSADO POR OFERTAZO.CA • CATÁLOGO DIGITAL", 400, 945);
+      ctx.fillText(esOfertazoAdmin ? "🎁 CREA TU TIENDA GRATIS 7 DÍAS EN OFERTAZO.CA" : "IMPULSADO POR OFERTAZO.CA • CATÁLOGO DIGITAL", 400, 945);
 
       return canvas;
     }
@@ -1189,7 +1189,7 @@
         const esOfertazoAdmin = (negocioActual && negocioActual.slug === 'ofertazo');
 
         const textoCompartir = esOfertazoAdmin
-          ? `🚀 *¡BIENVENIDO A ${name.toUpperCase()}!* 📲\n🛒 Mira nuestro catálogo de ofertas o crea el catálogo digital de tu propio negocio con *10 Días Gratis*.\n\n👉 *Entra aquí:*\n${url}`
+          ? `🚀 *¡BIENVENIDO A ${name.toUpperCase()}!* 📲\n🛒 Mira nuestro catálogo de ofertas o crea el catálogo digital de tu propio negocio con *7 Días Gratis*.\n\n👉 *Entra aquí:*\n${url}`
           : `🔥 *¡PIDE ONLINE EN ${name.toUpperCase()}!* 🛵\n🏷️ ${act}\n📍 ${negocioActual.direccion || 'Ciego de Ávila'}\n\n👉 *Mira nuestras fotos, precios y haz tu pedido directo aquí:*\n${url}`;
 
         const canvas = await construirCanvasTarjetaNegocio();
@@ -1272,7 +1272,7 @@
     function contactarSoporteWA() {
       const nombre = negocioActual ? negocioActual.nombre : "mi negocio";
       const slug = negocioActual ? negocioActual.slug : "";
-      const msg = `👋 Hola, deseo reactivar el catálogo de *${nombre}* (?tienda=${slug}). Ya tengo listo el comprobante de Transfermóvil por los $1,500 CUP.`;
+      const msg = `👋 Hola, deseo reactivar el catálogo de *${nombre}* (?tienda=${slug}). Ya tengo listo el comprobante de Transfermóvil por los $2,000 CUP.`;
       window.open(`https://wa.me/${MI_ADMIN_WHATSAPP}?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
@@ -1321,7 +1321,7 @@
       
       categorias.forEach(cat => {
         const isAct = categoriaSeleccionada.toLowerCase() === cat.toLowerCase();
-        html += '<button onclick="filtrarCategoria(\'' + cat + '\')" class="' + 
+        html += '<button onclick="filtrarCategoria(\'' + cat + \')" class="' + 
           (isAct 
             ? 'bg-amber-500 text-slate-950 font-black border-amber-400 shadow-[0_0_12px_rgba(245,158,11,0.4)]' 
             : 'bg-slate-900 text-slate-400 border-slate-800') + 
@@ -1515,7 +1515,7 @@
         "👤 *Cliente:* " + nombre + "\n" +
         (esDomicilio 
           ? "🛵 *Entrega:* A Domicilio\n🏠 *Dirección:* " + direccion + "\n" 
-          : "🏬 *Entrega:* Recogida en el local (" + (negocioActual.direccion || 'Ciego de Ávila') + ")\n") +
+          : "🏬 *Entrega:* Recogida en le local (" + (negocioActual.direccion || 'Ciego de Ávila') + ")\n") +
         "💵 *Método de Pago:* Efectivo (CUP o USD)\n" +
         "📊 *Tasa aplicada:* 1 USD = " + tasaUSD + " CUP\n\n" +
         "📋 *DETALLE DE PRODUCTOS:*\n";
