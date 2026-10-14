@@ -99,7 +99,7 @@
 
   <!-- Portada del Negocio Actual -->
   <div id="biz-portada-box" class="w-full max-w-xl mx-auto h-28 hidden overflow-hidden relative z-10">
-    <img id="biz-portada" class="w-full h-full object-cover" alt="Portada">
+    <img id="biz-portada" class="w-full h-full object-cover" alt="Portada" onerror="document.getElementById('biz-portada-box').classList.add('hidden')">
     <div class="absolute inset-0 bg-gradient-to-t from-[#05070e] via-transparent to-transparent"></div>
   </div>
 
@@ -112,7 +112,7 @@
         <div class="flex items-center gap-2.5 min-w-0">
           <div id="biz-icon-box" class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-300 flex items-center justify-center text-slate-950 text-base font-black shadow-[0_0_15px_rgba(245,158,11,0.5)] overflow-hidden shrink-0">
             <i class="fa-solid fa-store" id="biz-default-icon"></i>
-            <img id="biz-logo" class="w-full h-full object-cover hidden" alt="Logo">
+            <img id="biz-logo" class="w-full h-full object-cover hidden" alt="Logo" onerror="this.classList.add('hidden');document.getElementById('biz-default-icon').classList.remove('hidden');">
           </div>
           <div class="min-w-0">
             <h1 id="biz-header-name" class="text-base font-black tracking-wider text-amber-400 font-cyber truncate drop-shadow-[0_0_8px_rgba(245,158,11,0.4)]">
@@ -439,6 +439,23 @@
     const MI_ADMIN_WHATSAPP = "5358960660";
     const MI_TARJETA = "9238129979527274";
 
+    // Imagen SVG integrada (no requiere internet externo y nunca se queda en negro)
+    const FALLBACK_BANNER_SVG = "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(
+      `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="240" viewBox="0 0 400 240">
+        <defs>
+          <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#0f172a"/>
+            <stop offset="50%" stop-color="#1e1b4b"/>
+            <stop offset="100%" stop-color="#090d16"/>
+          </linearGradient>
+        </defs>
+        <rect width="400" height="240" fill="url(#bg)"/>
+        <circle cx="200" cy="105" r="38" fill="#f59e0b" fill-opacity="0.18" stroke="#f59e0b" stroke-width="2"/>
+        <text x="200" y="116" text-anchor="middle" fill="#fbbf24" font-family="sans-serif" font-size="30" font-weight="bold">🏬</text>
+        <text x="200" y="175" text-anchor="middle" fill="#38bdf8" font-family="monospace" font-size="13" font-weight="bold">TIENDA ACTIVA</text>
+      </svg>`
+    );
+
     const urlParams = new URLSearchParams(window.location.search);
     const TIENDA_SLUG = (urlParams.get('tienda') || 'ofertazo').toLowerCase().trim();
 
@@ -450,19 +467,28 @@
     let tasaUSD = 320;
     let negocioTieneDomicilio = true;
     let costoDomicilioNegocio = 0;
-    let modoEntregaSeleccionado = 'domicilio'; // 'domicilio' o 'local'
+    let modoEntregaSeleccionado = 'domicilio';
     let listaTodosNegocios = [];
     let mapaImagenesNegocios = {};
     let qrInstancia = null;
 
+    function esImagenValida(str) {
+      if (!str || typeof str !== 'string') return false;
+      const limpia = str.trim();
+      if (limpia === '' || limpia === 'null' || limpia === 'undefined') return false;
+      return limpia.startsWith('http') || limpia.startsWith('data:image/');
+    }
+
     function obtenerLogoNegocio(n) {
       if (!n) return "";
-      return (n.logo_url || n.logo || n.imagen_logo || "").trim();
+      const candidato = (n.logo_url || n.logo || n.imagen_logo || "").trim();
+      return esImagenValida(candidato) ? candidato : "";
     }
 
     function obtenerPortadaNegocio(n) {
       if (!n) return "";
-      return (n.portada_url || n.portada || n.banner_url || n.imagen || "").trim();
+      const candidato = (n.portada_url || n.portada || n.banner_url || n.imagen || "").trim();
+      return esImagenValida(candidato) ? candidato : "";
     }
 
     async function cargarNegocio() {
@@ -488,7 +514,6 @@
 
         tasaUSD = parseFloat(negocioActual.tasa_usd) || 320;
 
-        // Configurar estado y precio de domicilio según lo que decidió el dueño del negocio
         negocioTieneDomicilio = (negocioActual.tiene_domicilio !== false);
         costoDomicilioNegocio = negocioTieneDomicilio ? (parseFloat(negocioActual.costo_mensajeria) || 0) : 0;
 
@@ -576,7 +601,7 @@
       return 0;
     }
 
-    /* CARRUSEL DE OTROS NEGOCIOS */
+    /* CARRUSEL DE OTROS NEGOCIOS (SIN DUPLICADOS Y CON RESPALDO MULTINIVEL) */
     async function cargarCarruselOtrosNegocios() {
       try {
         const { data, error } = await supabaseClient
@@ -588,34 +613,53 @@
         if (error || !data) return;
 
         const ahora = new Date();
-        const otros = data.filter(n => {
-          if (negocioActual && n.slug === negocioActual.slug) return false;
-          if (!n.fecha_vencimiento) return true;
-          return new Date(n.fecha_vencimiento) >= ahora;
-        });
+        const nombreActualNorm = negocioActual && negocioActual.nombre ? negocioActual.nombre.trim().toLowerCase() : "";
 
-        if (otros.length === 0) return;
-
-        const idsNegocios = otros.map(n => n.id);
+        // Primero obtenemos fotos de productos de todos los negocios para tener respaldo real
+        const idsTodos = data.map(n => n.id);
         const { data: prodsData } = await supabaseClient
           .from('productos')
           .select('negocio_id, imagen')
-          .in('negocio_id', idsNegocios)
+          .in('negocio_id', idsTodos)
           .not('imagen', 'is', null)
           .neq('imagen', '')
           .order('id', { ascending: false });
 
         if (prodsData) {
           prodsData.forEach(p => {
-            if (!mapaImagenesNegocios[p.negocio_id] && p.imagen && p.imagen.trim() !== "") {
+            if (!mapaImagenesNegocios[p.negocio_id] && esImagenValida(p.imagen)) {
               mapaImagenesNegocios[p.negocio_id] = p.imagen.trim();
             }
           });
         }
 
+        // Filtrar negocios vencidos, excluir la tienda actual y eliminar tiendas duplicadas por nombre
+        const mapaPorNombre = new Map();
+        data.forEach(n => {
+          if (negocioActual && n.slug === negocioActual.slug) return;
+          const nombreNorm = (n.nombre || "").trim().toLowerCase();
+          if (nombreNorm === nombreActualNorm) return; // Evita mostrar un duplicado viejo de la tienda actual
+          if (n.fecha_vencimiento && new Date(n.fecha_vencimiento) < ahora) return;
+
+          const tieneFoto = Boolean(obtenerPortadaNegocio(n) || obtenerLogoNegocio(n) || mapaImagenesNegocios[n.id]);
+
+          if (!mapaPorNombre.has(nombreNorm)) {
+            mapaPorNombre.set(nombreNorm, n);
+          } else {
+            // Si hay dos registros con el mismo nombre, quedarse con el que sí tenga foto
+            const existente = mapaPorNombre.get(nombreNorm);
+            const existenteTieneFoto = Boolean(obtenerPortadaNegocio(existente) || obtenerLogoNegocio(existente) || mapaImagenesNegocios[existente.id]);
+            if (!existenteTieneFoto && tieneFoto) {
+              mapaPorNombre.set(nombreNorm, n);
+            }
+          }
+        });
+
+        const otros = Array.from(mapaPorNombre.values());
+        if (otros.length === 0) return;
+
         const listaParaCarrusel = otros.length === 1 ? [...otros, ...otros, ...otros, ...otros] : [...otros, ...otros];
         const track = document.getElementById("carrusel-track");
-        const fallbackImg = 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=500';
 
         let html = '';
         listaParaCarrusel.forEach(n => {
@@ -623,17 +667,20 @@
           const logo = obtenerLogoNegocio(n);
           const fotoProducto = mapaImagenesNegocios[n.id] || "";
 
-          const imgPrincipal = portada || logo || fotoProducto || fallbackImg;
-          const imgLogoMini = logo || portada || fotoProducto;
+          // Lista ordenada de imágenes para probar si alguna falla
+          const candidatas = [portada, logo, fotoProducto].filter(Boolean);
+          const imgPrincipal = candidatas[0] || FALLBACK_BANNER_SVG;
+          const imgRespaldo1 = candidatas[1] || FALLBACK_BANNER_SVG;
+          const imgLogoMini = logo || portada || fotoProducto || "";
 
           const logoIcon = imgLogoMini 
-            ? `<img src="${imgLogoMini}" onerror="this.onerror=null;this.src='${fallbackImg}';" class="w-6 h-6 rounded-lg object-cover border border-amber-400/40 shrink-0">` 
+            ? `<img src="${imgLogoMini}" onerror="this.onerror=null;this.src='${FALLBACK_BANNER_SVG}';" class="w-6 h-6 rounded-lg object-cover border border-amber-400/40 shrink-0 bg-slate-900">` 
             : `<div class="w-6 h-6 rounded-lg bg-amber-500/20 text-amber-300 flex items-center justify-center text-[10px] shrink-0"><i class="fa-solid fa-store"></i></div>`;
 
           html += `
             <a href="index.html?tienda=${n.slug}" class="tarjeta-carrusel block">
-              <div class="h-24 w-full relative overflow-hidden bg-slate-950">
-                <img src="${imgPrincipal}" onerror="this.onerror=null;this.src='${fallbackImg}';" class="w-full h-full object-cover" alt="${n.nombre}">
+              <div class="h-24 w-full relative overflow-hidden bg-slate-900">
+                <img src="${imgPrincipal}" data-backup="${imgRespaldo1}" onerror="if(this.src!==this.dataset.backup){this.src=this.dataset.backup;}else{this.onerror=null;this.src='${FALLBACK_BANNER_SVG}';}" class="w-full h-full object-cover" alt="${n.nombre}">
                 <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
                 <span class="absolute top-1.5 right-1.5 text-[7px] font-black text-cyan-300 bg-slate-950/80 border border-cyan-500/30 px-1.5 py-0.5 rounded uppercase font-cyber">
                   Ver Tienda
@@ -692,11 +739,10 @@
         return;
       }
 
-      const fallbackImg = 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=150';
       let html = '';
       lista.forEach(n => {
         const esLaMisma = (negocioActual && n.slug === negocioActual.slug);
-        const logoSrc = obtenerLogoNegocio(n) || obtenerPortadaNegocio(n) || mapaImagenesNegocios[n.id] || fallbackImg;
+        const logoSrc = obtenerLogoNegocio(n) || obtenerPortadaNegocio(n) || mapaImagenesNegocios[n.id] || FALLBACK_BANNER_SVG;
         const badgeActual = esLaMisma 
           ? '<span class="text-[9px] font-black text-amber-400 bg-amber-500/20 px-1.5 py-0.5 rounded border border-amber-500/30">TIENDA ACTUAL</span>'
           : '';
@@ -704,7 +750,7 @@
         html += `
           <div class="pt-3 first:pt-0 pb-1 flex items-start gap-3 justify-between">
             <div class="flex items-start gap-3 min-w-0">
-              <img src="${logoSrc}" onerror="this.onerror=null;this.src='${fallbackImg}';" class="w-12 h-12 rounded-2xl object-cover bg-slate-950 border border-slate-700 shrink-0">
+              <img src="${logoSrc}" onerror="this.onerror=null;this.src='${FALLBACK_BANNER_SVG}';" class="w-12 h-12 rounded-2xl object-cover bg-slate-950 border border-slate-700 shrink-0">
               <div class="min-w-0">
                 <div class="flex items-center gap-1.5 flex-wrap">
                   <h3 class="text-xs font-black text-white font-cyber truncate">${n.nombre}</h3>
@@ -936,12 +982,11 @@
         return;
       }
 
-      const fallbackImg = 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=300';
       let html = '';
       list.forEach(p => {
         const precioCup = Number(p.precio || 0);
         const precioUsd = (precioCup / tasaUSD).toFixed(2);
-        const imagenSrc = p.imagen && p.imagen.trim() !== '' ? p.imagen : fallbackImg;
+        const imagenSrc = esImagenValida(p.imagen) ? p.imagen.trim() : FALLBACK_BANNER_SVG;
         const catName = p.categoria || 'GENERAL';
         const opacidad = (p.disponible === false) ? 'opacity-40 grayscale' : '';
         
@@ -953,7 +998,7 @@
         html += '<div class="card-product rounded-2xl p-2 flex flex-col justify-between ' + opacidad + '">' +
           '<div>' +
             '<div class="relative w-full aspect-square mb-2 overflow-hidden rounded-xl bg-slate-950 border border-slate-800">' +
-              '<img src="' + imagenSrc + '" onerror="this.onerror=null;this.src=\'' + fallbackImg + '\';" class="w-full h-full object-cover" alt="' + p.nombre + '">' +
+              '<img src="' + imagenSrc + '" onerror="this.onerror=null;this.src=\'' + FALLBACK_BANNER_SVG + '\';" class="w-full h-full object-cover" alt="' + p.nombre + '">' +
               '<span class="absolute top-1.5 left-1.5 text-[8px] font-black text-amber-300 bg-slate-950/80 backdrop-blur-sm border border-amber-500/30 px-1.5 py-0.5 rounded-md uppercase tracking-wider">' + catName + '</span>' +
             '</div>' +
             '<h3 class="font-bold text-white text-[12px] leading-tight line-clamp-2 min-h-[30px]">' + p.nombre + '</h3>' +
