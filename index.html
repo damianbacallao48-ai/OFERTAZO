@@ -234,9 +234,16 @@
     </section>
 
     <!-- Enlace al Panel Admin para el Dueño -->
-    <div class="text-center pt-1 pb-6">
+    <div class="text-center pt-1 pb-2">
       <a id="link-pie-admin" href="#" class="text-xs text-slate-400 hover:text-amber-400 underline font-semibold flex items-center justify-center gap-1.5 transition">
         <i class="fa-solid fa-lock text-[10px]"></i> ¿Eres el dueño de este negocio? Administrar catálogo
+      </a>
+    </div>
+
+    <!-- BOTÓN AL MURO DE OPINIONES Y SUGERENCIAS (AGREGADO ABAJO) -->
+    <div class="text-center pt-2 pb-6">
+      <a href="comentarios.html" class="inline-flex items-center justify-center gap-2 bg-slate-900 border border-amber-500/40 hover:border-amber-400 text-amber-300 hover:text-white px-4 py-2.5 rounded-2xl text-xs font-bold transition shadow-md active:scale-95">
+        <i class="fa-solid fa-comments text-amber-400"></i> ¿Qué te parece OFERTAZO? ¡Déjanos tu idea o comentario! 💬
       </a>
     </div>
 
@@ -606,7 +613,7 @@
       return 0;
     }
 
-    /* CARRUSEL DE OTROS NEGOCIOS (CARGA TODAS LAS TIENDAS ACTIVAS SIN RESTRICCIONES DE NOMBRE) */
+    /* CARRUSEL DE OTROS NEGOCIOS */
     async function cargarCarruselOtrosNegocios() {
       try {
         const { data, error } = await supabaseClient
@@ -619,7 +626,6 @@
 
         const ahora = new Date();
 
-        // Obtener fotos de productos por si algún negocio no tiene portada ni logo
         const idsTodos = data.map(n => n.id);
         const { data: prodsData } = await supabaseClient
           .from('productos')
@@ -637,7 +643,6 @@
           });
         }
 
-        // Filtrar solo las tiendas vigentes y que no sean la actual
         const otros = data.filter(n => {
           if (negocioActual && n.slug === negocioActual.slug) return false;
           if (n.fecha_vencimiento && new Date(n.fecha_vencimiento) < ahora) return false;
@@ -647,7 +652,6 @@
 
         if (otros.length === 0) return;
 
-        // Duplicar lista si hay pocas tiendas para que el carrusel ruede de forma continua
         const listaParaCarrusel = otros.length < 3 ? [...otros, ...otros, ...otros, ...otros] : [...otros, ...otros];
         const track = document.getElementById("carrusel-track");
 
