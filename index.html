@@ -7,9 +7,9 @@
   <title>OFERTAZO - Catálogo Digital Ciego de Ávila</title>
   <meta name="description" content="Directorio y catálogo digital interactivo en Ciego de Ávila. Pide fácil, rápido y a domicilio.">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="🔥 Catálogo Digital & Directorio Comercial">
-  <meta property="og:description" content="Explora tiendas, menús y haz tus pedidos a domicilio en Ciego de Ávila.">
-  <meta property="og:image" content="https://images.unsplash.com/photo-1542838132-92c53300491e?w=800&auto=format&fit=crop&q=80">
+  <meta id="og-title" property="og:title" content="🔥 OFERTAZO.CA - Catálogo Digital & Directorio Comercial">
+  <meta id="og-desc" property="og:description" content="Explora tiendas, menús y haz tus pedidos a domicilio en Ciego de Ávila.">
+  <meta id="og-image" property="og:image" content="https://qhkqznpgjirvnndriehr.supabase.co/storage/v1/object/public/imagenes/ofertazo_promo.jpg">
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -312,14 +312,17 @@
 
       <div class="grid grid-cols-2 gap-2 pt-1">
         <button onclick="descargarFlyerQR()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-2.5 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 active:scale-95 transition shadow-md">
-          <i class="fa-solid fa-download"></i> Guardar QR
+          <i class="fa-solid fa-download"></i> Guardar Imagen
         </button>
-        <button onclick="compartirQRWhatsApp()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-2.5 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 active:scale-95 transition shadow-md">
-          <i class="fa-brands fa-whatsapp text-sm"></i> Compartir
+        <button onclick="compartirConImagenNegocio()" id="btn-share-qr-img" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-2.5 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 active:scale-95 transition shadow-md">
+          <i class="fa-brands fa-whatsapp text-sm"></i> Enviar con Foto
         </button>
       </div>
     </div>
   </div>
+
+  <!-- Contenedor oculto para generar QR en segundo plano cuando comparten directo -->
+  <div id="qrcode-hidden" class="hidden"></div>
 
   <!-- Barra Flotante Carrito -->
   <div id="cart-bar" class="fixed bottom-4 left-3 right-3 max-w-xl mx-auto hidden z-40">
@@ -342,20 +345,20 @@
       </div>
       <div>
         <h3 id="modal-share-title" class="font-cyber font-bold text-white text-sm">Compartir Catálogo</h3>
-        <p class="text-[11px] text-slate-400">Pasa el catálogo directo a tus contactos</p>
+        <p class="text-[11px] text-slate-400">Comparte tu enlace acompañado de la imagen de tu negocio</p>
       </div>
       <div class="space-y-2 pt-1">
-        <button onclick="abrirModalQR()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 text-xs active:scale-95 shadow-md">
-          <i class="fa-solid fa-qrcode text-base"></i> Ver Tarjeta & Código QR
+        <button onclick="compartirConImagenNegocio()" id="btn-wa-con-foto" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-3 rounded-xl flex items-center justify-center gap-2 text-xs active:scale-95 shadow-lg">
+          <i class="fa-brands fa-whatsapp text-base"></i> Compartir con Foto del Negocio
         </button>
-        <button onclick="compartirWA()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 text-xs active:scale-95 shadow-md">
-          <i class="fa-brands fa-whatsapp text-base"></i> Enviar por WhatsApp
+        <button onclick="abrirModalQR()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 text-xs active:scale-95 shadow-md">
+          <i class="fa-solid fa-qrcode text-base"></i> Ver / Descargar Tarjeta QR
         </button>
         <button onclick="compartirFB()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 text-xs active:scale-95 shadow-md">
           <i class="fa-brands fa-facebook text-base"></i> Enviar a Facebook
         </button>
         <button onclick="copiarLink()" id="btn-copy" class="w-full bg-slate-800 text-slate-200 font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 border border-slate-700 text-xs active:scale-95">
-          <i class="fa-solid fa-link text-amber-400"></i> Copiar Enlace
+          <i class="fa-solid fa-link text-amber-400"></i> Copiar Solo Enlace
         </button>
       </div>
     </div>
@@ -375,7 +378,6 @@
         <div id="cart-items" class="space-y-2"></div>
 
         <div class="pt-3 border-t border-slate-800 space-y-2.5">
-          <!-- Selector de Tipo de Entrega (Domicilio vs Recogida en Local) -->
           <div id="box-selector-entrega">
             <label class="text-[10px] text-amber-300 font-bold uppercase block mb-1">Método de Entrega:</label>
             <select id="client-delivery-mode" onchange="cambiarModoEntrega(this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white font-bold outline-none focus:border-amber-400">
@@ -384,7 +386,6 @@
             </select>
           </div>
 
-          <!-- Aviso cuando el negocio NO tiene domicilio -->
           <div id="box-sin-domicilio" class="hidden bg-slate-900/90 border border-slate-700 rounded-xl p-2.5 text-[11px] text-amber-300 font-bold flex items-center gap-2">
             <i class="fa-solid fa-store text-amber-400"></i>
             <span>Este negocio solo ofrece recogida directa en el local.</span>
@@ -401,7 +402,6 @@
           </div>
         </div>
 
-        <!-- Desglose de Costos: Subtotal + Domicilio + Total -->
         <div class="bg-slate-900/90 p-3 rounded-2xl border border-slate-800 space-y-1.5 text-xs">
           <div class="flex justify-between text-slate-300">
             <span>Subtotal productos:</span>
@@ -439,7 +439,6 @@
     const MI_ADMIN_WHATSAPP = "5358960660";
     const MI_TARJETA = "9238129979527274";
 
-    // Imagen SVG integrada (no requiere internet externo y nunca se queda en negro)
     const FALLBACK_BANNER_SVG = "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(
       `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="240" viewBox="0 0 400 240">
         <defs>
@@ -522,7 +521,6 @@
         document.title = `${negocioActual.nombre} - Catálogo Digital`;
         document.getElementById("biz-header-name").innerText = negocioActual.nombre;
         document.getElementById("biz-header-type").innerText = `${negocioActual.direccion || 'Ciego de Ávila'}`;
-
         document.getElementById("modal-share-title").innerText = `Compartir ${negocioActual.nombre}`;
 
         const logoActual = obtenerLogoNegocio(negocioActual);
@@ -539,6 +537,14 @@
           document.getElementById("biz-portada").src = portadaActual;
           box.classList.remove("hidden");
         }
+
+        // Actualizar metadatos OG con la imagen y nombre del negocio actual
+        const ogTitle = document.getElementById("og-title");
+        const ogDesc = document.getElementById("og-desc");
+        const ogImg = document.getElementById("og-image");
+        if (ogTitle) ogTitle.content = `🔥 ${negocioActual.nombre} - Catálogo Digital`;
+        if (ogDesc) ogDesc.content = negocioActual.descripcion || `Haz tu pedido online en ${negocioActual.nombre} (${negocioActual.direccion || 'Ciego de Ávila'}).`;
+        if (ogImg && (portadaActual || logoActual)) ogImg.content = portadaActual || logoActual;
 
         const ahora = new Date();
         const fechaVence = negocioActual.fecha_vencimiento ? new Date(negocioActual.fecha_vencimiento) : null;
@@ -601,7 +607,7 @@
       return 0;
     }
 
-    /* CARRUSEL DE OTROS NEGOCIOS (SIN DUPLICADOS Y CON RESPALDO MULTINIVEL) */
+    /* CARRUSEL DE OTROS NEGOCIOS */
     async function cargarCarruselOtrosNegocios() {
       try {
         const { data, error } = await supabaseClient
@@ -615,7 +621,6 @@
         const ahora = new Date();
         const nombreActualNorm = negocioActual && negocioActual.nombre ? negocioActual.nombre.trim().toLowerCase() : "";
 
-        // Primero obtenemos fotos de productos de todos los negocios para tener respaldo real
         const idsTodos = data.map(n => n.id);
         const { data: prodsData } = await supabaseClient
           .from('productos')
@@ -633,12 +638,11 @@
           });
         }
 
-        // Filtrar negocios vencidos, excluir la tienda actual y eliminar tiendas duplicadas por nombre
         const mapaPorNombre = new Map();
         data.forEach(n => {
           if (negocioActual && n.slug === negocioActual.slug) return;
           const nombreNorm = (n.nombre || "").trim().toLowerCase();
-          if (nombreNorm === nombreActualNorm) return; // Evita mostrar un duplicado viejo de la tienda actual
+          if (nombreNorm === nombreActualNorm) return;
           if (n.fecha_vencimiento && new Date(n.fecha_vencimiento) < ahora) return;
 
           const tieneFoto = Boolean(obtenerPortadaNegocio(n) || obtenerLogoNegocio(n) || mapaImagenesNegocios[n.id]);
@@ -646,7 +650,6 @@
           if (!mapaPorNombre.has(nombreNorm)) {
             mapaPorNombre.set(nombreNorm, n);
           } else {
-            // Si hay dos registros con el mismo nombre, quedarse con el que sí tenga foto
             const existente = mapaPorNombre.get(nombreNorm);
             const existenteTieneFoto = Boolean(obtenerPortadaNegocio(existente) || obtenerLogoNegocio(existente) || mapaImagenesNegocios[existente.id]);
             if (!existenteTieneFoto && tieneFoto) {
@@ -667,7 +670,6 @@
           const logo = obtenerLogoNegocio(n);
           const fotoProducto = mapaImagenesNegocios[n.id] || "";
 
-          // Lista ordenada de imágenes para probar si alguna falla
           const candidatas = [portada, logo, fotoProducto].filter(Boolean);
           const imgPrincipal = candidatas[0] || FALLBACK_BANNER_SVG;
           const imgRespaldo1 = candidatas[1] || FALLBACK_BANNER_SVG;
@@ -798,7 +800,189 @@
       renderizarListaDirectorio(filtrados);
     }
 
-    /* SISTEMA DE CÓDIGO QR */
+    /* GENERADOR DE IMAGEN PERSONALIZADA POR NEGOCIO (CON PORTADA / LOGO REAL DEL NEGOCIO) */
+    function cargarImagenCrossOrigin(url) {
+      return new Promise((resolve) => {
+        if (!url) { resolve(null); return; }
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = () => resolve(img);
+        img.onerror = () => resolve(null);
+        img.src = url;
+      });
+    }
+
+    function generarQREnCanvas(url) {
+      return new Promise((resolve) => {
+        const hiddenDiv = document.getElementById("qrcode-hidden");
+        hiddenDiv.innerHTML = "";
+        new QRCode(hiddenDiv, {
+          text: url,
+          width: 240,
+          height: 240,
+          colorDark: "#05070e",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.H
+        });
+        setTimeout(() => {
+          const qrCanvas = hiddenDiv.querySelector("canvas");
+          resolve(qrCanvas);
+        }, 80);
+      });
+    }
+
+    async function construirCanvasTarjetaNegocio() {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = 800;
+      canvas.height = 1000;
+
+      // 1. Fondo Oscuro Cyberpunk
+      const gradBg = ctx.createLinearGradient(0, 0, 800, 1000);
+      gradBg.addColorStop(0, "#05070e");
+      gradBg.addColorStop(0.5, "#0b1326");
+      gradBg.addColorStop(1, "#05070e");
+      ctx.fillStyle = gradBg;
+      ctx.fillRect(0, 0, 800, 1000);
+
+      // 2. Cargar imagen real del negocio (Portada, Logo o Primer Producto)
+      const urlPortada = obtenerPortadaNegocio(negocioActual);
+      const urlLogo = obtenerLogoNegocio(negocioActual);
+      const urlProd = (productos.length > 0 && esImagenValida(productos[0].imagen)) ? productos[0].imagen : "";
+
+      const imgBanner = await cargarImagenCrossOrigin(urlPortada || urlLogo || urlProd);
+      const imgLogo = await cargarImagenCrossOrigin(urlLogo || urlPortada || urlProd);
+
+      // Dibujar Portada del negocio en la parte superior si existe
+      if (imgBanner) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.roundRect ? ctx.roundRect(30, 30, 740, 290, 28) : ctx.rect(30, 30, 740, 290);
+        ctx.clip();
+        ctx.drawImage(imgBanner, 30, 30, 740, 290);
+        // Sombreado elegante sobre la portada
+        const gradOverlay = ctx.createLinearGradient(0, 30, 0, 320);
+        gradOverlay.addColorStop(0, "rgba(5, 7, 14, 0.2)");
+        gradOverlay.addColorStop(1, "rgba(5, 7, 14, 0.92)");
+        ctx.fillStyle = gradOverlay;
+        ctx.fillRect(30, 30, 740, 290);
+        ctx.restore();
+      }
+
+      // 3. Si es OFERTAZO (Admin Principal) y no hay portada o quiere el diseño oficial
+      const esOfertazoAdmin = (negocioActual && negocioActual.slug === 'ofertazo');
+
+      // Marco Exterior Neón
+      ctx.lineWidth = 6;
+      ctx.strokeStyle = "#f59e0b";
+      ctx.strokeRect(20, 20, 760, 960);
+
+      //Dibujar Logo Circular / Redondeado del Negocio
+      if (imgLogo) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(400, 210, 70, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.clip();
+        ctx.drawImage(imgLogo, 330, 140, 140, 140);
+        ctx.restore();
+
+        ctx.beginPath();
+        ctx.arc(400, 210, 70, 0, Math.PI * 2);
+        ctx.lineWidth = 5;
+        ctx.strokeStyle = "#fbbf24";
+        ctx.stroke();
+      }
+
+      // 4. Nombre del Negocio y Actividad
+      ctx.fillStyle = "#fbbf24";
+      ctx.font = "900 46px 'Orbitron', sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText((negocioActual ? negocioActual.nombre : "OFERTAZO.CA").toUpperCase(), 400, 345);
+
+      ctx.fillStyle = "#22d3ee";
+      ctx.font = "bold 22px 'Plus Jakarta Sans', sans-serif";
+      const subtitulo = esOfertazoAdmin 
+        ? "🚀 PLATAFORMA DE CATÁLOGOS & TIENDAS ONLINE" 
+        : `⚡ ${(negocioActual.tipo || "CATÁLOGO DIGITAL & PEDIDOS").toUpperCase()} ⚡`;
+      ctx.fillText(subtitulo, 400, 385);
+
+      // 5. Generar y dibujar el QR del negocio
+      const enlaceLimpio = obtenerEnlaceLimpio();
+      const qrCanvas = await generarQREnCanvas(enlaceLimpio);
+
+      ctx.fillStyle = "#ffffff";
+      ctx.beginPath();
+      ctx.roundRect ? ctx.roundRect(240, 420, 320, 320, 26) : ctx.rect(240, 420, 320, 320);
+      ctx.fill();
+
+      if (qrCanvas) {
+        ctx.drawImage(qrCanvas, 265, 445, 270, 270);
+      }
+
+      // 6. Textos inferiores personalizados
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "bold 26px 'Plus Jakarta Sans', sans-serif";
+      ctx.fillText("¡MIRA NUESTRAS OFERTAS Y PIDE ONLINE!", 400, 795);
+
+      ctx.fillStyle = "#cbd5e1";
+      ctx.font = "20px 'Plus Jakarta Sans', sans-serif";
+      const dirTexto = negocioActual && negocioActual.direccion ? `📍 ${negocioActual.direccion}` : "📍 Ciego de Ávila • Pedidos por WhatsApp";
+      ctx.fillText(dirTexto, 400, 835);
+
+      // 7. Sello inferior
+      ctx.fillStyle = "#10b981";
+      ctx.font = "bold 18px 'Orbitron', sans-serif";
+      ctx.fillText(esOfertazoAdmin ? "🎁 CREA TU TIENDA GRATIS 10 DÍAS EN OFERTAZO.CA" : "IMPULSADO POR OFERTAZO.CA • CATÁLOGO DIGITAL", 400, 930);
+
+      return canvas;
+    }
+
+    /* COMPARTIR CON IMAGEN DEL NEGOCIO ACTUAL + TEXTO + LINK */
+    async function compartirConImagenNegocio() {
+      const btn1 = document.getElementById("btn-wa-con-foto");
+      const btn2 = document.getElementById("btn-share-qr-img");
+      if (btn1) btn1.innerText = "Generando imagen de tu tienda...";
+      if (btn2) btn2.innerText = "Generando...";
+
+      try {
+        const name = negocioActual ? negocioActual.nombre : "OFERTAZO";
+        const act = negocioActual ? (negocioActual.tipo || "Catálogo Digital") : "";
+        const url = obtenerEnlaceLimpio();
+        const esOfertazoAdmin = (negocioActual && negocioActual.slug === 'ofertazo');
+
+        const textoCompartir = esOfertazoAdmin
+          ? `🚀 *¡BIENVENIDO A ${name.toUpperCase()}!* 📲\n🛒 Mira nuestro catálogo de ofertas o crea el catálogo digital de tu propio negocio con *10 Días Gratis*.\n\n👉 *Entra aquí:*\n${url}`
+          : `🔥 *¡PIDE ONLINE EN ${name.toUpperCase()}!* 🛵\n🏷️ ${act}\n📍 ${negocioActual.direccion || 'Ciego de Ávila'}\n\n👉 *Mira nuestras fotos, precios y haz tu pedido directo aquí:*\n${url}`;
+
+        const canvas = await construirCanvasTarjetaNegocio();
+        const blob = await new Promise(res => canvas.toBlob(res, "image/png", 0.92));
+
+        if (blob && navigator.canShare) {
+          const archivoImagen = new File([blob], `${negocioActual.slug || 'catalogo'}.png`, { type: "image/png" });
+          if (navigator.canShare({ files: [archivoImagen] })) {
+            await navigator.share({
+              title: `${name} - Catálogo Digital`,
+              text: textoCompartir,
+              files: [archivoImagen]
+            });
+            if (btn1) btn1.innerHTML = '<i class="fa-brands fa-whatsapp text-base"></i> Compartir con Foto del Negocio';
+            if (btn2) btn2.innerHTML = '<i class="fa-brands fa-whatsapp text-sm"></i> Enviar con Foto';
+            return;
+          }
+        }
+
+        // Si está en una PC o navegador antiguo que no soporta navigator.share con archivos, abre WhatsApp con el texto
+        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(textoCompartir)}`, '_blank');
+      } catch (err) {
+        console.log("Compartir cancelado o alternativo:", err);
+      }
+
+      if (btn1) btn1.innerHTML = '<i class="fa-brands fa-whatsapp text-base"></i> Compartir con Foto del Negocio';
+      if (btn2) btn2.innerHTML = '<i class="fa-brands fa-whatsapp text-sm"></i> Enviar con Foto';
+    }
+
+    /* MODAL QR */
     function abrirModalQR() {
       cerrarCompartir();
       if (!negocioActual) return;
@@ -834,61 +1018,12 @@
       document.getElementById("qr-modal").classList.add("hidden");
     }
 
-    function descargarFlyerQR() {
-      const qrCanvas = document.querySelector("#qrcode-render canvas");
-      if (!qrCanvas) return;
-
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-      canvas.width = 600;
-      canvas.height = 780;
-
-      ctx.fillStyle = "#070b16";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      ctx.lineWidth = 6;
-      ctx.strokeStyle = "#f59e0b";
-      ctx.strokeRect(15, 15, canvas.width - 30, canvas.height - 30);
-
-      ctx.fillStyle = "#fbbf24";
-      ctx.font = "bold 32px 'Orbitron', sans-serif";
-      ctx.textAlign = "center";
-      ctx.fillText(negocioActual.nombre.toUpperCase(), canvas.width / 2, 80);
-
-      ctx.fillStyle = "#22d3ee";
-      ctx.font = "bold 18px 'Plus Jakarta Sans', sans-serif";
-      ctx.fillText((negocioActual.tipo || "Catálogo Digital").toUpperCase(), canvas.width / 2, 125);
-
-      ctx.fillStyle = "#ffffff";
-      ctx.roundRect ? ctx.roundRect(140, 160, 320, 320, 20) : ctx.fillRect(140, 160, 320, 320);
-      ctx.fill();
-
-      ctx.drawImage(qrCanvas, 165, 185, 270, 270);
-
-      ctx.fillStyle = "#f8fafc";
-      ctx.font = "bold 20px 'Plus Jakarta Sans', sans-serif";
-      ctx.fillText("¡ESCANEA Y HAZ TU PEDIDO!", canvas.width / 2, 535);
-
-      ctx.fillStyle = "#94a3b8";
-      ctx.font = "16px 'Plus Jakarta Sans', sans-serif";
-      ctx.fillText("Envíos directos a tu WhatsApp • Ciego de Ávila", canvas.width / 2, 575);
-
-      ctx.fillStyle = "#10b981";
-      ctx.font = "bold 16px 'Orbitron', sans-serif";
-      ctx.fillText("OFERTAZO.CUBA • CATÁLOGO DIGITAL", canvas.width / 2, 720);
-
+    async function descargarFlyerQR() {
+      const canvas = await construirCanvasTarjetaNegocio();
       const a = document.createElement("a");
-      a.download = `QR_${negocioActual.slug || 'tienda'}.png`;
+      a.download = `Tarjeta_${negocioActual.slug || 'tienda'}.png`;
       a.href = canvas.toDataURL("image/png");
       a.click();
-    }
-
-    function compartirQRWhatsApp() {
-      const name = negocioActual ? negocioActual.nombre : "mi negocio";
-      const act = negocioActual ? (negocioActual.tipo || "Catálogo Digital") : "";
-      const url = obtenerEnlaceLimpio();
-      const txt = encodeURIComponent(`📲 *¡VISITA NUESTRO CATÁLOGO DIGITAL!* 📲\n🏬 *${name}*\n🏷️ *Actividad:* ${act}\n\n👉 Accede aquí directo o escanea nuestro código QR:\n${url}`);
-      window.open(`https://api.whatsapp.com/send?text=${txt}`, '_blank');
     }
 
     function copiarTarjetaCliente() {
@@ -1086,13 +1221,6 @@
       return `${base}?tienda=${negocioActual ? negocioActual.slug : 'ofertazo'}`;
     }
 
-    function compartirWA() {
-      const name = negocioActual ? negocioActual.nombre : 'OFERTAZO';
-      const enlaceLimpio = obtenerEnlaceLimpio();
-      const txt = encodeURIComponent(`🔥 ¡Pide en ${name}! Catálogo digital directo:\n${enlaceLimpio}`);
-      window.open("https://api.whatsapp.com/send?text=" + txt, '_blank');
-    }
-
     function compartirFB() {
       window.open("https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(obtenerEnlaceLimpio()), '_blank');
     }
@@ -1101,7 +1229,7 @@
       navigator.clipboard.writeText(obtenerEnlaceLimpio()).then(() => {
         const b = document.getElementById("btn-copy");
         b.innerHTML = '<i class="fa-solid fa-check text-emerald-400"></i> ¡Copiado!';
-        setTimeout(() => { b.innerHTML = '<i class="fa-solid fa-link text-amber-400"></i> Copiar Enlace'; }, 2000);
+        setTimeout(() => { b.innerHTML = '<i class="fa-solid fa-link text-amber-400"></i> Copiar Solo Enlace'; }, 2000);
       });
     }
 
