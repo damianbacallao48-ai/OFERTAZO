@@ -32,7 +32,7 @@
     <header class="flex justify-between items-center py-4 border-b border-slate-800 mb-5">
       <div>
         <h1 class="text-xl font-black text-amber-400">PANEL MAESTRO</h1>
-        <p class="text-xs text-slate-400">Control de Pagos y Suscripciones</p>
+        <p class="text-xs text-slate-400">Control de Pagos y Suscripciones (2,000 CUP / Mes)</p>
       </div>
       <a href="registro.html" target="_blank" class="bg-emerald-600 text-xs px-3 py-1.5 rounded-xl text-white font-bold flex items-center gap-1.5 active:scale-95 shadow">
         <i class="fa-solid fa-plus"></i> Registro
@@ -167,7 +167,7 @@
           <div class="flex items-center justify-between pt-2 border-t border-slate-800 text-xs">
             <div class="flex items-center gap-1.5">
               <button onclick="renovar30Dias(${b.id})" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-2.5 py-1 rounded-xl text-[10px] active:scale-95 flex items-center gap-1">
-                <i class="fa-solid fa-check-circle"></i> Aprobar +30 Días
+                <i class="fa-solid fa-check-circle"></i> Aprobar +30 Días ($2,000 CUP)
               </button>
               <button onclick="toggleActivo(${b.id}, ${b.activo})" class="bg-slate-800 text-slate-300 font-bold px-2.5 py-1 rounded-xl text-[10px] border border-slate-700 active:scale-95">
                 ${b.activo ? 'Pausar' : 'Reactivar'}
@@ -184,7 +184,7 @@
     }
 
     async function renovar30Dias(id) {
-      if (!confirm("¿Confirmas que este cliente pagó y deseas activar/extender 30 días de suscripción?")) return;
+      if (!confirm("¿Confirmas que este cliente pagó los 2,000 CUP y deseas activar/extender 30 días de suscripción?")) return;
 
       const nuevaFecha = new Date();
       nuevaFecha.setDate(nuevaFecha.getDate() + 30);
@@ -232,7 +232,7 @@
           console.warn("Aviso al borrar productos:", errProd.message);
         }
 
-        // 2. Eliminar el negocio y pedir que devuelva la fila borrada para verificar si Supabase permitió el DELETE
+        // 2. Eliminar el negocio
         const { data: borrados, error: errNeg } = await supabaseClient
           .from('negocios')
           .delete()
