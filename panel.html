@@ -53,8 +53,27 @@
       </div>
     </header>
 
-    <!-- SECCIÓN 1: DATOS Y CONFIGURACIÓN DEL NEGOCIO (SEPARADO) -->
-    <section class="bg-[#0b1326] border border-slate-800 rounded-2xl p-4 space-y-3.5 shadow-xl">
+    <!-- BARRA DE PESTAÑAS: SEPARACIÓN DE AJUSTES Y SUBIR PRODUCTOS -->
+    <div class="grid grid-cols-2 gap-2 bg-[#080d1a] p-1 rounded-2xl border border-slate-800">
+      <button 
+        id="tab-btn-ajustes" 
+        onclick="cambiarPestanaPanel('ajustes')" 
+        class="py-2.5 px-3 rounded-xl font-cyber font-black text-[11px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition active:scale-95 bg-amber-500 text-slate-950 shadow-[0_0_12px_rgba(245,158,11,0.35)]">
+        <i class="fa-solid fa-sliders"></i>
+        <span>Ajustes</span>
+      </button>
+
+      <button 
+        id="tab-btn-productos" 
+        onclick="cambiarPestanaPanel('productos')" 
+        class="py-2.5 px-3 rounded-xl font-cyber font-black text-[11px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition active:scale-95 bg-transparent text-slate-400 hover:text-white">
+        <i class="fa-solid fa-plus-circle"></i>
+        <span>Subir Producto</span>
+      </button>
+    </div>
+
+    <!-- SECCIÓN 1: DATOS Y CONFIGURACIÓN DEL NEGOCIO (PESTAÑA 1) -->
+    <section id="seccion-panel-ajustes" class="bg-[#0b1326] border border-slate-800 rounded-2xl p-4 space-y-3.5 shadow-xl">
       <h2 class="text-xs font-black text-amber-300 font-cyber flex items-center gap-1.5">
         <i class="fa-solid fa-sliders text-cyan-400"></i> DATOS Y CONFIGURACIÓN DEL NEGOCIO
       </h2>
@@ -121,8 +140,8 @@
       </div>
     </section>
 
-    <!-- SECCIÓN 2: AGREGAR NUEVO PRODUCTO (SEPARADO) -->
-    <section class="bg-[#0b1326] border border-slate-800 rounded-2xl p-4 space-y-3.5 shadow-xl">
+    <!-- SECCIÓN 2: AGREGAR NUEVO PRODUCTO (PESTAÑA 2 - INICIALMENTE OCULTA) -->
+    <section id="seccion-panel-productos" class="hidden bg-[#0b1326] border border-slate-800 rounded-2xl p-4 space-y-3.5 shadow-xl">
       <h2 class="text-xs font-black text-emerald-400 font-cyber flex items-center gap-1.5">
         <i class="fa-solid fa-plus-circle text-emerald-400"></i> AGREGAR NUEVO PRODUCTO
       </h2>
@@ -227,6 +246,28 @@
         box.classList.remove("hidden");
       } else {
         box.classList.add("hidden");
+      }
+    }
+
+    /* CONTROL DE PESTAÑAS (AJUSTES / PRODUCTOS) */
+    function cambiarPestanaPanel(pestana) {
+      const secAjustes = document.getElementById('seccion-panel-ajustes');
+      const secProductos = document.getElementById('seccion-panel-productos');
+      const btnAjustes = document.getElementById('tab-btn-ajustes');
+      const btnProductos = document.getElementById('tab-btn-productos');
+
+      if (pestana === 'ajustes') {
+        secAjustes.classList.remove('hidden');
+        secProductos.classList.add('hidden');
+
+        btnAjustes.className = "py-2.5 px-3 rounded-xl font-cyber font-black text-[11px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition active:scale-95 bg-amber-500 text-slate-950 shadow-[0_0_12px_rgba(245,158,11,0.35)]";
+        btnProductos.className = "py-2.5 px-3 rounded-xl font-cyber font-black text-[11px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition active:scale-95 bg-transparent text-slate-400 hover:text-white";
+      } else {
+        secAjustes.classList.add('hidden');
+        secProductos.classList.remove('hidden');
+
+        btnProductos.className = "py-2.5 px-3 rounded-xl font-cyber font-black text-[11px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition active:scale-95 bg-emerald-500 text-slate-950 shadow-[0_0_12px_rgba(16,185,129,0.35)]";
+        btnAjustes.className = "py-2.5 px-3 rounded-xl font-cyber font-black text-[11px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition active:scale-95 bg-transparent text-slate-400 hover:text-white";
       }
     }
 
@@ -436,6 +477,7 @@
         document.getElementById("prod-desc").value = "";
         fileInput.value = "";
         cargarProductos();
+        alert("¡Producto publicado exitosamente!");
       }
 
       btn.disabled = false;
