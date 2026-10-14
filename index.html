@@ -8,12 +8,12 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Fuente moderna y estándar: Inter -->
+    <!-- Tipografía comercial y moderna: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Iconos Lucide / Phosphor estilo limpio -->
+    <!-- Iconos Lucide -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
@@ -22,7 +22,7 @@
             background-color: #0b0f17;
             color: #f1f5f9;
         }
-        /* Ocultar barra de scroll en categorías horizontales */
+        /* Ocultar barra de desplazamiento en listas horizontales */
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
@@ -34,11 +34,11 @@
 </head>
 <body class="min-h-screen pb-20">
 
-    <!-- TOP BAR / BANNER -->
+    <!-- CABECERA PRINCIPAL -->
     <header class="bg-[#111827] border-b border-slate-800 sticky top-0 z-40 backdrop-blur-md bg-opacity-95">
         <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <!-- LOGO CON FALLBACK SI NO CARGA -->
+                <!-- LOGO CON ICONO DE RESPALDO -->
                 <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center overflow-hidden">
                     <img src="img/logo.png" 
                          alt="Logo" 
@@ -50,7 +50,7 @@
                     <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-1.5">
                         OFERTAZO.CA
                     </h1>
-                    <p class="text-xs text-slate-400 font-normal">Ciego de Ávila • Catálogo Digital</p>
+                    <p class="text-xs text-slate-400 font-normal">Ciego de Ávila • Catálogo Digital Express</p>
                 </div>
             </div>
 
@@ -68,7 +68,8 @@
             <button class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold py-2 rounded-lg shadow-sm flex items-center justify-center gap-1.5 transition">
                 <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i> Crear Tienda
             </button>
-            <button class="flex-1 bg-slate-800/80 hover:bg-slate-800 text-slate-300 text-xs font-medium py-2 rounded-lg border border-slate-700/60 flex items-center justify-center gap-1.5 transition">
+            <!-- BOTÓN QUE ABRE EL MENÚ DE COMPARTIR Y QR -->
+            <button onclick="toggleShareModal(true)" class="flex-1 bg-slate-800/80 hover:bg-slate-800 text-slate-300 text-xs font-medium py-2 rounded-lg border border-slate-700/60 flex items-center justify-center gap-1.5 transition">
                 <i data-lucide="share-2" class="w-3.5 h-3.5"></i> Difundir
             </button>
         </div>
@@ -76,7 +77,7 @@
 
     <main class="max-w-md mx-auto px-4 pt-4 space-y-5">
 
-        <!-- TARJETA DE INFORMACIÓN / TARIFAS -->
+        <!-- TARJETA DE MENSAJERÍA Y CAMBIO -->
         <div class="bg-gradient-to-br from-[#161f30] to-[#111827] border border-slate-800 rounded-2xl p-4 shadow-sm space-y-3">
             <div class="flex items-center justify-between text-xs">
                 <div class="flex items-center gap-1.5 bg-amber-500/10 text-amber-300 px-2.5 py-1 rounded-md border border-amber-500/20 font-medium">
@@ -87,7 +88,7 @@
                 </div>
             </div>
             <p class="text-xs text-slate-400 leading-relaxed">
-                Entregas a domicilio rápidas en Ciego de Ávila. Paga al recibir o por transferencia.
+                Entregas a domicilio rápidas en Ciego de Ávila. Pedidos directos vía WhatsApp.
             </p>
         </div>
 
@@ -95,21 +96,21 @@
         <section class="space-y-2.5">
             <div class="flex items-center justify-between">
                 <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span> Negocios Asociados
+                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span> Otros Negocios
                 </h2>
-                <a href="#" class="text-xs text-indigo-400 hover:text-indigo-300 font-medium">Ver todos &rarr;</a>
+                <a href="#" class="text-xs text-indigo-400 hover:text-indigo-300 font-medium">Ver Directorio &rarr;</a>
             </div>
 
             <div class="flex gap-3 overflow-x-auto no-scrollbar pb-1">
                 <!-- Tienda 1 -->
                 <div class="min-w-[170px] bg-[#161f30] border border-slate-800 rounded-xl overflow-hidden flex-shrink-0">
                     <div class="h-24 bg-slate-800 relative">
-                        <img src="img/tienda1.jpg" alt="La cuevita" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=400&q=80'">
-                        <span class="absolute top-2 right-2 bg-emerald-500/90 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">ABIERTO</span>
+                        <img src="img/tienda1.jpg" alt="La cuevita cuba" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=400&q=80'">
+                        <span class="absolute top-2 right-2 bg-emerald-500/90 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">ACTIVO</span>
                     </div>
                     <div class="p-2.5">
                         <h3 class="text-xs font-semibold text-white truncate">La cuevita cuba</h3>
-                        <p class="text-[11px] text-slate-400">Víveres y frescos</p>
+                        <p class="text-[11px] text-slate-400">Víveres & Abarrotes</p>
                     </div>
                 </div>
 
@@ -117,11 +118,11 @@
                 <div class="min-w-[170px] bg-[#161f30] border border-slate-800 rounded-xl overflow-hidden flex-shrink-0">
                     <div class="h-24 bg-slate-800 relative">
                         <img src="img/tienda2.jpg" alt="Café Habana" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=400&q=80'">
-                        <span class="absolute top-2 right-2 bg-emerald-500/90 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">ABIERTO</span>
+                        <span class="absolute top-2 right-2 bg-emerald-500/90 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">ACTIVO</span>
                     </div>
                     <div class="p-2.5">
                         <h3 class="text-xs font-semibold text-white truncate">Café Don Pepe</h3>
-                        <p class="text-[11px] text-slate-400">Cafetería & Snack</p>
+                        <p class="text-[11px] text-slate-400">Cafetería & Meriendas</p>
                     </div>
                 </div>
             </div>
@@ -130,22 +131,22 @@
         <!-- FILTROS POR CATEGORÍA -->
         <section class="space-y-3">
             <div class="flex gap-2 overflow-x-auto no-scrollbar">
-                <button onclick="filterCategory('todos')" class="cat-btn active bg-amber-500 text-slate-950 font-semibold text-xs px-3.5 py-1.5 rounded-lg transition">
-                    Todos
+                <button onclick="filterCategory('todos', this)" class="cat-btn bg-amber-500 text-slate-950 font-semibold text-xs px-3.5 py-1.5 rounded-lg transition">
+                    🔥 Todos
                 </button>
-                <button onclick="filterCategory('cereales')" class="cat-btn bg-slate-800/80 hover:bg-slate-800 text-slate-300 font-medium text-xs px-3.5 py-1.5 rounded-lg border border-slate-700/50 transition">
+                <button onclick="filterCategory('cereales', this)" class="cat-btn bg-slate-800/80 hover:bg-slate-800 text-slate-300 font-medium text-xs px-3.5 py-1.5 rounded-lg border border-slate-700/50 transition">
                     Cereales
                 </button>
-                <button onclick="filterCategory('cafe')" class="cat-btn bg-slate-800/80 hover:bg-slate-800 text-slate-300 font-medium text-xs px-3.5 py-1.5 rounded-lg border border-slate-700/50 transition">
+                <button onclick="filterCategory('cafe', this)" class="cat-btn bg-slate-800/80 hover:bg-slate-800 text-slate-300 font-medium text-xs px-3.5 py-1.5 rounded-lg border border-slate-700/50 transition">
                     Café
                 </button>
-                <button onclick="filterCategory('lacteos')" class="cat-btn bg-slate-800/80 hover:bg-slate-800 text-slate-300 font-medium text-xs px-3.5 py-1.5 rounded-lg border border-slate-700/50 transition">
-                    Lácteos
+                <button onclick="filterCategory('general', this)" class="cat-btn bg-slate-800/80 hover:bg-slate-800 text-slate-300 font-medium text-xs px-3.5 py-1.5 rounded-lg border border-slate-700/50 transition">
+                    General
                 </button>
             </div>
         </section>
 
-        <!-- GRILLA DE PRODUCTOS -->
+        <!-- CATÁLOGO DE PRODUCTOS -->
         <section class="grid grid-cols-2 gap-3" id="productGrid">
 
             <!-- Producto 1 -->
@@ -183,10 +184,10 @@
                 </div>
                 <div class="p-3 flex flex-col flex-1 justify-between gap-2">
                     <div>
-                        <h4 class="text-xs font-semibold text-white line-clamp-1">Café Expresso 250g</h4>
+                        <h4 class="text-xs font-semibold text-white line-clamp-1">Café Expresso (250g)</h4>
                         <p class="text-sm font-bold text-amber-400 mt-1">$600 CUP</p>
                     </div>
-                    <button onclick="orderProduct('Café Expresso 250g')" class="w-full bg-slate-800 hover:bg-emerald-600 text-slate-200 hover:text-white font-medium text-xs py-1.5 rounded-lg border border-slate-700 hover:border-emerald-500 transition flex items-center justify-center gap-1.5">
+                    <button onclick="orderProduct('Café Expresso (250g)')" class="w-full bg-slate-800 hover:bg-emerald-600 text-slate-200 hover:text-white font-medium text-xs py-1.5 rounded-lg border border-slate-700 hover:border-emerald-500 transition flex items-center justify-center gap-1.5">
                         <i data-lucide="shopping-cart" class="w-3.5 h-3.5"></i> Pedir
                     </button>
                 </div>
@@ -196,13 +197,131 @@
 
     </main>
 
-    <!-- LOGICA JS -->
+    <!-- VENTANA MODAL FLOTANTE (DIFUNDIR / COMPARTIR / QR) -->
+    <div id="shareModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/75 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
+        <div id="shareModalCard" class="w-full max-w-sm bg-[#161f30] border border-slate-800 rounded-t-2xl sm:rounded-2xl p-5 space-y-4 transform translate-y-8 sm:translate-y-0 transition-transform duration-200">
+            
+            <!-- Barra superior modal -->
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                    <i data-lucide="share-2" class="w-4 h-4 text-amber-400"></i> Compartir Catálogo
+                </h3>
+                <button onclick="toggleShareModal(false)" class="text-slate-400 hover:text-white p-1 rounded-lg">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Accesos directos a redes -->
+            <div class="grid grid-cols-3 gap-2.5">
+                <button onclick="shareWhatsApp()" class="flex flex-col items-center justify-center gap-1.5 p-3 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 text-emerald-400 transition">
+                    <i data-lucide="message-circle" class="w-5 h-5"></i>
+                    <span class="text-[11px] font-medium">WhatsApp</span>
+                </button>
+
+                <button onclick="shareFacebook()" class="flex flex-col items-center justify-center gap-1.5 p-3 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 text-blue-400 transition">
+                    <i data-lucide="facebook" class="w-5 h-5"></i>
+                    <span class="text-[11px] font-medium">Facebook</span>
+                </button>
+
+                <button onclick="shareInstagram()" class="flex flex-col items-center justify-center gap-1.5 p-3 rounded-xl bg-pink-500/10 hover:bg-pink-500/20 border border-pink-500/20 text-pink-400 transition">
+                    <i data-lucide="instagram" class="w-5 h-5"></i>
+                    <span class="text-[11px] font-medium">Instagram</span>
+                </button>
+            </div>
+
+            <!-- Copiar Enlace Directo -->
+            <div class="space-y-1.5">
+                <label class="text-[11px] text-slate-400 font-medium">Enlace del catálogo</label>
+                <div class="flex gap-2">
+                    <input id="shareUrlInput" type="text" readonly class="w-full bg-[#0b0f17] border border-slate-700/80 rounded-lg px-3 py-2 text-xs text-slate-300 select-all focus:outline-none">
+                    <button onclick="copyShareLink()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-semibold text-xs px-3 rounded-lg flex items-center gap-1 transition flex-shrink-0">
+                        <i data-lucide="copy" class="w-3.5 h-3.5"></i> <span id="copyBtnText">Copiar</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Código QR generado dinámicamente -->
+            <div class="bg-[#0b0f17] border border-slate-800 rounded-xl p-3 flex items-center gap-3">
+                <div class="w-20 h-20 bg-white p-1 rounded-lg flex-shrink-0 flex items-center justify-center shadow-sm">
+                    <img id="qrImage" src="" alt="Código QR" class="w-full h-full object-contain">
+                </div>
+                <div class="flex-1 space-y-1">
+                    <h4 class="text-xs font-semibold text-white">Escanear QR</h4>
+                    <p class="text-[11px] text-slate-400 leading-tight">Escanea este código con cualquier cámara móvil para abrir el catálogo al instante.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT -->
     <script>
         // Inicializar iconos
         lucide.createIcons();
 
-        // Filtro por categoría
-        function filterCategory(category) {
+        const SITE_URL = window.location.href;
+        const SHARE_TEXT = "¡Mira los productos y precios en OFERTAZO.CA (Ciego de Ávila)!";
+        const WHATSAPP_CONTACT = "5350000000"; // Reemplaza por tu número de pedidos
+
+        // Configurar QR y campo de URL al cargar
+        document.addEventListener("DOMContentLoaded", () => {
+            const urlInput = document.getElementById('shareUrlInput');
+            if (urlInput) urlInput.value = SITE_URL;
+
+            const qrImg = document.getElementById('qrImage');
+            if (qrImg) {
+                qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(SITE_URL)}`;
+            }
+        });
+
+        // Abrir / Cerrar modal flotante
+        function toggleShareModal(open) {
+            const modal = document.getElementById('shareModal');
+            const card = document.getElementById('shareModalCard');
+
+            if (open) {
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                card.classList.remove('translate-y-8');
+            } else {
+                modal.classList.add('opacity-0', 'pointer-events-none');
+                card.classList.add('translate-y-8');
+            }
+        }
+
+        // Copiar enlace
+        function copyShareLink() {
+            const input = document.getElementById("shareUrlInput");
+            navigator.clipboard.writeText(input.value).then(() => {
+                const btn = document.getElementById("copyBtnText");
+                btn.textContent = "¡Copiado!";
+                setTimeout(() => { btn.textContent = "Copiar"; }, 2000);
+            });
+        }
+
+        // Acciones de compartir
+        function shareWhatsApp() {
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(SHARE_TEXT + " " + SITE_URL)}`, '_blank');
+        }
+
+        function shareFacebook() {
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(SITE_URL)}`, '_blank');
+        }
+
+        function shareInstagram() {
+            copyShareLink();
+            alert("Enlace copiado al portapapeles. Pégalo directamente en tus historias o perfil de Instagram.");
+            window.open("https://instagram.com", '_blank');
+        }
+
+        // Cerrar tocando fondo oscuro
+        document.getElementById('shareModal').addEventListener('click', (e) => {
+            if (e.target.id === 'shareModal') {
+                toggleShareModal(false);
+            }
+        });
+
+        // Filtrado por categorías
+        function filterCategory(category, clickedBtn) {
             const cards = document.querySelectorAll('.product-card');
             const buttons = document.querySelectorAll('.cat-btn');
 
@@ -211,8 +330,8 @@
                 btn.classList.add('bg-slate-800/80', 'text-slate-300', 'font-medium');
             });
 
-            event.target.classList.remove('bg-slate-800/80', 'text-slate-300', 'font-medium');
-            event.target.classList.add('bg-amber-500', 'text-slate-950', 'font-semibold');
+            clickedBtn.classList.remove('bg-slate-800/80', 'text-slate-300', 'font-medium');
+            clickedBtn.classList.add('bg-amber-500', 'text-slate-950', 'font-semibold');
 
             cards.forEach(card => {
                 if (category === 'todos' || card.dataset.category === category) {
@@ -223,11 +342,10 @@
             });
         }
 
-        // Enlace rápido a WhatsApp
+        // Enviar pedido por WhatsApp
         function orderProduct(name) {
-            const phone = "5350000000"; // Reemplaza por tu número de WhatsApp
-            const msg = encodeURIComponent(`Hola, quiero encargar: ${name}`);
-            window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
+            const msg = encodeURIComponent(`Hola, me interesa encargar el siguiente producto: ${name}`);
+            window.open(`https://wa.me/${WHATSAPP_CONTACT}?text=${msg}`, '_blank');
         }
     </script>
 </body>
