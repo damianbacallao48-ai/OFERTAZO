@@ -15,7 +15,7 @@
 </head>
 <body class="bg-[#05070e] text-slate-100 min-h-screen pb-24 font-sans antialiased">
 
-  <!-- PANTALLA DE ACCESO POR PIN / CONTRASEÑA -->
+  <!-- PANTALLA DE ACCESO POR PIN -->
   <div id="auth-screen" class="min-h-screen flex items-center justify-center p-4">
     <div class="bg-[#0b1326] border border-amber-500/40 p-6 rounded-3xl max-w-sm w-full space-y-4 shadow-2xl text-center">
       <div class="w-14 h-14 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-2xl mx-auto border border-amber-500/30">
@@ -26,7 +26,7 @@
         <p id="auth-biz-name" class="text-xs text-slate-400 mt-1">Cargando negocio...</p>
       </div>
       <div class="space-y-3 pt-2">
-        <input id="input-pin" type="password" placeholder="Ingresa tu PIN / Contraseña" maxlength="10" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-center text-lg text-white font-cyber tracking-widest outline-none focus:border-amber-400">
+        <input id="input-pin" type="password" placeholder="Ingresa tu PIN / Contraseña" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-center text-lg text-white font-cyber tracking-widest outline-none focus:border-amber-400">
         <button onclick="verificarPIN()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-3 rounded-xl text-xs uppercase tracking-wider active:scale-95 transition shadow-lg">
           Entrar a Administrar
         </button>
@@ -86,10 +86,10 @@
           <textarea id="cfg-descripcion" rows="2" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white outline-none focus:border-amber-400 resize-none"></textarea>
         </div>
 
-        <!-- SELECCIÓN DE SERVICIO A DOMICILIO -->
+        <!-- OPCIÓN DE SERVICIO A DOMICILIO -->
         <div class="bg-slate-900/90 p-3 rounded-2xl border border-slate-800 space-y-2.5">
           <label class="text-[11px] text-amber-300 font-bold uppercase flex items-center gap-1.5">
-            <i class="fa-solid fa-motorcycle text-amber-400"></i> ¿Haces Servicio a Domicilio (Delivery)?
+            <i class="fa-solid fa-motorcycle text-amber-400"></i> Servicio a Domicilio (Delivery)
           </label>
 
           <select id="cfg-tiene-domicilio" onchange="toggleDelivery(this.value)" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white font-bold outline-none focus:border-amber-400">
@@ -97,9 +97,8 @@
             <option value="false">🏬 NO, solo recogida directa en el local</option>
           </select>
 
-          <!-- Monto a cobrar si ofrece domicilio -->
           <div id="box-costo-delivery">
-            <label class="text-[10px] text-slate-400 font-bold uppercase">Monto por entrega (CUP):</label>
+            <label class="text-[10px] text-slate-400 font-bold uppercase">Costo Delivery (CUP):</label>
             <input id="cfg-costo-delivery" type="number" placeholder="Ej. 250" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white font-cyber text-xs outline-none focus:border-amber-400">
           </div>
         </div>
@@ -157,26 +156,22 @@
       </div>
     </section>
 
-    <!-- ZONA DE PELIGRO: ELIMINAR NEGOCIO CON CONTRASEÑA -->
-    <section class="bg-red-950/30 border border-red-800/60 rounded-2xl p-4 space-y-3 text-center">
+    <!-- BOTÓN PARA ELIMINAR EL NEGOCIO (SOLICITA LA CONTRASEÑA) -->
+    <section class="bg-red-950/40 border border-red-800/60 rounded-2xl p-4 space-y-3 text-center">
       <div class="w-10 h-10 rounded-xl bg-red-900/40 text-red-400 flex items-center justify-center mx-auto text-lg border border-red-700/50">
-        <i class="fa-solid fa-triangle-exclamation"></i>
+        <i class="fa-solid fa-trash-can"></i>
       </div>
       <div>
-        <h3 class="text-xs font-black text-red-400 font-cyber uppercase">Zona de Peligro: Eliminar Mi Negocio</h3>
+        <h3 class="text-xs font-black text-red-400 font-cyber uppercase">Eliminar Mi Negocio</h3>
         <p class="text-[10px] text-slate-400 max-w-xs mx-auto mt-0.5">
-          Si decides dar de baja este catálogo, se borrarán todos tus productos y datos de forma permanente. Requiere confirmar con tu contraseña.
+          Borra tu catálogo y productos permanentemente de la plataforma. Para hacerlo deberás confirmar con tu contraseña.
         </p>
       </div>
 
-      <button onclick="solicitarEliminarNegocio()" class="bg-red-600/90 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-xl text-xs uppercase tracking-wider shadow-md active:scale-95 transition inline-flex items-center gap-1.5">
-        <i class="fa-solid fa-trash-can"></i> Eliminar Negocio Definitivamente
+      <button onclick="solicitarEliminarNegocio()" class="bg-red-600 hover:bg-red-500 text-white font-bold py-2.5 px-5 rounded-xl text-xs uppercase tracking-wider shadow-md active:scale-95 transition inline-flex items-center gap-1.5">
+        <i class="fa-solid fa-triangle-exclamation"></i> Eliminar Negocio Definitivamente
       </button>
     </section>
-
-    <div class="text-center pt-2 text-[10px] text-slate-500 font-cyber">
-      Plataforma Supervisada por: <span class="text-cyan-400">Daemon.pro.adm</span>
-    </div>
 
   </div>
 
@@ -206,12 +201,15 @@
     }
 
     function verificarPIN() {
-      const pin = document.getElementById("input-pin").value.trim();
-      if (pin === String(negocioActual.pin_seguridad)) {
+      const pinIngresado = document.getElementById("input-pin").value.trim();
+      const pinReal = String(negocioActual.pin_seguridad || "").trim();
+
+      // Comparación flexible y segura
+      if (pinIngresado === pinReal) {
         sessionStorage.setItem(`auth_${negocioActual.slug}`, "true");
         mostrarPanel();
       } else {
-        alert("PIN / Contraseña incorrecta. Consulta con Daemon.pro.adm si olvidaste tu clave.");
+        alert("Contraseña / PIN incorrecto.");
       }
     }
 
@@ -403,36 +401,32 @@
       cargarProductos();
     }
 
-    /* ELIMINAR EL NEGOCIO DEFINITIVAMENTE CON PIN / CONTRASEÑA */
+    /* ELIMINAR EL NEGOCIO (CON CONTRASEÑA OBLIGATORIA) */
     async function solicitarEliminarNegocio() {
-      const pinConfirm = prompt("⚠️ ADVERTENCIA: Esta acción borrará este catálogo y todos sus productos permanentemente.\n\nPara confirmar, escribe tu PIN / Contraseña de acceso:");
+      const pinConfirm = prompt("⚠️ ATENCIÓN: Esta acción eliminará permanentemente tu tienda y todos tus productos.\n\nEscribe tu PIN / Contraseña para confirmar:");
       
       if (!pinConfirm) return;
 
-      if (pinConfirm.trim() !== String(negocioActual.pin_seguridad)) {
-        alert("❌ Contraseña incorrecta. Operación cancelada por seguridad.");
+      const pinReal = String(negocioActual.pin_seguridad || "").trim();
+
+      if (pinConfirm.trim() !== pinReal) {
+        alert("❌ Contraseña incorrecta. No se realizaron cambios.");
         return;
       }
 
-      const dobleCheck = confirm(`¿Estás 100% seguro de que deseas eliminar "${negocioActual.nombre}"? No podrás recuperar la información.`);
-      if (!dobleCheck) return;
+      const seguro = confirm(`¿Confirmas que deseas eliminar definitivamente "${negocioActual.nombre}"?`);
+      if (!seguro) return;
 
       try {
-        // 1. Borrar todos los productos asociados
         await supabaseClient.from('productos').delete().eq('negocio_id', negocioActual.id);
-        
-        // 2. Borrar comentarios asociados si existían
-        await supabaseClient.from('comentarios').delete().eq('negocio_id', negocioActual.id);
-
-        // 3. Borrar el registro del negocio
         const { error } = await supabaseClient.from('negocios').delete().eq('id', negocioActual.id);
         if (error) throw error;
 
         sessionStorage.removeItem(`auth_${negocioActual.slug}`);
-        alert("✅ Tu negocio ha sido eliminado correctamente.");
+        alert("✅ Negocio eliminado correctamente.");
         window.location.href = "index.html";
       } catch (err) {
-        alert("Error al eliminar el negocio: " + err.message);
+        alert("Error al eliminar negocio: " + err.message);
       }
     }
 
