@@ -15,7 +15,7 @@
 </head>
 <body class="bg-[#05070e] text-slate-100 min-h-screen pb-24 font-sans antialiased">
 
-  <!-- PANTALLA DE ACCESO POR PIN -->
+  <!-- PANTALLA DE ACCESO POR CONTRASEÑA (SIEMPRE ACTIVA AL ENTRAR) -->
   <div id="auth-screen" class="min-h-screen flex items-center justify-center p-4">
     <div class="bg-[#0b1326] border border-amber-500/40 p-6 rounded-3xl max-w-sm w-full space-y-4 shadow-2xl text-center">
       <div class="w-14 h-14 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-2xl mx-auto border border-amber-500/30">
@@ -187,6 +187,9 @@
     let productos = [];
 
     async function init() {
+      // Limpiar sesiones guardadas para obligar a pedir contraseña siempre
+      sessionStorage.clear();
+
       const { data, error } = await supabaseClient.from('negocios').select('*').eq('slug', TIENDA_SLUG).single();
       negocioActual = data;
       if (!negocioActual || error) {
@@ -194,19 +197,13 @@
         return;
       }
       document.getElementById("auth-biz-name").innerText = negocioActual.nombre;
-
-      if (sessionStorage.getItem(`auth_${negocioActual.slug}`) === "true") {
-        mostrarPanel();
-      }
     }
 
     function verificarPIN() {
       const pinIngresado = document.getElementById("input-pin").value.trim();
       const pinEnBD = String(negocioActual.pin || negocioActual.pin_seguridad || negocioActual.password || "").trim();
 
-      // Validación que admite tu clave sin mostrarla en mensajes de error
       if (pinIngresado === pinEnBD || pinIngresado === "0110") {
-        sessionStorage.setItem(`auth_${negocioActual.slug}`, "true");
         mostrarPanel();
       } else {
         alert("Contraseña incorrecta. Inténtalo nuevamente.");
@@ -265,7 +262,6 @@
       const tieneDom = (document.getElementById("cfg-tiene-domicilio").value === "true");
       const costo = tieneDom ? (parseFloat(document.getElementById("cfg-costo-delivery").value) || 0) : 0;
 
-      // Objeto limpio sin enviar nombres de columna inexistentes
       const updates = {
         nombre: nombre,
         tasa_usd: tasa,
@@ -423,7 +419,6 @@
         const { error } = await supabaseClient.from('negocios').delete().eq('id', negocioActual.id);
         if (error) throw error;
 
-        sessionStorage.removeItem(`auth_${negocioActual.slug}`);
         alert("Negocio eliminado correctamente.");
         window.location.href = "index.html";
       } catch (err) {
@@ -432,7 +427,6 @@
     }
 
     function cerrarSesion() {
-      sessionStorage.removeItem(`auth_${negocioActual.slug}`);
       location.reload();
     }
 
