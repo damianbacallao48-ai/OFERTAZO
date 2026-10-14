@@ -8,139 +8,139 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #030712; overflow: hidden; user-select: none; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #030712; user-select: none; }
         .font-cyber { font-family: 'Orbitron', monospace; }
         .cyber-panel { background: rgba(11, 19, 38, 0.95); border: 1px solid rgba(245, 158, 11, 0.3); }
         
         #virtual-finger {
             position: absolute;
             z-index: 9999;
-            transition: all 0.6s ease-in-out;
+            transition: all 0.7s cubic-bezier(0.25, 1, 0.5, 1);
             pointer-events: none;
             filter: drop-shadow(0 10px 15px rgba(0,0,0,0.8));
         }
-        .step-box {
+        .step-screen {
             display: none;
-            animation: fadeIn 0.4s ease-in-out forwards;
+            opacity: 0;
+            transform: scale(0.95);
+            transition: all 0.4s ease-in-out;
         }
-        .step-box.active {
+        .step-screen.active {
             display: flex;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.96); }
-            to { opacity: 1; transform: scale(1); }
+            opacity: 1;
+            transform: scale(1);
         }
     </style>
 </head>
-<body class="flex flex-col h-screen justify-between text-white relative">
+<body class="min-h-screen flex flex-col justify-between text-white relative">
 
     <!-- DEDO VIRTUAL -->
-    <div id="virtual-finger" style="top: 75%; left: 50%;">
-        <i class="fa-solid fa-hand-pointer text-amber-400 text-4xl transform -rotate-45"></i>
+    <div id="virtual-finger" style="top: 70%; left: 50%;">
+        <i class="fa-solid fa-hand-pointer text-amber-400 text-3xl transform -rotate-45"></i>
     </div>
 
     <!-- CABECERA -->
-    <header class="bg-[#080d1a] border-b border-amber-500/30 p-3.5 flex justify-between items-center z-20">
+    <header class="bg-[#080d1a] border-b border-amber-500/30 p-3 flex justify-between items-center z-20 shrink-0">
         <div class="flex items-center space-x-2">
-            <div class="bg-gradient-to-r from-amber-500 to-amber-300 p-1.5 rounded-xl text-slate-950 font-black text-sm font-cyber">
+            <div class="bg-gradient-to-r from-amber-500 to-amber-300 p-1.5 rounded-xl text-slate-950 font-black text-xs font-cyber">
                 ⚡ OFERTAZO
             </div>
-            <span class="text-[10px] bg-emerald-500/20 text-emerald-400 font-bold px-2 py-0.5 rounded-full border border-emerald-500/30">CIEGO DE ÁVILA</span>
+            <span class="text-[9px] bg-emerald-500/20 text-emerald-400 font-bold px-2 py-0.5 rounded-full border border-emerald-500/30">CIEGO DE ÁVILA</span>
         </div>
-        <div class="text-[10px] font-bold bg-slate-900 px-3 py-1 rounded-full text-amber-400 border border-amber-500/30 font-cyber">
+        <div class="text-[9px] font-bold bg-slate-900 px-2.5 py-1 rounded-full text-amber-400 border border-amber-500/30 font-cyber">
             TUTORIAL 🎬
         </div>
     </header>
 
     <!-- TEXTO FLOTANTE EXPLICATIVO -->
-    <div class="px-4 pt-2 z-30">
-        <div class="cyber-panel rounded-2xl p-3 border-l-4 border-l-amber-500 shadow-xl">
-            <div class="flex items-center space-x-2 mb-1">
+    <div class="px-3 pt-2 z-30 shrink-0">
+        <div class="cyber-panel rounded-xl p-2.5 border-l-4 border-l-amber-500 shadow-xl">
+            <div class="flex items-center space-x-2 mb-0.5">
                 <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                 <span id="step-title" class="text-[10px] font-black text-amber-400 uppercase font-cyber">Paso 1: Creación del Negocio</span>
             </div>
-            <p id="step-desc" class="text-xs text-slate-200 font-semibold leading-snug">
-                Cualquier negocio en Ciego de Ávila crea su tienda digital en segundos...
+            <p id="step-desc" class="text-[11px] text-slate-200 font-medium leading-snug">
+                Pulsa el botón inferior para iniciar el tutorial interactivo en vivo...
             </p>
         </div>
     </div>
 
     <!-- SIMULADOR MÓVIL -->
-    <main class="flex-1 relative flex items-center justify-center p-3">
-        <div class="w-full max-w-md bg-[#0b1326] border border-slate-700/80 rounded-3xl shadow-2xl overflow-hidden flex flex-col h-[400px] relative p-5">
+    <main class="flex-1 flex items-center justify-center p-3 relative">
+        <div class="w-full max-w-sm bg-[#0b1326] border border-slate-700/80 rounded-2xl shadow-2xl p-4 flex flex-col justify-between h-[340px] relative">
             
             <!-- PASO 1 -->
-            <div id="screen-1" class="step-box active flex-col justify-between h-full">
-                <div class="space-y-3">
+            <div id="screen-1" class="step-screen active flex-col justify-between h-full">
+                <div class="space-y-2">
                     <div class="text-center">
-                        <h3 class="text-sm font-black text-amber-400 font-cyber">CREA TU CATÁLOGO</h3>
-                        <p class="text-[10px] text-slate-400">Prueba 7 Días Gratis</p>
+                        <h3 class="text-xs font-black text-amber-400 font-cyber">CREA TU CATÁLOGO</h3>
+                        <p class="text-[9px] text-slate-400">Prueba 7 Días Gratis</p>
                     </div>
-                    <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-700 text-xs">
-                        <span class="text-[9px] text-slate-400 block font-bold">NEGOCIO:</span>
+                    <div class="bg-slate-900 p-2 rounded-lg border border-slate-700 text-[11px]">
+                        <span class="text-[8px] text-slate-400 block font-bold">NEGOCIO:</span>
                         <strong class="text-white">Boutique & Ropa Elegance</strong>
                     </div>
-                    <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-700 text-xs">
-                        <span class="text-[9px] text-slate-400 block font-bold">ENLACE:</span>
+                    <div class="bg-slate-900 p-2 rounded-lg border border-slate-700 text-[11px]">
+                        <span class="text-[8px] text-slate-400 block font-bold">ENLACE:</span>
                         <strong class="text-cyan-400 font-mono">?tienda=ropa-elegance</strong>
                     </div>
                 </div>
-                <div class="w-full bg-amber-500 text-slate-950 font-black py-3 rounded-xl text-center text-xs uppercase tracking-wider shadow-lg">
+                <div class="w-full bg-amber-500 text-slate-950 font-black py-2.5 rounded-lg text-center text-[11px] uppercase tracking-wider shadow-lg">
                     Crear Mi Catálogo Ahora
                 </div>
             </div>
 
             <!-- PASO 2 -->
-            <div id="screen-2" class="step-box flex-col justify-between h-full">
-                <div class="space-y-2.5">
+            <div id="screen-2" class="step-screen flex-col justify-between h-full">
+                <div class="space-y-2">
                     <div class="flex justify-between items-center">
-                        <h3 class="text-xs font-black text-emerald-400 font-cyber"><i class="fa-solid fa-store mr-1"></i> Panel de Control</h3>
-                        <span class="text-[9px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded">Activo</span>
+                        <h3 class="text-[11px] font-black text-emerald-400 font-cyber"><i class="fa-solid fa-store mr-1"></i> Panel de Control</h3>
+                        <span class="text-[8px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded">Activo</span>
                     </div>
-                    <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-700 text-xs space-y-1">
-                        <span class="text-[9px] text-slate-400 font-bold block">PRODUCTO:</span>
+                    <div class="bg-slate-900 p-2 rounded-lg border border-slate-700 text-[11px] space-y-1">
+                        <span class="text-[8px] text-slate-400 font-bold block">PRODUCTO:</span>
                         <div class="text-white font-bold">Tenis Deportivos Nike Air</div>
                         <div class="text-amber-400 font-cyber font-bold">$12,500 CUP</div>
                     </div>
                 </div>
-                <div class="w-full bg-emerald-600 text-white font-black py-3 rounded-xl text-center text-xs uppercase tracking-wider shadow-lg">
+                <div class="w-full bg-emerald-600 text-white font-black py-2.5 rounded-lg text-center text-[11px] uppercase tracking-wider shadow-lg">
                     Publicar Artículo
                 </div>
             </div>
 
             <!-- PASO 3 -->
-            <div id="screen-3" class="step-box flex-col justify-between h-full">
-                <div class="space-y-3">
-                    <div class="bg-slate-900 border border-amber-500/30 p-2.5 rounded-xl flex items-center justify-between">
+            <div id="screen-3" class="step-screen flex-col justify-between h-full">
+                <div class="space-y-2">
+                    <div class="bg-slate-900 border border-amber-500/30 p-2 rounded-lg flex items-center justify-between">
                         <div>
-                            <h4 class="text-xs font-bold text-white">Tenis Nike Air</h4>
-                            <p class="text-[10px] text-amber-400 font-cyber font-bold">$12,500 CUP</p>
+                            <h4 class="text-[11px] font-bold text-white">Tenis Nike Air</h4>
+                            <p class="text-[9px] text-amber-400 font-cyber font-bold">$12,500 CUP</p>
                         </div>
-                        <span class="bg-emerald-500 text-slate-950 text-[9px] font-bold px-2 py-0.5 rounded">Stock</span>
+                        <span class="bg-emerald-500 text-slate-950 text-[8px] font-bold px-1.5 py-0.5 rounded">Stock</span>
                     </div>
-                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-[11px] space-y-1 text-slate-300">
+                    <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 text-[10px] space-y-1 text-slate-300">
                         <p class="flex justify-between"><span>Subtotal:</span> <strong class="text-white">$12,500 CUP</strong></p>
                         <p class="flex justify-between text-amber-300"><span>🛵 Domicilio:</span> <strong>+$250 CUP</strong></p>
-                        <p class="flex justify-between text-sm font-black text-white pt-1 border-t border-slate-800">
+                        <p class="flex justify-between text-xs font-black text-white pt-1 border-t border-slate-800">
                             <span>Total:</span> <span class="text-amber-400 font-cyber">$12,750 CUP</span>
                         </p>
                     </div>
                 </div>
-                <div class="w-full bg-emerald-600 text-white font-black py-3 rounded-xl text-center text-xs uppercase flex items-center justify-center gap-2 shadow-lg">
-                    <i class="fa-brands fa-whatsapp text-base"></i> Confirmar Pedido por WhatsApp
+                <div class="w-full bg-emerald-600 text-white font-black py-2.5 rounded-lg text-center text-[11px] uppercase flex items-center justify-center gap-1.5 shadow-lg">
+                    <i class="fa-brands fa-whatsapp text-sm"></i> Confirmar Pedido por WhatsApp
                 </div>
             </div>
 
             <!-- PASO 4 -->
-            <div id="screen-4" class="step-box flex-col items-center justify-center text-center h-full">
-                <div class="w-16 h-16 bg-emerald-500/20 border-2 border-emerald-400 rounded-full flex items-center justify-center text-emerald-400 text-2xl mb-3 shadow-xl animate-bounce">
+            <div id="screen-4" class="step-screen flex-col items-center justify-center text-center h-full">
+                <div class="w-12 h-12 bg-emerald-500/20 border-2 border-emerald-400 rounded-full flex items-center justify-center text-emerald-400 text-lg mb-2 shadow-xl animate-bounce">
                     <i class="fa-solid fa-check"></i>
                 </div>
-                <h3 class="text-base font-black text-white font-cyber mb-1">¡PEDIDO RECIBIDO!</h3>
-                <p class="text-[11px] text-slate-300 max-w-xs mb-4">
+                <h3 class="text-xs font-black text-white font-cyber mb-1">¡PEDIDO RECIBIDO!</h3>
+                <p class="text-[10px] text-slate-300 max-w-xs mb-2">
                     Sin intermediarios. El pedido llega organizado directo al WhatsApp del negocio.
                 </p>
-                <div class="bg-slate-900 border border-amber-500/40 px-4 py-2 rounded-xl text-[10px] text-amber-400 font-bold font-cyber">
+                <div class="bg-slate-900 border border-amber-500/40 px-3 py-1.5 rounded-lg text-[9px] text-amber-400 font-bold font-cyber">
                     🎁 7 Días Gratis • Solo 2,000 CUP / mes
                 </div>
             </div>
@@ -148,9 +148,9 @@
         </div>
     </main>
 
-    <!-- FOOTER / BOTÓN -->
-    <footer class="bg-[#080d1a] border-t border-amber-500/30 p-3 text-center z-20">
-        <button id="start-btn" onclick="ejecutarDemo()" class="w-full max-w-md mx-auto bg-gradient-to-r from-amber-500 to-amber-400 text-slate-950 font-black py-3 px-5 rounded-xl shadow-lg font-cyber text-xs uppercase flex items-center justify-center gap-2">
+    <!-- FOOTER / BOTÓN DE INICIO FIJO -->
+    <footer class="bg-[#080d1a] border-t border-amber-500/30 p-3 text-center z-20 shrink-0">
+        <button id="start-btn" onclick="ejecutarDemo()" class="w-full max-w-sm mx-auto bg-gradient-to-r from-amber-500 to-amber-400 text-slate-950 font-black py-3 px-4 rounded-xl shadow-lg font-cyber text-xs uppercase flex items-center justify-center gap-2">
             <i class="fa-solid fa-play-circle text-base"></i>
             <span>▶️ REPRODUCIR VÍDEO TUTORIAL</span>
         </button>
@@ -167,16 +167,16 @@
             const desc = document.getElementById('step-desc');
 
             // PASO 1 -> PASO 2
-            finger.style.top = '78%';
-            finger.style.left = '65%';
+            finger.style.top = '65%';
+            finger.style.left = '60%';
 
             setTimeout(() => {
                 document.getElementById('screen-1').classList.remove('active');
                 document.getElementById('screen-2').classList.add('active');
                 title.innerText = "Paso 2: Panel de Control del Dueño";
                 desc.innerText = "El comerciante entra a su panel privado para gestionar su inventario y precios...";
-                finger.style.top = '78%';
-                finger.style.left = '70%';
+                finger.style.top = '65%';
+                finger.style.left = '65%';
 
                 // PASO 2 -> PASO 3
                 setTimeout(() => {
@@ -184,8 +184,8 @@
                     document.getElementById('screen-3').classList.add('active');
                     title.innerText = "Paso 3: Compra del Cliente";
                     desc.innerText = "Los clientes exploran el catálogo, agregan al carrito y calculan el domicilio...";
-                    finger.style.top = '78%';
-                    finger.style.left = '75%';
+                    finger.style.top = '65%';
+                    finger.style.left = '70%';
 
                     // PASO 3 -> PASO 4
                     setTimeout(() => {
