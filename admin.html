@@ -10,57 +10,99 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen p-4 pb-28 font-sans max-w-lg mx-auto antialiased">
 
-  <header class="flex justify-between items-center py-4 border-b border-slate-800 mb-5">
-    <div>
-      <h1 class="text-xl font-black text-amber-400">PANEL MAESTRO</h1>
-      <p class="text-xs text-slate-400">Control de Pagos y Suscripciones</p>
-    </div>
-    <a href="registro.html" target="_blank" class="bg-emerald-600 text-xs px-3 py-1.5 rounded-xl text-white font-bold flex items-center gap-1.5 active:scale-95 shadow">
-      <i class="fa-solid fa-plus"></i> Registro
-    </a>
-  </header>
-
-  <!-- LISTA DE TODOS LOS NEGOCIOS REGISTRADOS -->
-  <section class="space-y-3 mb-6">
-    <div class="flex justify-between items-center px-1">
-      <h2 class="text-xs font-black text-white uppercase tracking-wider flex items-center gap-1.5">
-        <i class="fa-solid fa-users-gear text-amber-400"></i> Negocios Registrados (<span id="total-biz">0</span>)
-      </h2>
-      <button onclick="cargarNegocios()" class="text-xs text-cyan-400 font-bold hover:underline">
-        <i class="fa-solid fa-rotate"></i> Recargar
+  <!-- PANTALLA DE SEGURIDAD SUPERADMIN -->
+  <div id="admin-lock" class="min-h-[85vh] flex items-center justify-center">
+    <div class="bg-slate-900 border border-amber-500/40 rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
+      <div class="w-14 h-14 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-2xl mx-auto border border-amber-500/30">
+        <i class="fa-solid fa-user-shield"></i>
+      </div>
+      <div>
+        <h1 class="text-base font-black text-amber-400 uppercase">Acceso SuperAdmin</h1>
+        <p class="text-xs text-slate-400">Panel exclusivo del propietario de OFERTAZO</p>
+      </div>
+      <input id="super-pin" type="password" placeholder="PIN Maestro" onkeydown="if(event.key==='Enter') desbloquearAdmin()" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-center text-lg text-white font-bold tracking-widest outline-none focus:border-amber-400">
+      <button onclick="desbloquearAdmin()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-3 rounded-xl text-xs uppercase tracking-wider active:scale-95 transition shadow-lg">
+        Entrar al Panel Maestro
       </button>
     </div>
+  </div>
 
-    <div id="lista-negocios" class="space-y-3">
-      <div class="text-center py-10 text-slate-500 text-xs">Cargando tiendas...</div>
-    </div>
-  </section>
-
-  <!-- TASA DE CAMBIO USD -->
-  <section class="bg-slate-900 border border-cyan-500/40 rounded-3xl p-4 shadow-xl">
-    <div class="flex items-center justify-between gap-3">
-      <div class="flex items-center gap-2">
-        <i class="fa-solid fa-money-bill-transfer text-cyan-400 text-lg"></i>
-        <div>
-          <h3 class="text-xs font-black text-white uppercase">Tasa del Dólar (USD / CUP)</h3>
-          <p class="text-[10px] text-slate-400">Aplica a todas las tiendas</p>
-        </div>
+  <!-- CONTENIDO DEL PANEL MAESTRO -->
+  <div id="admin-content" class="hidden">
+    <header class="flex justify-between items-center py-4 border-b border-slate-800 mb-5">
+      <div>
+        <h1 class="text-xl font-black text-amber-400">PANEL MAESTRO</h1>
+        <p class="text-xs text-slate-400">Control de Pagos y Suscripciones</p>
       </div>
-      <div class="flex items-center gap-2">
-        <input id="input-tasa-usd" type="number" placeholder="320" class="w-20 bg-slate-800 border border-slate-700 rounded-xl p-2 text-xs text-center font-black text-amber-400 outline-none focus:border-cyan-400">
-        <button onclick="guardarTasaUSD()" id="btn-tasa" class="bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-black px-3 py-2 rounded-xl active:scale-95 transition">
-          Actualizar
+      <a href="registro.html" target="_blank" class="bg-emerald-600 text-xs px-3 py-1.5 rounded-xl text-white font-bold flex items-center gap-1.5 active:scale-95 shadow">
+        <i class="fa-solid fa-plus"></i> Registro
+      </a>
+    </header>
+
+    <!-- LISTA DE TODOS LOS NEGOCIOS REGISTRADOS -->
+    <section class="space-y-3 mb-6">
+      <div class="flex justify-between items-center px-1">
+        <h2 class="text-xs font-black text-white uppercase tracking-wider flex items-center gap-1.5">
+          <i class="fa-solid fa-users-gear text-amber-400"></i> Negocios Registrados (<span id="total-biz">0</span>)
+        </h2>
+        <button onclick="cargarNegocios()" class="text-xs text-cyan-400 font-bold hover:underline">
+          <i class="fa-solid fa-rotate"></i> Recargar
         </button>
       </div>
-    </div>
-  </section>
+
+      <div id="lista-negocios" class="space-y-3">
+        <div class="text-center py-10 text-slate-500 text-xs">Cargando tiendas...</div>
+      </div>
+    </section>
+
+    <!-- TASA DE CAMBIO USD -->
+    <section class="bg-slate-900 border border-cyan-500/40 rounded-3xl p-4 shadow-xl">
+      <div class="flex items-center justify-between gap-3">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-money-bill-transfer text-cyan-400 text-lg"></i>
+          <div>
+            <h3 class="text-xs font-black text-white uppercase">Tasa del Dólar (USD / CUP)</h3>
+            <p class="text-[10px] text-slate-400">Aplica a todas las tiendas</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <input id="input-tasa-usd" type="number" placeholder="320" class="w-20 bg-slate-800 border border-slate-700 rounded-xl p-2 text-xs text-center font-black text-amber-400 outline-none focus:border-cyan-400">
+          <button onclick="guardarTasaUSD()" id="btn-tasa" class="bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-black px-3 py-2 rounded-xl active:scale-95 transition">
+            Actualizar
+          </button>
+        </div>
+      </div>
+    </section>
+  </div>
 
   <script>
     const SUPABASE_URL = "https://qhkqznpgjirvnndriehr.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFoa3F6bnBnamlydm5uZHJpZWhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5MTE5NzQsImV4cCI6MjEwNzQ4Nzk3NH0.AHUdASoGr0FJWUuP0LxS9UJ2_-QzFPwAjmEeWZ3g1Uc";
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+    const PIN_MAESTRO = "0110";
     let negocios = [];
+
+    function desbloquearAdmin() {
+      const pin = document.getElementById("super-pin").value.trim();
+      if (pin === PIN_MAESTRO) {
+        sessionStorage.setItem("superadmin_ok", "1");
+        mostrarAdmin();
+      } else {
+        alert("PIN Maestro incorrecto.");
+      }
+    }
+
+    function mostrarAdmin() {
+      document.getElementById("admin-lock").classList.add("hidden");
+      document.getElementById("admin-content").classList.remove("hidden");
+      cargarTasaUSD();
+      cargarNegocios();
+    }
+
+    if (sessionStorage.getItem("superadmin_ok") === "1") {
+      mostrarAdmin();
+    }
 
     async function cargarNegocios() {
       const cont = document.getElementById("lista-negocios");
@@ -89,6 +131,8 @@
         const vence = new Date(b.fecha_vencimiento);
         const diffDias = Math.ceil((vence - ahora) / (1000 * 60 * 60 * 24));
         const estaVencido = diffDias <= 0 || b.activo === false;
+        const pinMostrar = b.pin_admin || b.pin || b.password || '----';
+        const nombreSeguro = (b.nombre || 'Negocio').replace(/'/g, "\\'");
 
         let badgeEstado = '';
         if (estaVencido) {
@@ -99,18 +143,18 @@
           badgeEstado = `<span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[9px] font-bold px-2 py-0.5 rounded-full">PAGADO (${diffDias} días)</span>`;
         }
 
-        html += `<div class="bg-slate-900 border ${estaVencido ? 'border-red-900/60' : 'border-slate-800'} rounded-2xl p-3.5 space-y-2.5 shadow-md">
+        html += `<div id="card-biz-${b.id}" class="bg-slate-900 border ${estaVencido ? 'border-red-900/60' : 'border-slate-800'} rounded-2xl p-3.5 space-y-2.5 shadow-md">
           <div class="flex justify-between items-start">
             <div>
-              <div class="flex items-center gap-2">
+              <div class="flex items-center gap-2 flex-wrap">
                 <h3 class="text-sm font-bold text-white">${b.nombre}</h3>
                 ${badgeEstado}
               </div>
               <p class="text-[11px] text-cyan-400 font-mono mt-0.5">?tienda=${b.slug}</p>
-              <p class="text-[10px] text-slate-400">WA: +${b.telefono_whatsapp} • PIN: <strong class="text-amber-300 font-mono">${b.pin_admin}</strong></p>
+              <p class="text-[10px] text-slate-400">WA: +${b.telefono_whatsapp || ''} • PIN: <strong class="text-amber-300 font-mono">${pinMostrar}</strong></p>
             </div>
             <!-- Botones de acceso directo -->
-            <div class="flex items-center gap-1.5">
+            <div class="flex items-center gap-1.5 shrink-0">
               <a href="panel.html?tienda=${b.slug}" target="_blank" title="Editar Productos" class="p-2 bg-amber-500 text-slate-950 font-bold rounded-xl text-xs flex items-center gap-1 shadow">
                 <i class="fa-solid fa-pen-to-square"></i> Editar
               </a>
@@ -129,7 +173,9 @@
                 ${b.activo ? 'Pausar' : 'Reactivar'}
               </button>
             </div>
-            <button onclick="eliminarNegocio(${b.id})" class="text-red-400 text-xs p-1 hover:text-red-300"><i class="fa-solid fa-trash"></i></button>
+            <button onclick="eliminarNegocio(${b.id}, '${nombreSeguro}')" id="btn-del-${b.id}" class="text-red-400 hover:text-white hover:bg-red-600 text-xs px-2.5 py-1.5 rounded-xl transition active:scale-95" title="Eliminar definitivamente">
+              <i class="fa-solid fa-trash"></i>
+            </button>
           </div>
         </div>`;
       });
@@ -161,13 +207,51 @@
     }
 
     async function toggleActivo(id, act) {
-      await supabaseClient.from('negocios').update({ activo: !act }).eq('id', id);
+      const { error } = await supabaseClient.from('negocios').update({ activo: !act }).eq('id', id);
+      if (error) alert("Error al cambiar estado: " + error.message);
       cargarNegocios();
     }
 
-    async function eliminarNegocio(id) {
-      if (!confirm("¿Deseas eliminar este negocio y todos sus productos?")) return;
-      await supabaseClient.from('negocios').delete().eq('id', id);
+    async function eliminarNegocio(id, nombre) {
+      if (!confirm(`⚠️ ¿Estás seguro de eliminar definitivamente "${nombre}" y TODOS sus productos?`)) return;
+
+      const btn = document.getElementById(`btn-del-${id}`);
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+      }
+
+      try {
+        // 1. Primero eliminar todos los productos asociados a este negocio para evitar bloqueo por llave foránea
+        const { error: errProd } = await supabaseClient
+          .from('productos')
+          .delete()
+          .eq('negocio_id', id);
+
+        if (errProd) {
+          console.warn("Aviso al borrar productos:", errProd.message);
+        }
+
+        // 2. Eliminar el negocio y pedir que devuelva la fila borrada para verificar si Supabase permitió el DELETE
+        const { data: borrados, error: errNeg } = await supabaseClient
+          .from('negocios')
+          .delete()
+          .eq('id', id)
+          .select();
+
+        if (errNeg) {
+          alert("❌ Error de base de datos al eliminar: " + errNeg.message);
+        } else if (!borrados || borrados.length === 0) {
+          alert("⚠️ Supabase bloqueó el borrado físico porque falta activar la política DELETE en la tabla 'negocios'.\n\nPor ahora el negocio ha sido desactivado y ocultado.");
+          await supabaseClient.from('negocios').update({ activo: false }).eq('id', id);
+        } else {
+          const card = document.getElementById(`card-biz-${id}`);
+          if (card) card.remove();
+        }
+      } catch (e) {
+        alert("Error inesperado: " + e.message);
+      }
+
       cargarNegocios();
     }
 
@@ -183,9 +267,6 @@
       await supabaseClient.from('configuracion').upsert({ clave: 'tasa_usd', valor: String(v) });
       alert("Tasa actualizada.");
     }
-
-    cargarTasaUSD();
-    cargarNegocios();
   </script>
 </body>
 </html>
