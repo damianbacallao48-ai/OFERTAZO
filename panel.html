@@ -56,4 +56,531 @@
     <!-- BARRA DE PESTAÑAS: SEPARACIÓN DE AJUSTES Y SUBIR PRODUCTOS -->
     <div class="grid grid-cols-2 gap-2 bg-[#080d1a] p-1 rounded-2xl border border-slate-800">
       <button 
-        id="tab-btn-ajustes
+        id="tab-btn-ajustes" 
+        onclick="cambiarPestanaPanel('ajustes')" 
+        class="py-2.5 px-3 rounded-xl font-cyber font-black text-[11px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition active:scale-95 bg-amber-500 text-slate-950 shadow-[0_0_12px_rgba(245,158,11,0.35)]">
+        <i class="fa-solid fa-sliders"></i>
+        <span>Ajustes</span>
+      </button>
+
+      <button 
+        id="tab-btn-productos" 
+        onclick="cambiarPestanaPanel('productos')" 
+        class="py-2.5 px-3 rounded-xl font-cyber font-black text-[11px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition active:scale-95 bg-transparent text-slate-400 hover:text-white">
+        <i class="fa-solid fa-plus-circle"></i>
+        <span>Subir Producto</span>
+      </button>
+    </div>
+
+    <!-- SECCIÓN 1: DATOS Y CONFIGURACIÓN DEL NEGOCIO (PESTAÑA 1) -->
+    <section id="seccion-panel-ajustes" class="bg-[#0b1326] border border-slate-800 rounded-2xl p-4 space-y-3.5 shadow-xl">
+      <h2 class="text-xs font-black text-amber-300 font-cyber flex items-center gap-1.5">
+        <i class="fa-solid fa-sliders text-cyan-400"></i> DATOS Y CONFIGURACIÓN DEL NEGOCIO
+      </h2>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="text-[10px] text-slate-400 font-bold uppercase">Nombre del Negocio:</label>
+          <input id="cfg-nombre" type="text" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white outline-none focus:border-amber-400">
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-[10px] text-slate-400 font-bold uppercase">Tasa de Cambio (1 USD en CUP):</label>
+            <input id="cfg-tasa" type="number" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white font-cyber text-xs outline-none focus:border-cyan-400">
+          </div>
+          <div>
+            <label class="text-[10px] text-slate-400 font-bold uppercase">WhatsApp de Pedidos:</label>
+            <input id="cfg-wa" type="text" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white font-mono text-xs outline-none focus:border-emerald-400">
+          </div>
+        </div>
+
+        <div>
+          <label class="text-[10px] text-slate-400 font-bold uppercase">Dirección en Ciego de Ávila:</label>
+          <input id="cfg-direccion" type="text" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white outline-none focus:border-amber-400">
+        </div>
+
+        <div>
+          <label class="text-[10px] text-slate-400 font-bold uppercase">Descripción / Eslogan:</label>
+          <textarea id="cfg-descripcion" rows="2" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white outline-none focus:border-amber-400 resize-none"></textarea>
+        </div>
+
+        <!-- CONTROL DE SERVICIO A DOMICILIO -->
+        <div class="bg-slate-900/90 p-3 rounded-2xl border border-slate-800 space-y-2.5">
+          <label class="text-[11px] text-amber-300 font-bold uppercase flex items-center gap-1.5">
+            <i class="fa-solid fa-motorcycle text-amber-400"></i> Servicio a Domicilio (Delivery)
+          </label>
+
+          <select id="cfg-tiene-domicilio" onchange="toggleDelivery(this.value)" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white font-bold outline-none focus:border-amber-400">
+            <option value="true">🛵 SÍ, hacemos entregas a domicilio</option>
+            <option value="false">🏬 NO, solo recogida directa en el local</option>
+          </select>
+
+          <div id="box-costo-delivery">
+            <label class="text-[10px] text-slate-400 font-bold uppercase">Costo Delivery (CUP):</label>
+            <input id="cfg-costo-delivery" type="number" placeholder="Ej. 250" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white font-cyber text-xs outline-none focus:border-amber-400">
+          </div>
+        </div>
+
+        <!-- CAMBIAR PIN / CONTRASEÑA DE ACCESO -->
+        <div class="bg-slate-900/90 p-3 rounded-2xl border border-amber-500/30 space-y-2">
+          <label class="text-[11px] text-amber-400 font-bold uppercase flex items-center gap-1.5">
+            <i class="fa-solid fa-key"></i> Contraseña / PIN de Acceso al Panel
+          </label>
+          <div class="relative">
+            <input id="cfg-pin" type="password" placeholder="Escribe tu PIN o contraseña" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 pr-10 text-amber-300 font-cyber tracking-widest text-xs outline-none focus:border-amber-400">
+            <button type="button" onclick="toggleVerPin()" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white">
+              <i id="icono-ojo-pin" class="fa-solid fa-eye"></i>
+            </button>
+          </div>
+          <p class="text-[10px] text-slate-400">Puedes cambiar tu contraseña aquí en cualquier momento y darle a "Guardar Cambios".</p>
+        </div>
+
+        <!-- Cambio de Logo y Portada -->
+        <div class="grid grid-cols-2 gap-2 pt-1">
+          <div>
+            <label class="text-[10px] text-slate-400 font-bold uppercase block mb-1">Cambiar Logo:</label>
+            <input id="file-logo" type="file" accept="image/*" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-1.5 text-[10px] text-slate-400 file:py-1 file:px-2 file:rounded-lg file:border-0 file:bg-amber-500 file:text-slate-950 file:font-bold">
+          </div>
+          <div>
+            <label class="text-[10px] text-slate-400 font-bold uppercase block mb-1">Cambiar Portada:</label>
+            <input id="file-portada" type="file" accept="image/*" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-1.5 text-[10px] text-slate-400 file:py-1 file:px-2 file:rounded-lg file:border-0 file:bg-amber-500 file:text-slate-950 file:font-bold">
+          </div>
+        </div>
+
+        <button onclick="guardarAjustes()" id="btn-guardar-ajustes" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-2.5 rounded-xl text-xs uppercase tracking-wider active:scale-95 transition shadow-lg">
+          Guardar Cambios del Negocio
+        </button>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 2: AGREGAR NUEVO PRODUCTO (PESTAÑA 2 - INICIALMENTE OCULTA) -->
+    <section id="seccion-panel-productos" class="hidden bg-[#0b1326] border border-slate-800 rounded-2xl p-4 space-y-3.5 shadow-xl">
+      <h2 class="text-xs font-black text-emerald-400 font-cyber flex items-center gap-1.5">
+        <i class="fa-solid fa-plus-circle text-emerald-400"></i> AGREGAR NUEVO PRODUCTO
+      </h2>
+
+      <div class="space-y-2.5 text-xs">
+        <div>
+          <label class="text-[10px] text-slate-400 font-bold uppercase">Nombre del Producto:</label>
+          <input id="prod-nombre" type="text" placeholder="Ej. Hamburguesa Especial" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white outline-none focus:border-emerald-400">
+        </div>
+        
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-[10px] text-slate-400 font-bold uppercase">Precio ($ CUP):</label>
+            <input id="prod-precio" type="number" placeholder="Ej. 1200" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white outline-none font-cyber focus:border-emerald-400">
+          </div>
+          <div>
+            <label class="text-[10px] text-slate-400 font-bold uppercase">Categoría:</label>
+            <input id="prod-categoria" type="text" placeholder="Ej. COMIDAS" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white outline-none uppercase focus:border-emerald-400">
+          </div>
+        </div>
+
+        <div>
+          <label class="text-[10px] text-slate-400 font-bold uppercase">Descripción Breve:</label>
+          <input id="prod-desc" type="text" placeholder="Ingredientes, detalles o porciones" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white outline-none focus:border-emerald-400">
+        </div>
+
+        <div>
+          <label class="text-[10px] text-slate-400 font-bold uppercase">Foto del Producto (Galería):</label>
+          <input id="prod-file" type="file" accept="image/*" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-1.5 text-xs text-slate-400 file:mr-2 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:bg-emerald-500 file:text-slate-950 file:font-bold">
+        </div>
+
+        <button onclick="crearProducto()" id="btn-crear-prod" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-2.5 rounded-xl text-xs uppercase tracking-wider active:scale-95 transition shadow-lg">
+          Publicar Producto
+        </button>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 3: PRODUCTOS REGISTRADOS -->
+    <section class="space-y-2">
+      <h2 class="text-xs font-black text-amber-400 font-cyber">PRODUCTOS REGISTRADOS</h2>
+      <div id="panel-productos-list" class="space-y-2">
+        <p class="text-xs text-slate-500 text-center py-6">Cargando productos...</p>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 4: ELIMINAR NEGOCIO -->
+    <section class="bg-red-950/40 border border-red-800/60 rounded-2xl p-4 space-y-3 text-center">
+      <div class="w-10 h-10 rounded-xl bg-red-900/40 text-red-400 flex items-center justify-center mx-auto text-lg border border-red-700/50">
+        <i class="fa-solid fa-trash-can"></i>
+      </div>
+      <div>
+        <h3 class="text-xs font-black text-red-400 font-cyber uppercase">Eliminar Mi Negocio</h3>
+        <p class="text-[10px] text-slate-400 max-w-xs mx-auto mt-0.5">
+          Borra tu catálogo y todos tus productos de forma permanente.
+        </p>
+      </div>
+
+      <button onclick="solicitarEliminarNegocio()" class="bg-red-600 hover:bg-red-500 text-white font-bold py-2.5 px-5 rounded-xl text-xs uppercase tracking-wider shadow-md active:scale-95 transition inline-flex items-center gap-1.5">
+        <i class="fa-solid fa-triangle-exclamation"></i> Eliminar Negocio Definitivamente
+      </button>
+    </section>
+
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://qhkqznpgjirvnndriehr.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFoa3F6bnBnamlydm5uZHJpZWhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5MTE5NzQsImV4cCI6MjEwNzQ4Nzk3NH0.AHUdASoGr0FJWUuP0LxS9UJ2_-QzFPwAjmEeWZ3g1Uc";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const TIENDA_SLUG = (urlParams.get('tienda') || 'ofertazo').toLowerCase().trim();
+
+    let negocioActual = null;
+    let productos = [];
+
+    async function init() {
+      sessionStorage.clear();
+
+      const { data, error } = await supabaseClient.from('negocios').select('*').eq('slug', TIENDA_SLUG).single();
+      negocioActual = data;
+      if (!negocioActual || error) {
+        document.getElementById("auth-biz-name").innerText = "Negocio no encontrado.";
+        return;
+      }
+      document.getElementById("auth-biz-name").innerText = negocioActual.nombre;
+    }
+
+    function obtenerPinNegocio() {
+      if (!negocioActual) return "";
+      return String(
+        negocioActual.pin_admin || 
+        negocioActual.pin || 
+        negocioActual.pin_seguridad || 
+        negocioActual.password || 
+        ""
+      ).trim();
+    }
+
+    function verificarPIN() {
+      if (!negocioActual) {
+        alert("Cargando datos del negocio, espera un segundo...");
+        return;
+      }
+
+      const pinIngresado = document.getElementById("input-pin").value.trim();
+      if (!pinIngresado) {
+        alert("Por favor ingresa tu contraseña.");
+        return;
+      }
+
+      const pinReal = obtenerPinNegocio();
+
+      // Acepta el PIN propio del negocio (pin_admin) o la clave maestra de soporte ("0110")
+      if ((pinReal !== "" && pinIngresado === pinReal) || pinIngresado === "0110") {
+        mostrarPanel();
+      } else {
+        alert("Contraseña incorrecta. Inténtalo nuevamente.");
+      }
+    }
+
+    function toggleVerPin() {
+      const inputPin = document.getElementById("cfg-pin");
+      const icono = document.getElementById("icono-ojo-pin");
+      if (inputPin.type === "password") {
+        inputPin.type = "text";
+        icono.className = "fa-solid fa-eye-slash";
+      } else {
+        inputPin.type = "password";
+        icono.className = "fa-solid fa-eye";
+      }
+    }
+
+    function toggleDelivery(val) {
+      const box = document.getElementById("box-costo-delivery");
+      if (val === "true") {
+        box.classList.remove("hidden");
+      } else {
+        box.classList.add("hidden");
+      }
+    }
+
+    /* CONTROL DE PESTAÑAS (AJUSTES / PRODUCTOS) */
+    function cambiarPestanaPanel(pestana) {
+      const secAjustes = document.getElementById('seccion-panel-ajustes');
+      const secProductos = document.getElementById('seccion-panel-productos');
+      const btnAjustes = document.getElementById('tab-btn-ajustes');
+      const btnProductos = document.getElementById('tab-btn-productos');
+
+      if (pestana === 'ajustes') {
+        secAjustes.classList.remove('hidden');
+        secProductos.classList.add('hidden');
+
+        btnAjustes.className = "py-2.5 px-3 rounded-xl font-cyber font-black text-[11px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition active:scale-95 bg-amber-500 text-slate-950 shadow-[0_0_12px_rgba(245,158,11,0.35)]";
+        btnProductos.className = "py-2.5 px-3 rounded-xl font-cyber font-black text-[11px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition active:scale-95 bg-transparent text-slate-400 hover:text-white";
+      } else {
+        secAjustes.classList.add('hidden');
+        secProductos.classList.remove('hidden');
+
+        btnProductos.className = "py-2.5 px-3 rounded-xl font-cyber font-black text-[11px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition active:scale-95 bg-emerald-500 text-slate-950 shadow-[0_0_12px_rgba(16,185,129,0.35)]";
+        btnAjustes.className = "py-2.5 px-3 rounded-xl font-cyber font-black text-[11px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition active:scale-95 bg-transparent text-slate-400 hover:text-white";
+      }
+    }
+
+    function mostrarPanel() {
+      document.getElementById("auth-screen").classList.add("hidden");
+      document.getElementById("main-panel").classList.remove("hidden");
+
+      document.getElementById("panel-biz-name").innerText = negocioActual.nombre.toUpperCase();
+      document.getElementById("panel-biz-slug").innerText = `?tienda=${negocioActual.slug}`;
+      document.getElementById("btn-ver-tienda").href = `index.html?tienda=${negocioActual.slug}`;
+
+      document.getElementById("cfg-nombre").value = negocioActual.nombre || "";
+      document.getElementById("cfg-tasa").value = negocioActual.tasa_usd || 320;
+      document.getElementById("cfg-wa").value = negocioActual.telefono_whatsapp || "";
+      document.getElementById("cfg-direccion").value = negocioActual.direccion || "";
+      document.getElementById("cfg-descripcion").value = negocioActual.descripcion || "";
+      document.getElementById("cfg-pin").value = obtenerPinNegocio();
+
+      const tieneDom = (negocioActual.tiene_domicilio !== false);
+      document.getElementById("cfg-tiene-domicilio").value = tieneDom ? "true" : "false";
+      document.getElementById("cfg-costo-delivery").value = negocioActual.costo_mensajeria || 250;
+      toggleDelivery(tieneDom ? "true" : "false");
+
+      cargarProductos();
+    }
+
+    function comprimirImagen(file, maxAncho = 800, calidad = 0.75) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (e) => {
+          const img = new Image();
+          img.src = e.target.result;
+          img.onload = () => {
+            const canvas = document.createElement("canvas");
+            let ancho = img.width;
+            let alto = img.height;
+
+            if (ancho > maxAncho) {
+              alto = Math.round((alto * maxAncho) / ancho);
+              ancho = maxAncho;
+            }
+
+            canvas.width = ancho;
+            canvas.height = alto;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, ancho, alto);
+
+            canvas.toBlob((blob) => {
+              resolve({ blob, base64: canvas.toDataURL("image/jpeg", calidad) });
+            }, "image/jpeg", calidad);
+          };
+        };
+      });
+    }
+
+    async function subirArchivoOptimizado(file) {
+      try {
+        const optimizado = await comprimirImagen(file);
+        const fileName = `${Date.now()}_prod.jpg`;
+
+        const { data, error } = await supabaseClient.storage.from('imagenes').upload(fileName, optimizado.blob, {
+          contentType: 'image/jpeg',
+          upsert: true
+        });
+
+        if (!error && data) {
+          const { data: pub } = supabaseClient.storage.from('imagenes').getPublicUrl(fileName);
+          return pub.publicUrl;
+        }
+
+        return optimizado.base64;
+      } catch (err) {
+        console.error("Fallo al procesar imagen:", err);
+        return null;
+      }
+    }
+
+    async function guardarAjustes() {
+      const nuevoPin = document.getElementById("cfg-pin").value.trim();
+      if (nuevoPin.length < 4) {
+        alert("La contraseña / PIN debe tener al menos 4 caracteres.");
+        return;
+      }
+
+      const btn = document.getElementById("btn-guardar-ajustes");
+      btn.disabled = true;
+      btn.innerText = "Guardando...";
+
+      const nombre = document.getElementById("cfg-nombre").value.trim();
+      const tasa = parseFloat(document.getElementById("cfg-tasa").value) || 320;
+      const wa = document.getElementById("cfg-wa").value.trim();
+      const dir = document.getElementById("cfg-direccion").value.trim();
+      const desc = document.getElementById("cfg-descripcion").value.trim();
+      const tieneDom = (document.getElementById("cfg-tiene-domicilio").value === "true");
+      const costo = tieneDom ? (parseFloat(document.getElementById("cfg-costo-delivery").value) || 0) : 0;
+
+      const updates = {
+        nombre: nombre,
+        tasa_usd: tasa,
+        telefono_whatsapp: wa,
+        direccion: dir,
+        descripcion: desc,
+        tiene_domicilio: tieneDom,
+        costo_mensajeria: costo,
+        pin_admin: nuevoPin
+      };
+
+      const fileLogo = document.getElementById("file-logo").files[0];
+      if (fileLogo) {
+        const logoUrl = await subirArchivoOptimizado(fileLogo);
+        if (logoUrl) updates.logo_url = logoUrl;
+      }
+
+      const filePortada = document.getElementById("file-portada").files[0];
+      if (filePortada) {
+        const portadaUrl = await subirArchivoOptimizado(filePortada);
+        if (portadaUrl) updates.portada_url = portadaUrl;
+      }
+
+      const { error } = await supabaseClient
+        .from('negocios')
+        .update(updates)
+        .eq('id', negocioActual.id);
+
+      if (error) {
+        alert("Error al guardar: " + error.message);
+      } else {
+        alert("¡Ajustes y contraseña actualizados correctamente!");
+        Object.assign(negocioActual, updates);
+        document.getElementById("panel-biz-name").innerText = nombre.toUpperCase();
+      }
+
+      btn.disabled = false;
+      btn.innerText = "Guardar Cambios del Negocio";
+    }
+
+    async function cargarProductos() {
+      const { data } = await supabaseClient
+        .from('productos')
+        .select('*')
+        .eq('negocio_id', negocioActual.id)
+        .order('id', { ascending: false });
+
+      productos = data || [];
+      const listEl = document.getElementById("panel-productos-list");
+
+      if (productos.length === 0) {
+        listEl.innerHTML = '<p class="text-xs text-slate-500 text-center py-6">No tienes productos aún.</p>';
+        return;
+      }
+
+      let html = '';
+      productos.forEach(p => {
+        const img = p.imagen || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=100';
+        html += `
+          <div class="bg-slate-900/90 border border-slate-800 p-2.5 rounded-xl flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <img src="${img}" class="w-10 h-10 rounded-lg object-cover bg-slate-950 shrink-0">
+              <div class="min-w-0">
+                <p class="text-xs font-bold text-white truncate">${p.nombre}</p>
+                <p class="text-[10px] text-amber-400 font-cyber font-bold">$${p.precio} CUP <span class="text-slate-500 font-normal">(${p.categoria || 'GENERAL'})</span></p>
+              </div>
+            </div>
+            <div class="flex items-center gap-1.5 shrink-0">
+              <button onclick="alternarDisponible(${p.id}, ${p.disponible !== false})" class="text-[10px] px-2 py-1 rounded-lg font-bold ${p.disponible !== false ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-red-950 text-red-400 border border-red-800'}">
+                ${p.disponible !== false ? 'Disponible' : 'Agotado'}
+              </button>
+              <button onclick="eliminarProducto(${p.id})" class="text-slate-500 hover:text-red-400 p-1">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      });
+      listEl.innerHTML = html;
+    }
+
+    async function crearProducto() {
+      const nombre = document.getElementById("prod-nombre").value.trim();
+      const precio = parseFloat(document.getElementById("prod-precio").value);
+      const categoria = document.getElementById("prod-categoria").value.trim().toUpperCase() || 'GENERAL';
+      const desc = document.getElementById("prod-desc").value.trim();
+      const fileInput = document.getElementById("prod-file");
+      const btn = document.getElementById("btn-crear-prod");
+
+      if (!nombre || isNaN(precio)) {
+        alert("Escribe el nombre y el precio en CUP.");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerText = "Subiendo imagen...";
+
+      let imagenUrl = "";
+      if (fileInput.files.length > 0) {
+        imagenUrl = await subirArchivoOptimizado(fileInput.files[0]) || "";
+      }
+
+      const { error } = await supabaseClient.from('productos').insert([{
+        negocio_id: negocioActual.id,
+        nombre: nombre,
+        precio: precio,
+        categoria: categoria,
+        descripcion: desc,
+        imagen: imagenUrl,
+        disponible: true
+      }]);
+
+      if (error) {
+        alert("Error al publicar: " + error.message);
+      } else {
+        document.getElementById("prod-nombre").value = "";
+        document.getElementById("prod-precio").value = "";
+        document.getElementById("prod-desc").value = "";
+        fileInput.value = "";
+        cargarProductos();
+        alert("¡Producto publicado exitosamente!");
+      }
+
+      btn.disabled = false;
+      btn.innerText = "Publicar Producto";
+    }
+
+    async function alternarDisponible(id, estadoActual) {
+      await supabaseClient.from('productos').update({ disponible: !estadoActual }).eq('id', id);
+      cargarProductos();
+    }
+
+    async function eliminarProducto(id) {
+      if (!confirm("¿Deseas eliminar este producto?")) return;
+      await supabaseClient.from('productos').delete().eq('id', id);
+      cargarProductos();
+    }
+
+    async function solicitarEliminarNegocio() {
+      const pinConfirm = prompt("⚠️ Esta acción borrará este catálogo y todos sus productos permanentemente.\n\nEscribe tu contraseña para confirmar:");
+      if (!pinConfirm) return;
+
+      const pinReal = obtenerPinNegocio();
+
+      if ((pinReal === "" || pinConfirm.trim() !== pinReal) && pinConfirm.trim() !== "0110") {
+        alert("Contraseña incorrecta.");
+        return;
+      }
+
+      if (!confirm(`¿Confirmas eliminar definitivamente "${negocioActual.nombre}"?`)) return;
+
+      try {
+        await supabaseClient.from('productos').delete().eq('negocio_id', negocioActual.id);
+        const { error } = await supabaseClient.from('negocios').delete().eq('id', negocioActual.id);
+        if (error) throw error;
+
+        alert("Negocio eliminado correctamente.");
+        window.location.href = "index.html";
+      } catch (err) {
+        alert("Error al eliminar: " + err.message);
+      }
+    }
+
+    function cerrarSesion() {
+      location.reload();
+    }
+
+    init();
+  </script>
+</body>
+</html>
