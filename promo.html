@@ -12,7 +12,6 @@
         .font-cyber { font-family: 'Orbitron', monospace; }
         .cyber-panel { background: rgba(11, 19, 38, 0.95); border: 1px solid rgba(245, 158, 11, 0.3); }
         
-        /* Dedo virtual */
         #virtual-finger {
             position: absolute;
             z-index: 9999;
@@ -32,18 +31,12 @@
         @keyframes ping {
             75%, 100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; }
         }
-
-        /* Caja de texto flotante tipo tutorial */
-        #tutorial-bubble {
-            transition: all 0.4s ease;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.7);
-        }
     </style>
 </head>
 <body class="flex flex-col h-screen justify-between text-white relative">
 
     <!-- DEDO VIRTUAL ANIMADO -->
-    <div id="virtual-finger">
+    <div id="virtual-finger" style="top: 50%; left: 50%;">
         <div class="pulse-ring" id="finger-ring"></div>
         <i class="fa-solid fa-hand-pointer text-amber-400 text-4xl transform -rotate-45"></i>
     </div>
@@ -56,14 +49,14 @@
             </div>
             <span class="text-[10px] bg-emerald-500/20 text-emerald-400 font-bold px-2 py-0.5 rounded-full border border-emerald-500/30">CIEGO DE ÁVILA</span>
         </div>
-        <div id="top-badge" class="text-[10px] font-bold bg-slate-900 px-3 py-1 rounded-full text-amber-400 border border-amber-500/30 font-cyber">
+        <div class="text-[10px] font-bold bg-slate-900 px-3 py-1 rounded-full text-amber-400 border border-amber-500/30 font-cyber">
             TUTORIAL EN VIVO 🎬
         </div>
     </header>
 
-    <!-- TEXTO FLOTANTE TIPO TUTOR (EXPLICACIÓN EN VIVO) -->
+    <!-- TEXTO FLOTANTE TIPO TUTOR -->
     <div class="px-4 pt-2 z-30">
-        <div id="tutorial-bubble" class="cyber-panel rounded-2xl p-3 border-l-4 border-l-amber-500 transform transition-all duration-300">
+        <div class="cyber-panel rounded-2xl p-3 border-l-4 border-l-amber-500 shadow-xl">
             <div class="flex items-center space-x-2 mb-1">
                 <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                 <span id="step-title" class="text-[10px] font-black text-amber-400 uppercase font-cyber">Paso 1: Creación del Negocio</span>
@@ -77,10 +70,10 @@
     <!-- CONTENEDOR PRINCIPAL / SIMULADOR MÓVIL -->
     <main class="flex-1 relative flex items-center justify-center p-3">
         
-        <div class="w-full max-w-md bg-[#0b1326] border border-slate-700/80 rounded-3xl shadow-2xl overflow-hidden flex flex-col h-[460px] relative">
+        <div class="w-full max-w-md bg-[#0b1326] border border-slate-700/80 rounded-3xl shadow-2xl overflow-hidden flex flex-col h-[420px] relative">
             
             <!-- PANTALLA 1: REGISTRO -->
-            <div id="screen-reg" class="absolute inset-0 p-5 flex flex-col justify-between transition-all duration-500 opacity-150">
+            <div id="screen-reg" class="absolute inset-0 p-5 flex flex-col justify-between transition-all duration-500 opacity-100 z-10">
                 <div class="space-y-3">
                     <div class="text-center">
                         <h3 class="text-sm font-black text-amber-400 font-cyber">CREA TU CATÁLOGO</h3>
@@ -100,8 +93,8 @@
                 </div>
             </div>
 
-            <!-- PANTALLA 2: PANEL DE CONTROL (SUBIR ARTÍCULO) -->
-            <div id="screen-panel" class="absolute inset-0 p-5 flex flex-col justify-between transition-all duration-500 opacity-0 transform translate-y-full">
+            <!-- PANTALLA 2: PANEL DE CONTROL -->
+            <div id="screen-panel" class="absolute inset-0 p-5 flex flex-col justify-between transition-all duration-500 opacity-0 pointer-events-none z-0">
                 <div class="space-y-2.5">
                     <div class="flex justify-between items-center">
                         <h3 class="text-xs font-black text-emerald-400 font-cyber"><i class="fa-solid fa-store mr-1"></i> Panel de Control</h3>
@@ -118,13 +111,13 @@
                 </div>
             </div>
 
-            <!-- PANTALLA 3: TIENDA / CARRITO DEL CLIENTE -->
-            <div id="screen-store" class="absolute inset-0 p-5 flex flex-col justify-between transition-all duration-500 opacity-0 transform translate-y-full">
+            <!-- PANTALLA 3: CARRITO DEL CLIENTE -->
+            <div id="screen-store" class="absolute inset-0 p-5 flex flex-col justify-between transition-all duration-500 opacity-0 pointer-events-none z-0">
                 <div class="space-y-3">
                     <div class="bg-slate-900 border border-amber-500/30 p-2.5 rounded-xl flex items-center justify-between">
                         <div>
                             <h4 class="text-xs font-bold text-white">Tenis Deportivos Nike Air</h4>
-                            <p class="text-[10px] text-amber-400 font-cyber font-bold">$12,500 CUP (≈$39.06 USD)</p>
+                            <p class="text-[10px] text-amber-400 font-cyber font-bold">$12,500 CUP</p>
                         </div>
                         <span class="bg-emerald-500 text-slate-950 text-[9px] font-bold px-2 py-0.5 rounded">En Stock</span>
                     </div>
@@ -141,14 +134,14 @@
                 </div>
             </div>
 
-            <!-- PANTALLA 4: WHATSAPP EXITOSO -->
-            <div id="screen-success" class="absolute inset-0 p-5 flex flex-col items-center justify-center text-center transition-all duration-500 opacity-0 transform scale-90">
+            <!-- PANTALLA 4: ÉXITO -->
+            <div id="screen-success" class="absolute inset-0 p-5 flex flex-col items-center justify-center text-center transition-all duration-500 opacity-0 pointer-events-none z-0">
                 <div class="w-16 h-16 bg-emerald-500/20 border-2 border-emerald-400 rounded-full flex items-center justify-center text-emerald-400 text-2xl mb-3 shadow-xl animate-bounce">
                     <i class="fa-solid fa-check"></i>
                 </div>
-                <h3 class="text-base font-black text-white font-cyber mb-1">¡PEDIDO RECIBIDO AL INSTANTE!</h3>
+                <h3 class="text-base font-black text-white font-cyber mb-1">¡PEDIDO RECIBIDO!</h3>
                 <p class="text-[11px] text-slate-300 max-w-xs mb-4">
-                    Sin intermediarios. El cliente compra y el pedido llega ordenado directo al WhatsApp del negocio.
+                    Sin intermediarios. El pedido llega organizado directo al WhatsApp del negocio.
                 </p>
                 <div class="bg-slate-900 border border-amber-500/40 px-4 py-2 rounded-xl text-[10px] text-amber-400 font-bold font-cyber">
                     🎁 7 Días Gratis • Solo 2,000 CUP / mes
@@ -162,7 +155,7 @@
     <footer class="bg-[#080d1a] border-t border-amber-500/30 p-3 text-center z-20">
         <button id="start-btn" onclick="iniciarTutorial()" class="w-full max-w-md mx-auto bg-gradient-to-r from-amber-500 to-amber-400 text-slate-950 font-black py-3 px-5 rounded-xl shadow-lg font-cyber text-xs uppercase flex items-center justify-center gap-2">
             <i class="fa-solid fa-play-circle text-base"></i>
-            <span>▶️ REPRODUCIR VÍDEO TUTORIAL (Pulsa para grabar)</span>
+            <span>▶️ REPRODUCIR VÍDEO TUTORIAL</span>
         </button>
     </footer>
 
@@ -177,9 +170,8 @@
             const el = document.getElementById(idEl);
             if (!el) return;
             const rect = el.getBoundingClientRect();
-            finger.style.display = 'flex';
-            finger.style.left = (rect.left + rect.width / 2 - 22) + 'px';
-            finger.style.top = (rect.top + rect.height / 2 - 22) + 'px';
+            finger.style.left = (rect.left + rect.width / 2 - 20) + 'px';
+            finger.style.top = (rect.top + rect.height / 2 - 20) + 'px';
 
             setTimeout(() => {
                 ring.style.display = 'block';
@@ -192,45 +184,53 @@
             }, 600);
         }
 
-        function cambiarPaso(titulo, desc, idOcultar, idMostrar) {
+        function cambiarPantalla(titulo, desc, idOcultar, idMostrar) {
             stepTitle.innerText = titulo;
             stepDesc.innerText = desc;
-            document.getElementById(idOcultar).classList.remove('opacity-100', 'translate-y-0');
-            document.getElementById(idOcultar).classList.add('opacity-0', '-translate-y-full');
+            
+            const oc = document.getElementById(idOcultar);
+            oc.classList.remove('opacity-100', 'z-10');
+            oc.classList.add('opacity-0', 'pointer-events-none', 'z-0');
 
-            const mostrar = document.getElementById(idMostrar);
-            mostrar.classList.remove('opacity-0', 'translate-y-full', 'scale-90');
-            mostrar.classList.add('opacity-100', 'translate-y-0', 'scale-100');
+            const mos = document.getElementById(idMostrar);
+            mos.classList.remove('opacity-0', 'pointer-events-none', 'z-0');
+            mos.classList.add('opacity-100', 'z-10');
         }
 
         function iniciarTutorial() {
             startBtn.style.opacity = '0.4';
             startBtn.style.pointerEvents = 'none';
 
-            // PASO 1: Registro
+            // Posicionar dedo inicial sobre el botón de crear
+            const btnReg = document.getElementById('btn-reg-demo');
+            const r1 = btnReg.getBoundingClientRect();
+            finger.style.left = (r1.left + r1.width / 2 - 20) + 'px';
+            finger.style.top = (r1.top + r1.height / 2 - 20) + 'px';
+
+            // PASO 1
             setTimeout(() => {
                 moverDedo('btn-reg-demo', () => {
-                    cambiarPaso(
+                    cambiarPantalla(
                         "Paso 2: Panel de Control del Dueño",
                         "El comerciante entra a su panel privado para gestionar su inventario...",
                         "screen-reg",
                         "screen-panel"
                     );
 
-                    // PASO 2: Publicar artículo
+                    // PASO 2
                     setTimeout(() => {
                         moverDedo('btn-pub-demo', () => {
-                            cambiarPaso(
+                            cambiarPantalla(
                                 "Paso 3: Compra del Cliente",
                                 "Los clientes exploran el catálogo, agregan al carrito y calculan el domicilio...",
                                 "screen-panel",
                                 "screen-store"
                             );
 
-                            // PASO 3: Enviar a WhatsApp
+                            // PASO 3
                             setTimeout(() => {
                                 moverDedo('btn-wa-demo', () => {
-                                    cambiarPaso(
+                                    cambiarPantalla(
                                         "Paso 4: ¡Venta Exitosa!",
                                         "El pedido llega organizado al instante al WhatsApp del negocio. ¡Así de fácil!",
                                         "screen-store",
