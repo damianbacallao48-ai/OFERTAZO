@@ -321,7 +321,7 @@
     </div>
   </div>
 
-  <!-- Contenedor oculto para generar QR en segundo plano cuando comparten directo -->
+  <!-- Contenedor oculto para generar QR en segundo plano -->
   <div id="qrcode-hidden" class="hidden"></div>
 
   <!-- Barra Flotante Carrito -->
@@ -538,7 +538,6 @@
           box.classList.remove("hidden");
         }
 
-        // Actualizar metadatos OG con la imagen y nombre del negocio actual
         const ogTitle = document.getElementById("og-title");
         const ogDesc = document.getElementById("og-desc");
         const ogImg = document.getElementById("og-image");
@@ -800,7 +799,7 @@
       renderizarListaDirectorio(filtrados);
     }
 
-    /* GENERADOR DE IMAGEN PERSONALIZADA POR NEGOCIO (CON PORTADA / LOGO REAL DEL NEGOCIO) */
+    /* GENERADOR DE IMAGEN PERSONALIZADA (SIN DEFORMAR FOTOS - MODO OBJECT-FIT: COVER) */
     function cargarImagenCrossOrigin(url) {
       return new Promise((resolve) => {
         if (!url) { resolve(null); return; }
@@ -812,14 +811,34 @@
       });
     }
 
+    // Dibuja cualquier imagen dentro de un área recortando los bordes sobrantes sin estirar ni deformar nunca
+    function dibujarImagenCover(ctx, img, x, y, w, h) {
+      const imgRatio = img.width / img.height;
+      const boxRatio = w / h;
+      let sx, sy, sw, sh;
+
+      if (imgRatio > boxRatio) {
+        sh = img.height;
+        sw = img.height * boxRatio;
+        sx = (img.width - sw) / 2;
+        sy = 0;
+      } else {
+        sw = img.width;
+        sh = img.width / boxRatio;
+        sx = 0;
+        sy = (img.height - sh) / 2;
+      }
+      ctx.drawImage(img, sx, sy, sw, sh, x, y, w, h);
+    }
+
     function generarQREnCanvas(url) {
       return new Promise((resolve) => {
         const hiddenDiv = document.getElementById("qrcode-hidden");
         hiddenDiv.innerHTML = "";
         new QRCode(hiddenDiv, {
           text: url,
-          width: 240,
-          height: 240,
+          width: 260,
+          height: 260,
           colorDark: "#05070e",
           colorLight: "#ffffff",
           correctLevel: QRCode.CorrectLevel.H
@@ -837,103 +856,164 @@
       canvas.width = 800;
       canvas.height = 1000;
 
-      // 1. Fondo Oscuro Cyberpunk
+      // 1. Fondo Base Oscuro Cyberpunk
       const gradBg = ctx.createLinearGradient(0, 0, 800, 1000);
       gradBg.addColorStop(0, "#05070e");
-      gradBg.addColorStop(0.5, "#0b1326");
-      gradBg.addColorStop(1, "#05070e");
+      gradBg.addColorStop(0.55, "#0b1326");
+      gradBg.addColorStop(1, "#04060c");
       ctx.fillStyle = gradBg;
       ctx.fillRect(0, 0, 800, 1000);
 
-      // 2. Cargar imagen real del negocio (Portada, Logo o Primer Producto)
+      // Cargar Portada y Logo por separado para respetar cada espacio
       const urlPortada = obtenerPortadaNegocio(negocioActual);
       const urlLogo = obtenerLogoNegocio(negocioActual);
       const urlProd = (productos.length > 0 && esImagenValida(productos[0].imagen)) ? productos[0].imagen : "";
 
-      const imgBanner = await cargarImagenCrossOrigin(urlPortada || urlLogo || urlProd);
-      const imgLogo = await cargarImagenCrossOrigin(urlLogo || urlPortada || urlProd);
+      const imgPortada = await cargarImagenCrossOrigin(urlPortada);
+      const imgPerfil = await cargarImagenCrossOrigin(urlLogo || urlPortada || urlProd);
 
-      // Dibujar Portada del negocio en la parte superior si existe
-      if (imgBanner) {
-        ctx.save();
-        ctx.beginPath();
-        ctx.roundRect ? ctx.roundRect(30, 30, 740, 290, 28) : ctx.rect(30, 30, 740, 290);
-        ctx.clip();
-        ctx.drawImage(imgBanner, 30, 30, 740, 290);
-        // Sombreado elegante sobre la portada
-        const gradOverlay = ctx.createLinearGradient(0, 30, 0, 320);
-        gradOverlay.addColorStop(0, "rgba(5, 7, 14, 0.2)");
-        gradOverlay.addColorStop(1, "rgba(5, 7, 14, 0.92)");
-        ctx.fillStyle = gradOverlay;
-        ctx.fillRect(30, 30, 740, 290);
-        ctx.restore();
+      // 2. ZONA SUPERIOR: FOTO DE PORTADA DE FONDO (Proporción exacta sin deformar)
+      ctx.save();
+      ctx.beginPath();
+      ctx.roundRect ? ctx.roundRect(24, 24, 752, 280, [24, 24, 0, 0]) : ctx.rect(24, 24, 752, 280);
+      ctx.clip();
+
+      if (imgPortada) {
+        dibujarImagenCover(ctx, imgPortada, 24, 24, 752, 280);
+        // Oscurecido gradual suave para que resalte el perfil y el diseño
+        const gradPortada = ctx.createLinearGradient(0, 24, 0, 304);
+        gradPortada.addColorStop(0, "rgba(5, 7, 14, 0.10)");
+        gradPortada.addColorStop(0.65, "rgba(5, 7, 14, 0.45)");
+        gradPortada.addColorStop(1, "rgba(11, 19, 38, 0.98)");
+        ctx.fillStyle = gradPortada;
+        ctx.fillRect(24, 24, 752, 280);
+      } else {
+        // Si no subió portada, ponemos un diseño de luces neón elegante en el encabezado
+        const gradNoBanner = ctx.createLinearGradient(24, 24, 776, 304);
+        gradNoBanner.addColorStop(0, "#0f172a");
+        gradNoBanner.addColorStop(0.5, "#1e1b4b");
+        gradNoBanner.addColorStop(1, "#0b1326");
+        ctx.fillStyle = gradNoBanner;
+        ctx.fillRect(24, 24, 752, 280);
       }
+      ctx.restore();
 
-      // 3. Si es OFERTAZO (Admin Principal) y no hay portada o quiere el diseño oficial
-      const esOfertazoAdmin = (negocioActual && negocioActual.slug === 'ofertazo');
+      // Línea divisoria brillante debajo de la portada
+      ctx.strokeStyle = "rgba(245, 158, 11, 0.35)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(24, 304);
+      ctx.lineTo(776, 304);
+      ctx.stroke();
 
-      // Marco Exterior Neón
-      ctx.lineWidth = 6;
-      ctx.strokeStyle = "#f59e0b";
-      ctx.strokeRect(20, 20, 760, 960);
+      // 3. CÍRCULO DE FOTO DE PERFIL (En el centro pisando el borde de la portada, sin deformar)
+      const cx = 400;
+      const cy = 275;
+      const radio = 78;
 
-      //Dibujar Logo Circular / Redondeado del Negocio
-      if (imgLogo) {
+      // Sombra y anillo exterior oscuro del avatar
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(cx, cy, radio + 8, 0, Math.PI * 2);
+      ctx.fillStyle = "#0b1326";
+      ctx.fill();
+      ctx.restore();
+
+      if (imgPerfil) {
         ctx.save();
         ctx.beginPath();
-        ctx.arc(400, 210, 70, 0, Math.PI * 2);
+        ctx.arc(cx, cy, radio, 0, Math.PI * 2);
         ctx.closePath();
         ctx.clip();
-        ctx.drawImage(imgLogo, 330, 140, 140, 140);
+        dibujarImagenCover(ctx, imgPerfil, cx - radio, cy - radio, radio * 2, radio * 2);
         ctx.restore();
-
+      } else {
+        ctx.save();
         ctx.beginPath();
-        ctx.arc(400, 210, 70, 0, Math.PI * 2);
-        ctx.lineWidth = 5;
-        ctx.strokeStyle = "#fbbf24";
-        ctx.stroke();
+        ctx.arc(cx, cy, radio, 0, Math.PI * 2);
+        ctx.fillStyle = "#f59e0b";
+        ctx.fill();
+        ctx.fillStyle = "#05070e";
+        ctx.font = "bold 64px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("🏬", cx, cy + 22);
+        ctx.restore();
       }
 
-      // 4. Nombre del Negocio y Actividad
-      ctx.fillStyle = "#fbbf24";
-      ctx.font = "900 46px 'Orbitron', sans-serif";
-      ctx.textAlign = "center";
-      ctx.fillText((negocioActual ? negocioActual.nombre : "OFERTAZO.CA").toUpperCase(), 400, 345);
+      // Anillo dorado neón alrededor del círculo de perfil
+      ctx.beginPath();
+      ctx.arc(cx, cy, radio, 0, Math.PI * 2);
+      ctx.lineWidth = 5;
+      ctx.strokeStyle = "#fbbf24";
+      ctx.stroke();
 
-      ctx.fillStyle = "#22d3ee";
-      ctx.font = "bold 22px 'Plus Jakarta Sans', sans-serif";
+      // 4. NOMBRE DEL NEGOCIO Y CATEGORÍA
+      const esOfertazoAdmin = (negocioActual && negocioActual.slug === 'ofertazo');
+      const nombreTexto = (negocioActual ? negocioActual.nombre : "OFERTAZO.CA").toUpperCase();
+
+      ctx.fillStyle = "#fbbf24";
+      ctx.textAlign = "center";
+      // Ajuste dinámico de tamaño de fuente si el nombre es muy largo
+      let fontSizeNombre = 46;
+      ctx.font = `900 ${fontSizeNombre}px 'Orbitron', sans-serif`;
+      while (ctx.measureText(nombreTexto).width > 700 && fontSizeNombre > 26) {
+        fontSizeNombre -= 2;
+        ctx.font = `900 ${fontSizeNombre}px 'Orbitron', sans-serif`;
+      }
+      ctx.fillText(nombreTexto, 400, 412);
+
+      // Píldora de Categoría / Actividad
       const subtitulo = esOfertazoAdmin 
         ? "🚀 PLATAFORMA DE CATÁLOGOS & TIENDAS ONLINE" 
         : `⚡ ${(negocioActual.tipo || "CATÁLOGO DIGITAL & PEDIDOS").toUpperCase()} ⚡`;
-      ctx.fillText(subtitulo, 400, 385);
 
-      // 5. Generar y dibujar el QR del negocio
+      ctx.fillStyle = "#22d3ee";
+      ctx.font = "800 20px 'Plus Jakarta Sans', sans-serif";
+      ctx.fillText(subtitulo, 400, 450);
+
+      // 5. MITAD INFERIOR: BLOQUE ESTRUCTURADO DEL QR Y DATOS DE PEDIDO
+      // Panel contenedor inferior
+      ctx.fillStyle = "rgba(15, 23, 42, 0.75)";
+      ctx.strokeStyle = "rgba(245, 158, 11, 0.3)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect ? ctx.roundRect(65, 480, 670, 420, 28) : ctx.rect(65, 480, 670, 420);
+      ctx.fill();
+      ctx.stroke();
+
+      // Marco blanco del QR centrado en la mitad de abajo
       const enlaceLimpio = obtenerEnlaceLimpio();
       const qrCanvas = await generarQREnCanvas(enlaceLimpio);
 
       ctx.fillStyle = "#ffffff";
       ctx.beginPath();
-      ctx.roundRect ? ctx.roundRect(240, 420, 320, 320, 26) : ctx.rect(240, 420, 320, 320);
+      ctx.roundRect ? ctx.roundRect(260, 505, 280, 280, 24) : ctx.rect(260, 505, 280, 280);
       ctx.fill();
 
       if (qrCanvas) {
-        ctx.drawImage(qrCanvas, 265, 445, 270, 270);
+        ctx.drawImage(qrCanvas, 280, 525, 240, 240);
       }
 
-      // 6. Textos inferiores personalizados
+      // Llamado a la acción y Dirección debajo del QR
       ctx.fillStyle = "#ffffff";
-      ctx.font = "bold 26px 'Plus Jakarta Sans', sans-serif";
-      ctx.fillText("¡MIRA NUESTRAS OFERTAS Y PIDE ONLINE!", 400, 795);
+      ctx.font = "800 25px 'Plus Jakarta Sans', sans-serif";
+      ctx.fillText("¡ESCANEA EL QR O ENTRA AL LINK PARA PEDIR!", 400, 828);
 
       ctx.fillStyle = "#cbd5e1";
-      ctx.font = "20px 'Plus Jakarta Sans', sans-serif";
+      ctx.font = "600 20px 'Plus Jakarta Sans', sans-serif";
       const dirTexto = negocioActual && negocioActual.direccion ? `📍 ${negocioActual.direccion}` : "📍 Ciego de Ávila • Pedidos por WhatsApp";
-      ctx.fillText(dirTexto, 400, 835);
+      ctx.fillText(dirTexto, 400, 868);
 
-      // 7. Sello inferior
+      // 6. Marco Exterior Neón General y Pie de Página
+      ctx.lineWidth = 6;
+      ctx.strokeStyle = "#f59e0b";
+      ctx.beginPath();
+      ctx.roundRect ? ctx.roundRect(20, 20, 760, 960, 28) : ctx.rect(20, 20, 760, 960);
+      ctx.stroke();
+
       ctx.fillStyle = "#10b981";
-      ctx.font = "bold 18px 'Orbitron', sans-serif";
-      ctx.fillText(esOfertazoAdmin ? "🎁 CREA TU TIENDA GRATIS 10 DÍAS EN OFERTAZO.CA" : "IMPULSADO POR OFERTAZO.CA • CATÁLOGO DIGITAL", 400, 930);
+      ctx.font = "800 17px 'Orbitron', sans-serif";
+      ctx.fillText(esOfertazoAdmin ? "🎁 CREA TU TIENDA GRATIS 10 DÍAS EN OFERTAZO.CA" : "IMPULSADO POR OFERTAZO.CA • CATÁLOGO DIGITAL", 400, 945);
 
       return canvas;
     }
@@ -972,7 +1052,6 @@
           }
         }
 
-        // Si está en una PC o navegador antiguo que no soporta navigator.share con archivos, abre WhatsApp con el texto
         window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(textoCompartir)}`, '_blank');
       } catch (err) {
         console.log("Compartir cancelado o alternativo:", err);
