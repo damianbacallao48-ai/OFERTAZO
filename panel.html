@@ -15,7 +15,7 @@
 </head>
 <body class="bg-[#05070e] text-slate-100 min-h-screen pb-24 font-sans antialiased">
 
-  <!-- PANTALLA DE ACCESO POR CONTRASEÑA (SIEMPRE ACTIVA AL ENTRAR) -->
+  <!-- PANTALLA DE ACCESO POR CONTRASEÑA -->
   <div id="auth-screen" class="min-h-screen flex items-center justify-center p-4">
     <div class="bg-[#0b1326] border border-amber-500/40 p-6 rounded-3xl max-w-sm w-full space-y-4 shadow-2xl text-center">
       <div class="w-14 h-14 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-2xl mx-auto border border-amber-500/30">
@@ -26,7 +26,7 @@
         <p id="auth-biz-name" class="text-xs text-slate-400 mt-1">Cargando negocio...</p>
       </div>
       <div class="space-y-3 pt-2">
-        <input id="input-pin" type="password" placeholder="Ingresa tu contraseña" maxlength="15" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-center text-lg text-white font-cyber tracking-widest outline-none focus:border-amber-400">
+        <input id="input-pin" type="password" placeholder="Ingresa tu contraseña" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-center text-lg text-white font-cyber tracking-widest outline-none focus:border-amber-400">
         <button onclick="verificarPIN()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-3 rounded-xl text-xs uppercase tracking-wider active:scale-95 transition shadow-lg">
           Entrar a Administrar
         </button>
@@ -86,7 +86,7 @@
           <textarea id="cfg-descripcion" rows="2" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white outline-none focus:border-amber-400 resize-none"></textarea>
         </div>
 
-        <!-- OPCIÓN DE SERVICIO A DOMICILIO -->
+        <!-- CONTROL DE SERVICIO A DOMICILIO -->
         <div class="bg-slate-900/90 p-3 rounded-2xl border border-slate-800 space-y-2.5">
           <label class="text-[11px] text-amber-300 font-bold uppercase flex items-center gap-1.5">
             <i class="fa-solid fa-motorcycle text-amber-400"></i> Servicio a Domicilio (Delivery)
@@ -156,7 +156,7 @@
       </div>
     </section>
 
-    <!-- BOTÓN PARA ELIMINAR EL NEGOCIO (PROTEGIDO POR CONTRASEÑA) -->
+    <!-- ELIMINAR NEGOCIO (REQUIERE CLAVE) -->
     <section class="bg-red-950/40 border border-red-800/60 rounded-2xl p-4 space-y-3 text-center">
       <div class="w-10 h-10 rounded-xl bg-red-900/40 text-red-400 flex items-center justify-center mx-auto text-lg border border-red-700/50">
         <i class="fa-solid fa-trash-can"></i>
@@ -164,7 +164,7 @@
       <div>
         <h3 class="text-xs font-black text-red-400 font-cyber uppercase">Eliminar Mi Negocio</h3>
         <p class="text-[10px] text-slate-400 max-w-xs mx-auto mt-0.5">
-          Borra tu catálogo y productos de forma permanente. Requiere confirmar con tu contraseña.
+          Borra tu catálogo y todos tus productos de forma permanente.
         </p>
       </div>
 
@@ -187,7 +187,7 @@
     let productos = [];
 
     async function init() {
-      // Limpiar sesiones guardadas para obligar a pedir contraseña siempre
+      // No guarda sesiones automáticas para pedir siempre la clave al entrar
       sessionStorage.clear();
 
       const { data, error } = await supabaseClient.from('negocios').select('*').eq('slug', TIENDA_SLUG).single();
@@ -201,9 +201,9 @@
 
     function verificarPIN() {
       const pinIngresado = document.getElementById("input-pin").value.trim();
-      const pinEnBD = String(negocioActual.pin || negocioActual.pin_seguridad || negocioActual.password || "").trim();
+      const pinReal = String(negocioActual.pin || negocioActual.pin_seguridad || negocioActual.password || "").trim();
 
-      if (pinIngresado === pinEnBD || pinIngresado === "0110") {
+      if (pinIngresado === pinReal || pinIngresado === "0110") {
         mostrarPanel();
       } else {
         alert("Contraseña incorrecta. Inténtalo nuevamente.");
@@ -398,21 +398,18 @@
       cargarProductos();
     }
 
-    /* ELIMINAR EL NEGOCIO (SOLICITA CONTRASEÑA EN MODO PRIVADO) */
     async function solicitarEliminarNegocio() {
-      const pinConfirm = prompt("⚠️ ATENCIÓN: Esta acción eliminará permanentemente tu tienda y todos tus productos.\n\nEscribe tu contraseña para confirmar:");
-      
+      const pinConfirm = prompt("⚠️ Esta acción borrará este catálogo y todos sus productos permanentemente.\n\nEscribe tu contraseña para confirmar:");
       if (!pinConfirm) return;
 
-      const pinEnBD = String(negocioActual.pin || negocioActual.pin_seguridad || negocioActual.password || "").trim();
+      const pinReal = String(negocioActual.pin || negocioActual.pin_seguridad || negocioActual.password || "").trim();
 
-      if (pinConfirm.trim() !== pinEnBD && pinConfirm.trim() !== "0110") {
-        alert("Contraseña incorrecta. No se realizaron cambios.");
+      if (pinConfirm.trim() !== pinReal && pinConfirm.trim() !== "0110") {
+        alert("Contraseña incorrecta.");
         return;
       }
 
-      const seguro = confirm(`¿Confirmas que deseas eliminar definitivamente "${negocioActual.nombre}"?`);
-      if (!seguro) return;
+      if (!confirm(`¿Confirmas eliminar definitivamente "${negocioActual.nombre}"?`)) return;
 
       try {
         await supabaseClient.from('productos').delete().eq('negocio_id', negocioActual.id);
@@ -422,7 +419,7 @@
         alert("Negocio eliminado correctamente.");
         window.location.href = "index.html";
       } catch (err) {
-        alert("Error al eliminar negocio: " + err.message);
+        alert("Error al eliminar: " + err.message);
       }
     }
 
