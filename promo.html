@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demo en Vivo - OFERTAZO.CA</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background: #05070e; overflow: hidden; user-select: none; }
+    .font-cyber { font-family: 'Orbitron', monospace; }
+    
+    /* Cursor / Dedo Virtual Animado */
+    #virtual-finger {
+      position: fixed;
+      width: 44px; height: 44px;
+      background: rgba(245, 158, 11, 0.35);
+      border: 3px solid #fbbf24;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transition: all 0.65s cubic-bezier(0.25, 1, 0.5, 1);
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.8);
+      display: none;
+      align-items: center; justify-content: center;
+    }
+    #virtual-finger::after {
+      content: '👆';
+      font-size: 22px;
+      transform: translateY(4px);
+    }
+    .finger-tap {
+      transform: scale(0.75) !important;
+      background: rgba(16, 185, 129, 0.7) !important;
+      border-color: #10b981 !important;
+    }
+
+    .screen-view {
+      display: none;
+      animation: fadeIn 0.4s ease forwards;
+    }
+    .screen-view.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body class="text-slate-100 h-screen w-screen flex flex-col justify-between p-3 relative">
+
+  <!-- Dedo Virtual -->
+  <div id="virtual-finger"></div>
+
+  <!-- Pantalla de Inicio para preparar el Grabador -->
+  <div id="start-screen" class="fixed inset-0 z-50 bg-[#05070e] flex flex-col items-center justify-center p-6 text-center space-y-5">
+    <div class="w-16 h-16 rounded-3xl bg-amber-500 text-slate-950 flex items-center justify-center text-3xl font-black shadow-lg">
+      <i class="fa-solid fa-clapperboard"></i>
+    </div>
+    <h1 class="text-lg font-black text-amber-400 font-cyber">SIMULADOR DE VÍDEO DEMO</h1>
+    <p class="text-xs text-slate-300 max-w-xs leading-relaxed">
+      Activa el <strong>Grabador de Pantalla</strong> de tu teléfono y toca el botón. El sistema simulará en vivo cómo se sube un producto, cómo el cliente compra y cómo llega al WhatsApp.
+    </p>
+    <button onclick="iniciarDemo()" class="bg-emerald-500 text-slate-950 font-black px-6 py-4 rounded-2xl font-cyber text-xs uppercase tracking-wider shadow-[0_0_25px_rgba(16,185,129,0.5)] active:scale-95">
+      🎬 INICIAR DEMOSTRACIÓN
+    </button>
+  </div>
+
+  <!-- BARRA SUPERIOR: SUBTÍTULO EXPLICATIVO QUE ENGANCHA AL CLIENTE -->
+  <div class="bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-slate-950 rounded-2xl p-3 text-center shadow-[0_0_20px_rgba(245,158,11,0.4)] z-20">
+    <p id="narration-badge" class="text-[10px] font-cyber font-black uppercase tracking-widest bg-slate-950 text-amber-400 inline-block px-2.5 py-0.5 rounded-full mb-1">
+      ⚡ MIRA CÓMO FUNCIONA OFERTAZO.CA ⚡
+    </p>
+    <h2 id="narration-text" class="text-sm font-black leading-tight">
+      ¿Tienes un negocio? ¡Así de fácil trabajas en nuestra plataforma!
+    </h2>
+  </div>
+
+  <!-- MARCO DEL TELÉFONO SIMULADO -->
+  <div class="flex-1 my-2.5 bg-[#080d1a] border-2 border-amber-500/40 rounded-3xl overflow-hidden flex flex-col shadow-2xl relative">
+    
+    <!-- Cabecera fija de la App -->
+    <div class="bg-[#05070e] p-3 border-b border-slate-800 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-xl bg-amber-500 text-slate-950 flex items-center justify-center font-black text-xs">
+          <i class="fa-solid fa-store"></i>
+        </div>
+        <div>
+          <h3 id="sim-header-title" class="text-xs font-black text-amber-400 font-cyber">PANEL DEL DUEÑO</h3>
+          <p class="text-[9px] text-slate-400">Ciego de Ávila • En línea</p>
+        </div>
+      </div>
+      <span id="sim-step-indicator" class="text-[9px] font-cyber font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded-lg">
+        PASO 1: SUBIR ARTÍCULO
+      </span>
+    </div>
+
+    <!-- VISTA 1: PANEL DE ADMINISTRACIÓN (SUBIENDO UN PRODUCTO EN VIVO) -->
+    <div id="view-panel" class="screen-view active p-4 space-y-3">
+      <div class="bg-[#0b1326] border border-slate-800 rounded-2xl p-3.5 space-y-3">
+        <h4 class="text-xs font-black text-emerald-400 font-cyber flex items-center gap-1.5">
+          <i class="fa-solid fa-plus-circle"></i> SUBIR NUEVO PRODUCTO O SERVICIO
+        </h4>
+
+        <div>
+          <label class="text-[9px] text-slate-400 uppercase font-bold">Nombre del Artículo / Plato:</label>
+          <div id="sim-input-nombre" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2 text-xs text-white font-bold h-8 flex items-center"></div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-[9px] text-slate-400 uppercase font-bold">Precio ($ CUP):</label>
+            <div id="sim-input-precio" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2 text-xs text-amber-400 font-cyber font-bold h-8 flex items-center"></div>
+          </div>
+          <div>
+            <label class="text-[9px] text-slate-400 uppercase font-bold">Categoría:</label>
+            <div id="sim-input-cat" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2 text-xs text-cyan-300 font-bold h-8 flex items-center"></div>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-[9px] text-slate-400 uppercase font-bold">Foto desde tu Galería:</label>
+          <div id="sim-foto-box" class="w-full h-24 bg-slate-900 border border-dashed border-slate-700 rounded-xl flex items-center justify-center overflow-hidden">
+            <span id="sim-foto-placeholder" class="text-[10px] text-slate-400"><i class="fa-solid fa-camera text-amber-400 mr-1"></i> Seleccionar foto...</span>
+            <img id="sim-foto-img" src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500" class="hidden w-full h-full object-cover">
+          </div>
+        </div>
+
+        <button id="btn-sim-publicar" class="w-full bg-emerald-600 text-white font-black py-2.5 rounded-xl text-xs uppercase tracking-wider shadow-lg transition">
+          Publicar en mi Catálogo
+        </button>
+      </div>
+    </div>
+
+    <!-- VISTA 2: CATÁLOGO DEL CLIENTE (COMPRANDO EN VIVO) -->
+    <div id="view-catalogo" class="screen-view p-3 space-y-3">
+      <!-- Buscador -->
+      <div class="bg-[#0b1326] border border-amber-500/30 rounded-xl p-2 flex items-center gap-2 text-xs text-slate-400">
+        <i class="fa-solid fa-magnifying-glass text-amber-400"></i>
+        <span>Buscar producto, ropa o comida...</span>
+      </div>
+
+      <!-- Rejilla de 2 productos -->
+      <div class="grid grid-cols-2 gap-2.5">
+        <!-- Producto recién creado -->
+        <div class="bg-[#0b1326] border border-amber-500/40 rounded-2xl p-2 space-y-1.5 shadow-lg">
+          <div class="relative aspect-square rounded-xl overflow-hidden bg-slate-950">
+            <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500" class="w-full h-full object-cover">
+            <span class="absolute top-1 left-1 bg-slate-950/80 text-amber-300 text-[8px] font-black px-1.5 py-0.5 rounded">OFERTAS</span>
+          </div>
+          <h4 class="text-xs font-bold text-white truncate">Combo Especial VIP</h4>
+          <div>
+            <p class="text-xs font-black text-amber-400 font-cyber">$1,500 CUP</p>
+            <p class="text-[9px] text-slate-400">≈ $4.68 USD</p>
+          </div>
+          <button id="btn-sim-agregar" class="w-full bg-amber-500 text-slate-950 font-black py-1.5 rounded-xl text-[11px] flex items-center justify-center gap-1">
+            <i class="fa-solid fa-plus text-[9px]"></i> Agregar
+          </button>
+        </div>
+
+        <!-- Segundo producto decorativo -->
+        <div class="bg-[#0b1326] border border-slate-800 rounded-2xl p-2 space-y-1.5 opacity-80">
+          <div class="relative aspect-square rounded-xl overflow-hidden bg-slate-950">
+            <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500" class="w-full h-full object-cover">
+            <span class="absolute top-1 left-1 bg-slate-950/80 text-amber-300 text-[8px] font-black px-1.5 py-0.5 rounded">CALZADO</span>
+          </div>
+          <h4 class="text-xs font-bold text-white truncate">Tenis Deportivos</h4>
+          <div>
+            <p class="text-xs font-black text-amber-400 font-cyber">$8,500 CUP</p>
+            <p class="text-[9px] text-slate-400">≈ $26.56 USD</p>
+          </div>
+          <button class="w-full bg-amber-500 text-slate-950 font-black py-1.5 rounded-xl text-[11px]">
+            + Agregar
+          </button>
+        </div>
+      </div>
+
+      <!-- Barra flotante del carrito -->
+      <div id="sim-cart-bar" class="hidden bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 p-3 rounded-2xl font-black flex justify-between items-center shadow-2xl mt-4">
+        <span class="text-xs flex items-center gap-2">
+          <i class="fa-solid fa-basket-shopping"></i>
+          <span class="bg-slate-950 text-amber-400 px-2 py-0.5 rounded-full text-[10px] font-cyber">2</span>
+          VER MI PEDIDO
+        </span>
+        <span class="font-cyber text-xs">$3,250 CUP</span>
+      </div>
+    </div>
+
+    <!-- VISTA 3: CARRITO CON CÁLCULO DE DOMICILIO Y ENVÍO A WHATSAPP -->
+    <div id="view-carrito" class="screen-view p-4 space-y-3">
+      <div class="bg-[#0b1326] border border-amber-500/40 rounded-2xl p-3.5 space-y-2.5">
+        <h4 class="text-xs font-black text-amber-400 font-cyber flex items-center gap-1.5">
+          <i class="fa-solid fa-cart-shopping"></i> RESUMEN DE COMPRA AUTOMÁTICO
+        </h4>
+
+        <div class="bg-slate-900 p-2.5 rounded-xl flex justify-between items-center text-xs">
+          <div>
+            <p class="font-bold text-white">2x Combo Especial VIP</p>
+            <p class="text-[10px] text-amber-400 font-bold">$3,000 CUP</p>
+          </div>
+          <span class="bg-amber-500 text-slate-950 font-black px-2 py-0.5 rounded text-xs">Listo</span>
+        </div>
+
+        <div class="space-y-1.5 text-xs">
+          <div class="bg-slate-900 p-2 rounded-xl border border-slate-700 text-emerald-300 font-bold">
+            🛵 Entrega a Domicilio (+$250 CUP)
+          </div>
+          <div class="bg-slate-900 p-2 rounded-xl border border-slate-700 text-white">
+            👤 Cliente: <strong>Carlos Pérez</strong>
+          </div>
+          <div class="bg-slate-900 p-2 rounded-xl border border-slate-700 text-white">
+            📍 Dirección: <strong>Calle Independencia #45, Ciego de Ávila</strong>
+          </div>
+        </div>
+
+        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1 text-xs">
+          <div class="flex justify-between text-slate-400"><span>Subtotal:</span><span>$3,000 CUP</span></div>
+          <div class="flex justify-between text-amber-300"><span>Domicilio:</span><span>+$250 CUP</span></div>
+          <div class="flex justify-between text-sm font-black text-white pt-1 border-t border-slate-800">
+            <span>TOTAL A PAGAR:</span>
+            <span class="text-amber-400 font-cyber">$3,250 CUP (≈$10.15 USD)</span>
+          </div>
+        </div>
+
+        <button id="btn-sim-wa" class="w-full bg-emerald-600 text-white font-black py-3 rounded-xl text-xs uppercase flex items-center justify-center gap-2 shadow-lg">
+          <i class="fa-brands fa-whatsapp text-base"></i> Confirmar Pedido por WhatsApp
+        </button>
+      </div>
+    </div>
+
+    <!-- VISTA 4: FACTURA EN WHATSAPP + CIERRE PROMOCIONAL -->
+    <div id="view-whatsapp" class="screen-view p-4 space-y-3">
+      <div class="bg-[#075e54] text-white p-2.5 rounded-t-2xl flex items-center gap-2">
+        <i class="fa-brands fa-whatsapp text-xl"></i>
+        <div>
+          <p class="text-xs font-bold">WhatsApp del Dueño del Negocio</p>
+          <p class="text-[9px] text-emerald-200">Pedido recibido al instante</p>
+        </div>
+      </div>
+      <div class="bg-[#0b141a] border border-emerald-500/30 p-3 rounded-b-2xl text-[11px] font-mono text-slate-200 space-y-1 leading-relaxed">
+        <p class="text-amber-400 font-bold">⚡📦 ¡NUEVO PEDIDO RECIBIDO! 📦⚡</p>
+        <p>👤 <strong>Cliente:</strong> Carlos Pérez</p>
+        <p>🛵 <strong>Entrega:</strong> A Domicilio</p>
+        <p>🏠 <strong>Dirección:</strong> Calle Independencia #45</p>
+        <p>📋 <strong>DETALLE:</strong> 2x Combo Especial VIP ($3,000 CUP)</p>
+        <p>🛵 <strong>Domicilio:</strong> +$250 CUP</p>
+        <p class="text-emerald-400 font-bold pt-1">💰 TOTAL: $3,250 CUP (o $10.15 USD)</p>
+      </div>
+
+      <div class="bg-gradient-to-br from-amber-500 to-amber-600 text-slate-950 p-4 rounded-2xl text-center space-y-1.5 shadow-2xl mt-2">
+        <span class="bg-slate-950 text-amber-400 text-[9px] font-cyber font-black px-2.5 py-0.5 rounded-full uppercase">
+          🎁 7 DÍAS DE PRUEBA GRATIS
+        </span>
+        <h3 class="text-base font-black font-cyber uppercase">¡CREA TU TIENDA HOY!</h3>
+        <p class="text-xs font-extrabold">ofertazo-cuba.github.io</p>
+        <p class="text-[10px] font-bold"><i class="fa-brands fa-whatsapp"></i> Soporte: +53 58960660</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PIE DE PÁGINA FIJO -->
+  <div class="bg-[#0b1326] border border-amber-500/30 rounded-2xl p-2.5 flex items-center justify-between text-xs">
+    <span class="font-cyber font-black text-amber-400 text-[11px]">OFERTAZO.CA</span>
+    <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2.5 py-0.5 rounded-full text-[10px] font-bold">
+      🎁 7 Días Gratis • Ciego de Ávila
+    </span>
+  </div>
+
+  <script>
+    const finger = document.getElementById('virtual-finger');
+
+    function moverDedoA(idElemento, hacerTap = true) {
+      const el = document.getElementById(idElemento);
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      finger.style.display = 'flex';
+      finger.style.left = (rect.left + rect.width / 2 - 22) + 'px';
+      finger.style.top = (rect.top + rect.height / 2 - 22) + 'px';
+
+      if (hacerTap) {
+        setTimeout(() => {
+          finger.classList.add('finger-tap');
+          setTimeout(() => finger.classList.remove('finger-tap'), 250);
+        }, 600);
+      }
+    }
+
+    function cambiarVista(idVista, tituloHeader, pasoBadge, subtituloArriba) {
+      document.querySelectorAll('.screen-view').forEach(v => v.classList.remove('active'));
+      document.getElementById(idVista).classList.add('active');
+      document.getElementById('sim-header-title').innerText = tituloHeader;
+      document.getElementById('sim-step-indicator').innerText = pasoBadge;
+      document.getElementById('narration-text').innerText = subtituloArriba;
+    }
+
+    function escribirTextoSimulado(idEl, texto) {
+      const el = document.getElementById(idEl);
+      el.innerText = "";
+      let i = 0;
+      const intervalo = setInterval(() => {
+        el.innerText += texto[i];
+        i++;
+        if (i >= texto.length) clearInterval(intervalo);
+      }, 45);
+    }
+
+    function iniciarDemo() {
+      document.getElementById('start-screen').style.display = 'none';
+
+      // 1. Escribir nombre del producto (1.5s)
+      setTimeout(() => {
+        moverDedoA('sim-input-nombre');
+        escribirTextoSimulado('sim-input-nombre', 'Combo Especial VIP');
+      }, 1000);
+
+      // 2. Escribir precio y categoría (3.5s)
+      setTimeout(() => {
+        moverDedoA('sim-input-precio');
+        escribirTextoSimulado('sim-input-precio', '1500');
+        escribirTextoSimulado('sim-input-cat', 'OFERTAS');
+      }, 3200);
+
+      // 3. Subir foto de galería (5.5s)
+      setTimeout(() => {
+        moverDedoA('sim-foto-box');
+        setTimeout(() => {
+          document.getElementById('sim-foto-placeholder').classList.add('hidden');
+          document.getElementById('sim-foto-img').classList.remove('hidden');
+        }, 650);
+      }, 5200);
+
+      // 4. Tocar botón Publicar (7.8s)
+      setTimeout(() => {
+        moverDedoA('btn-sim-publicar');
+        setTimeout(() => {
+          document.getElementById('btn-sim-publicar').innerText = '¡PUBLICADO AL INSTANTE! ✅';
+        }, 650);
+      }, 7600);
+
+      // 5. Cambiar a la Vista del Cliente en el Catálogo (10s)
+      setTimeout(() => {
+        cambiarVista(
+          'view-catalogo',
+          'CATÁLOGO DEL CLIENTE',
+          'PASO 2: CLIENTE COMPRA',
+          'Tus clientes ven tus fotos, precios en CUP/USD y agregan al carrito'
+        );
+      }, 9800);
+
+      // 6. Cliente toca "+ Agregar" dos veces (12s)
+      setTimeout(() => {
+        moverDedoA('btn-sim-agregar');
+        setTimeout(() => {
+          document.getElementById('btn-sim-agregar').innerText = '✓ 2 Agregados';
+          document.getElementById('sim-cart-bar').classList.remove('hidden');
+        }, 650);
+      }, 11800);
+
+      // 7. Cliente toca "Ver mi pedido" (14.5s)
+      setTimeout(() => {
+        moverDedoA('sim-cart-bar');
+      }, 14500);
+
+      // 8. Mostrar Resumen de Compra con Domicilio sumado (16s)
+      setTimeout(() => {
+        cambiarVista(
+          'view-carrito',
+          'CARRITO INTELIGENTE',
+          'PASO 3: SUMA DOMICILIO',
+          'Calcula la cuenta exacta más el domicilio automáticamente'
+        );
+      }, 15800);
+
+      // 9. Tocar "Confirmar Pedido por WhatsApp" (19.5s)
+      setTimeout(() => {
+        moverDedoA('btn-sim-wa');
+      }, 19500);
+
+      // 10. Mostrar el WhatsApp con la factura y el llamado a la acción (21s)
+      setTimeout(() => {
+        finger.style.display = 'none';
+        cambiarVista(
+          'view-whatsapp',
+          'PEDIDO EN TU WHATSAPP',
+          '¡LISTO PARA DESPACHAR!',
+          '¡Y el pedido llega directo a tu WhatsApp sin mandar 20 fotos!'
+        );
+      }, 21000);
+    }
+  </script>
+</body>
+</html>
