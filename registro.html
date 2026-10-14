@@ -25,14 +25,14 @@
     <div id="form-registro" class="space-y-3 pt-2">
       <div>
         <label class="text-[11px] font-bold text-slate-400 uppercase">Nombre de tu Negocio *</label>
-        <input id="reg-nombre" type="text" placeholder="Ej. Bar Habana o Pizzería Rossi" oninput="autocompletarSlug(this.value)" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
+        <input id="reg-nombre" type="text" placeholder="Ej. Tienda Ropa, Pizzería o Barbería" oninput="autocompletarSlug(this.value)" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
       </div>
 
       <div>
         <label class="text-[11px] font-bold text-slate-400 uppercase">Enlace personalizado deseado (Slug) *</label>
         <div class="flex items-center bg-slate-800 border border-slate-700 rounded-xl px-2.5 py-1 focus-within:border-amber-400">
           <span class="text-[11px] text-slate-500">?tienda=</span>
-          <input id="reg-slug" type="text" placeholder="bar-habana" class="w-full bg-transparent p-1.5 text-xs text-cyan-400 outline-none lowercase font-mono">
+          <input id="reg-slug" type="text" placeholder="mi-tienda" class="w-full bg-transparent p-1.5 text-xs text-cyan-400 outline-none lowercase font-mono">
         </div>
         <p class="text-[10px] text-slate-400 mt-0.5">Solo letras minúsculas, números o guiones.</p>
       </div>
@@ -52,10 +52,14 @@
         <div>
           <label class="text-[11px] font-bold text-slate-400 uppercase">Tipo de Negocio</label>
           <select id="reg-tipo" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
-            <option value="Restaurante / Cafetería">Restaurante / Cafetería</option>
-            <option value="Bar / Discoteca">Bar / Discoteca</option>
-            <option value="Punto de Venta / Tienda">Punto de Venta / Tienda</option>
-            <option value="Servicios">Servicios Varios</option>
+            <option value="Tienda / Boutique">Boutique / Tienda de Ropa & Calzado</option>
+            <option value="Restaurante / Cafetería">Restaurante / Cafetería / Pizzería</option>
+            <option value="Bar / Discoteca">Bar / Discoteca / Centro Nocturno</option>
+            <option value="Tecnología / Celulares">Tecnología, Celulares & Accesorios</option>
+            <option value="Perfumería / Cosméticos">Perfumería, Cosméticos & Cuidado</option>
+            <option value="Ferretería / Hogar">Ferretería, Insumos & Hogar</option>
+            <option value="Servicios Varios">Servicios Profesionales Varios</option>
+            <option value="Comercio General">Punto de Venta / Comercio General</option>
           </select>
         </div>
         <div>
