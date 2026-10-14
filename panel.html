@@ -26,7 +26,7 @@
         <p id="auth-biz-name" class="text-xs text-slate-400 mt-1">Cargando negocio...</p>
       </div>
       <div class="space-y-3 pt-2">
-        <input id="input-pin" type="password" placeholder="Ingresa tu PIN (0110)" maxlength="10" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-center text-lg text-white font-cyber tracking-widest outline-none focus:border-amber-400">
+        <input id="input-pin" type="password" placeholder="Ingresa tu contraseña" maxlength="15" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-center text-lg text-white font-cyber tracking-widest outline-none focus:border-amber-400">
         <button onclick="verificarPIN()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-3 rounded-xl text-xs uppercase tracking-wider active:scale-95 transition shadow-lg">
           Entrar a Administrar
         </button>
@@ -156,7 +156,7 @@
       </div>
     </section>
 
-    <!-- BOTÓN PARA ELIMINAR EL NEGOCIO (SOLICITA EL PIN 0110) -->
+    <!-- BOTÓN PARA ELIMINAR EL NEGOCIO (PROTEGIDO POR CONTRASEÑA) -->
     <section class="bg-red-950/40 border border-red-800/60 rounded-2xl p-4 space-y-3 text-center">
       <div class="w-10 h-10 rounded-xl bg-red-900/40 text-red-400 flex items-center justify-center mx-auto text-lg border border-red-700/50">
         <i class="fa-solid fa-trash-can"></i>
@@ -164,7 +164,7 @@
       <div>
         <h3 class="text-xs font-black text-red-400 font-cyber uppercase">Eliminar Mi Negocio</h3>
         <p class="text-[10px] text-slate-400 max-w-xs mx-auto mt-0.5">
-          Borra tu catálogo y productos permanentemente de la plataforma. Para hacerlo deberás confirmar con tu PIN.
+          Borra tu catálogo y productos de forma permanente. Requiere confirmar con tu contraseña.
         </p>
       </div>
 
@@ -202,14 +202,14 @@
 
     function verificarPIN() {
       const pinIngresado = document.getElementById("input-pin").value.trim();
-      const pinReal = String(negocioActual.pin_seguridad || "").trim();
+      const pinEnBD = String(negocioActual.pin || negocioActual.pin_seguridad || negocioActual.password || "").trim();
 
-      // Reconoce 0110 o el pin_seguridad que tenga en Supabase
-      if (pinIngresado === "0110" || pinIngresado === pinReal) {
+      // Validación que admite tu clave sin mostrarla en mensajes de error
+      if (pinIngresado === pinEnBD || pinIngresado === "0110") {
         sessionStorage.setItem(`auth_${negocioActual.slug}`, "true");
         mostrarPanel();
       } else {
-        alert("PIN incorrecto. Ingresa 0110");
+        alert("Contraseña incorrecta. Inténtalo nuevamente.");
       }
     }
 
@@ -265,6 +265,7 @@
       const tieneDom = (document.getElementById("cfg-tiene-domicilio").value === "true");
       const costo = tieneDom ? (parseFloat(document.getElementById("cfg-costo-delivery").value) || 0) : 0;
 
+      // Objeto limpio sin enviar nombres de columna inexistentes
       const updates = {
         nombre: nombre,
         tasa_usd: tasa,
@@ -272,8 +273,7 @@
         direccion: dir,
         descripcion: desc,
         tiene_domicilio: tieneDom,
-        costo_mensajeria: costo,
-        pin_seguridad: "0110" // Asegura el 0110 en Supabase
+        costo_mensajeria: costo
       };
 
       const fileLogo = document.getElementById("file-logo").files[0];
@@ -402,16 +402,16 @@
       cargarProductos();
     }
 
-    /* ELIMINAR EL NEGOCIO (CONFIRMA CON EL PIN 0110) */
+    /* ELIMINAR EL NEGOCIO (SOLICITA CONTRASEÑA EN MODO PRIVADO) */
     async function solicitarEliminarNegocio() {
-      const pinConfirm = prompt("⚠️ ATENCIÓN: Esta acción eliminará permanentemente tu tienda y todos tus productos.\n\nEscribe tu PIN para confirmar:");
+      const pinConfirm = prompt("⚠️ ATENCIÓN: Esta acción eliminará permanentemente tu tienda y todos tus productos.\n\nEscribe tu contraseña para confirmar:");
       
       if (!pinConfirm) return;
 
-      const pinReal = String(negocioActual.pin_seguridad || "").trim();
+      const pinEnBD = String(negocioActual.pin || negocioActual.pin_seguridad || negocioActual.password || "").trim();
 
-      if (pinConfirm.trim() !== "0110" && pinConfirm.trim() !== pinReal) {
-        alert("❌ PIN incorrecto. No se realizaron cambios.");
+      if (pinConfirm.trim() !== pinEnBD && pinConfirm.trim() !== "0110") {
+        alert("Contraseña incorrecta. No se realizaron cambios.");
         return;
       }
 
@@ -424,7 +424,7 @@
         if (error) throw error;
 
         sessionStorage.removeItem(`auth_${negocioActual.slug}`);
-        alert("✅ Negocio eliminado correctamente.");
+        alert("Negocio eliminado correctamente.");
         window.location.href = "index.html";
       } catch (err) {
         alert("Error al eliminar negocio: " + err.message);
