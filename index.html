@@ -112,7 +112,7 @@
               CARGANDO...
             </h1>
             <p id="biz-header-type" class="text-[10px] text-slate-400 font-semibold truncate flex items-center gap-1">
-              <i class="fa-solid fa-location-crosshairs text-cyan-400 text-[9px]"></i> Ciego de Ávila • Delivery
+              <i class="fa-solid fa-location-crosshairs text-cyan-400 text-[9px]"></i> Ciego de Ávila
             </p>
           </div>
         </div>
@@ -144,13 +144,10 @@
     </div>
   </header>
 
-  <!-- Banner Informativo del Negocio Actual -->
+  <!-- Banner Informativo del Negocio Actual (Sin aviso de domicilio) -->
   <section class="max-w-xl mx-auto px-3 pt-3 relative z-10">
     <div class="cyber-panel rounded-3xl p-3.5 shadow-xl space-y-2">
       <div class="flex flex-wrap gap-1.5">
-        <span id="badge-delivery" class="bg-amber-500/20 text-amber-300 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full border border-amber-500/40 flex items-center gap-1">
-          <i class="fa-solid fa-motorcycle text-amber-400 text-[9px]"></i> Mensajería: $250 CUP
-        </span>
         <span class="bg-emerald-500/20 text-emerald-300 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full border border-emerald-500/40 flex items-center gap-1">
           <i class="fa-solid fa-money-bill-wave text-emerald-400 text-[9px]"></i> Efectivo CUP / USD
         </span>
@@ -158,9 +155,6 @@
           1 USD = 320 CUP
         </span>
       </div>
-      <p id="biz-description" class="text-[11px] text-slate-300 leading-snug">
-        Cargando información del local...
-      </p>
     </div>
   </section>
 
@@ -408,10 +402,6 @@
             <span>Subtotal productos:</span>
             <span id="calc-subtotal" class="font-bold text-white">$0 CUP</span>
           </div>
-          <div class="flex justify-between text-slate-300">
-            <span>Mensajería:</span>
-            <span id="calc-delivery" class="font-bold text-amber-400">+$250 CUP</span>
-          </div>
           <div class="flex justify-between text-sm font-black text-white pt-2 border-t border-slate-800">
             <span>Total a pagar:</span>
             <div class="text-right">
@@ -476,9 +466,7 @@
 
         document.title = `${negocioActual.nombre} - Catálogo Digital`;
         document.getElementById("biz-header-name").innerText = negocioActual.nombre;
-        document.getElementById("biz-header-type").innerText = `${negocioActual.direccion || 'Ciego de Ávila'} • ${negocioActual.tipo || 'Catálogo'}`;
-        document.getElementById("badge-delivery").innerText = `🛵 Mensajería: $${negocioActual.costo_mensajeria || 250} CUP`;
-        document.getElementById("biz-description").innerText = negocioActual.descripcion || `Catálogo oficial de ${negocioActual.nombre}.`;
+        document.getElementById("biz-header-type").innerText = `${negocioActual.direccion || 'Ciego de Ávila'}`;
 
         document.getElementById("modal-share-title").innerText = `Compartir ${negocioActual.nombre}`;
 
@@ -610,7 +598,6 @@
       lista.forEach(n => {
         const esLaMisma = (negocioActual && n.slug === negocioActual.slug);
         const logoSrc = n.logo_url || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=150';
-        const fee = n.costo_mensajeria || 250;
         const badgeActual = esLaMisma 
           ? '<span class="text-[9px] font-black text-amber-400 bg-amber-500/20 px-1.5 py-0.5 rounded border border-amber-500/30">TIENDA ACTUAL</span>'
           : '';
@@ -627,9 +614,6 @@
                 <p class="text-[10px] text-slate-400 line-clamp-1 mt-0.5">
                   <i class="fa-solid fa-location-dot text-cyan-400 text-[9px]"></i> ${n.direccion || 'Ciego de Ávila'}
                 </p>
-                <div class="flex items-center gap-2 mt-1 text-[9px] text-slate-300">
-                  <span class="text-amber-300 font-bold"><i class="fa-solid fa-motorcycle text-[8px]"></i> Mensajería: $${fee} CUP</span>
-                </div>
                 <p class="text-[10px] text-slate-300/80 line-clamp-2 mt-1">${n.descripcion || 'Sin descripción disponible.'}</p>
               </div>
             </div>
@@ -676,7 +660,7 @@
 
       document.getElementById("qr-modal").classList.remove("hidden");
       document.getElementById("qr-modal-nombre").innerText = negocioActual.nombre.toUpperCase();
-      document.getElementById("qr-modal-actividades").innerText = `⚡ ${(negocioActual.tipo || 'Catálogo Comercial & Delivery').toUpperCase()} ⚡`;
+      document.getElementById("qr-modal-actividades").innerText = `⚡ ${(negocioActual.tipo || 'Catálogo Comercial').toUpperCase()} ⚡`;
 
       const enlaceLimpio = obtenerEnlaceLimpio();
       document.getElementById("qr-modal-url").innerText = enlaceLimpio;
@@ -727,7 +711,7 @@
 
       ctx.fillStyle = "#22d3ee";
       ctx.font = "bold 18px 'Plus Jakarta Sans', sans-serif";
-      ctx.fillText((negocioActual.tipo || "Catálogo & Delivery").toUpperCase(), canvas.width / 2, 125);
+      ctx.fillText((negocioActual.tipo || "Catálogo Digital").toUpperCase(), canvas.width / 2, 125);
 
       ctx.fillStyle = "#ffffff";
       ctx.roundRect ? ctx.roundRect(140, 160, 320, 320, 20) : ctx.fillRect(140, 160, 320, 320);
@@ -911,10 +895,9 @@
     }
 
     function actualizarTotales() {
-      const deliveryFee = Number(negocioActual ? negocioActual.costo_mensajeria : 250) || 0;
       const totalCount = carrito.reduce((sum, item) => sum + item.cantidad, 0);
       const subtotalCup = carrito.reduce((sum, item) => sum + (Number(item.precio || 0) * item.cantidad), 0);
-      const totalFinalCup = subtotalCup + deliveryFee;
+      const totalFinalCup = subtotalCup;
       const totalFinalUsd = (totalFinalCup / tasaUSD).toFixed(2);
 
       const bar = document.getElementById("cart-bar");
@@ -928,7 +911,6 @@
       }
 
       document.getElementById("calc-subtotal").innerText = '$' + subtotalCup.toLocaleString() + ' CUP (≈$' + (subtotalCup / tasaUSD).toFixed(2) + ' USD)';
-      document.getElementById("calc-delivery").innerText = '+$' + deliveryFee + ' CUP';
       document.getElementById("calc-total-cup").innerText = '$' + totalFinalCup.toLocaleString() + ' CUP';
       document.getElementById("calc-total-usd").innerText = '≈ $' + totalFinalUsd + ' USD';
     }
@@ -991,9 +973,8 @@
       if (!nombre) { alert("Por favor escribe tu nombre."); return; }
       if (!direccion) { alert("Por favor escribe la dirección de entrega."); return; }
 
-      const deliveryFee = Number(negocioActual ? negocioActual.costo_mensajeria : 250) || 0;
       const subtotalCup = carrito.reduce((sum, item) => sum + (Number(item.precio || 0) * item.cantidad), 0);
-      const totalGeneralCup = subtotalCup + deliveryFee;
+      const totalGeneralCup = subtotalCup;
       const totalGeneralUsd = (totalGeneralCup / tasaUSD).toFixed(2);
       const waNumber = (negocioActual && negocioActual.telefono_whatsapp) ? negocioActual.telefono_whatsapp : "5358960660";
       const bizName = negocioActual ? negocioActual.nombre : "OFERTAZO";
@@ -1001,7 +982,6 @@
       let msg = `⚡📦 *¡NUEVO PEDIDO A ${bizName.toUpperCase()}!* 📦⚡\n` +
         "👤 *Cliente:* " + nombre + "\n" +
         "🏠 *Dirección:* " + direccion + "\n" +
-        "🛵 *Entrega:* A Domicilio\n" +
         "💵 *Método de Pago:* Efectivo (CUP o USD)\n" +
         "📊 *Tasa aplicada:* 1 USD = " + tasaUSD + " CUP\n\n" +
         "📋 *DETALLE DE PRODUCTOS:*\n";
@@ -1013,7 +993,6 @@
 
       msg += "\n━━━━━━━━━━━━━━━━━━━\n" +
         "🛒 *Subtotal Productos:* $" + subtotalCup.toLocaleString() + " CUP\n" +
-        "🛵 *Costo Domicilio:* $" + deliveryFee + " CUP\n" +
         "💰 *TOTAL A PAGAR:* $" + totalGeneralCup.toLocaleString() + " CUP\n" +
         "💵 *O en USD:* $" + totalGeneralUsd + " USD\n" +
         "━━━━━━━━━━━━━━━━━━━";
