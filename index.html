@@ -67,7 +67,7 @@
     .carrusel-track {
       display: flex;
       width: max-content;
-      animation: marqueeFuturista 28s linear infinite;
+      animation: marqueeFuturista 32s linear infinite;
     }
     .carrusel-track:hover, .carrusel-track:active {
       animation-play-state: paused;
@@ -606,7 +606,7 @@
       return 0;
     }
 
-    /* CARRUSEL DE OTROS NEGOCIOS */
+    /* CARRUSEL DE OTROS NEGOCIOS (CARGA TODAS LAS TIENDAS ACTIVAS SIN RESTRICCIONES DE NOMBRE) */
     async function cargarCarruselOtrosNegocios() {
       try {
         const { data, error } = await supabaseClient
@@ -618,8 +618,8 @@
         if (error || !data) return;
 
         const ahora = new Date();
-        const nombreActualNorm = negocioActual && negocioActual.nombre ? negocioActual.nombre.trim().toLowerCase() : "";
 
+        // Obtener fotos de productos por si algún negocio no tiene portada ni logo
         const idsTodos = data.map(n => n.id);
         const { data: prodsData } = await supabaseClient
           .from('productos')
@@ -637,30 +637,18 @@
           });
         }
 
-        const mapaPorNombre = new Map();
-        data.forEach(n => {
-          if (negocioActual && n.slug === negocioActual.slug) return;
-          const nombreNorm = (n.nombre || "").trim().toLowerCase();
-          if (nombreNorm === nombreActualNorm) return;
-          if (n.fecha_vencimiento && new Date(n.fecha_vencimiento) < ahora) return;
-
-          const tieneFoto = Boolean(obtenerPortadaNegocio(n) || obtenerLogoNegocio(n) || mapaImagenesNegocios[n.id]);
-
-          if (!mapaPorNombre.has(nombreNorm)) {
-            mapaPorNombre.set(nombreNorm, n);
-          } else {
-            const existente = mapaPorNombre.get(nombreNorm);
-            const existenteTieneFoto = Boolean(obtenerPortadaNegocio(existente) || obtenerLogoNegocio(existente) || mapaImagenesNegocios[existente.id]);
-            if (!existenteTieneFoto && tieneFoto) {
-              mapaPorNombre.set(nombreNorm, n);
-            }
-          }
+        // Filtrar solo las tiendas vigentes y que no sean la actual
+        const otros = data.filter(n => {
+          if (negocioActual && n.slug === negocioActual.slug) return false;
+          if (n.fecha_vencimiento && new Date(n.fecha_vencimiento) < ahora) return false;
+          if (n.estado_pago === 'eliminado' || (n.slug && n.slug.startsWith('del_'))) return false;
+          return true;
         });
 
-        const otros = Array.from(mapaPorNombre.values());
         if (otros.length === 0) return;
 
-        const listaParaCarrusel = otros.length === 1 ? [...otros, ...otros, ...otros, ...otros] : [...otros, ...otros];
+        // Duplicar lista si hay pocas tiendas para que el carrusel ruede de forma continua
+        const listaParaCarrusel = otros.length < 3 ? [...otros, ...otros, ...otros, ...otros] : [...otros, ...otros];
         const track = document.getElementById("carrusel-track");
 
         let html = '';
@@ -721,6 +709,7 @@
 
         const ahora = new Date();
         listaTodosNegocios = data.filter(n => {
+          if (n.estado_pago === 'eliminado' || (n.slug && n.slug.startsWith('del_'))) return false;
           if (!n.fecha_vencimiento) return true;
           return new Date(n.fecha_vencimiento) >= ahora;
         });
@@ -799,7 +788,7 @@
       renderizarListaDirectorio(filtrados);
     }
 
-    /* GENERADOR DE IMAGEN PERSONALIZADA (SIN DEFORMAR FOTOS - MODO OBJECT-FIT: COVER) */
+    /* GENERADOR DE IMAGEN PERSONALIZADA PARA COMPARTIR */
     function cargarImagenCrossOrigin(url) {
       return new Promise((resolve) => {
         if (!url) { resolve(null); return; }
@@ -811,7 +800,6 @@
       });
     }
 
-    // Dibuja cualquier imagen dentro de un área recortando los bordes sobrantes sin estirar ni deformar nunca
     function dibujarImagenCover(ctx, img, x, y, w, h) {
       const imgRatio = img.width / img.height;
       const boxRatio = w / h;
@@ -856,7 +844,6 @@
       canvas.width = 800;
       canvas.height = 1000;
 
-      // 1. Fondo Base Oscuro Cyberpunk
       const gradBg = ctx.createLinearGradient(0, 0, 800, 1000);
       gradBg.addColorStop(0, "#05070e");
       gradBg.addColorStop(0.55, "#0b1326");
@@ -864,7 +851,6 @@
       ctx.fillStyle = gradBg;
       ctx.fillRect(0, 0, 800, 1000);
 
-      // Cargar Portada y Logo por separado para respetar cada espacio
       const urlPortada = obtenerPortadaNegocio(negocioActual);
       const urlLogo = obtenerLogoNegocio(negocioActual);
       const urlProd = (productos.length > 0 && esImagenValida(productos[0].imagen)) ? productos[0].imagen : "";
@@ -872,7 +858,6 @@
       const imgPortada = await cargarImagenCrossOrigin(urlPortada);
       const imgPerfil = await cargarImagenCrossOrigin(urlLogo || urlPortada || urlProd);
 
-      // 2. ZONA SUPERIOR: FOTO DE PORTADA DE FONDO (Proporción exacta sin deformar)
       ctx.save();
       ctx.beginPath();
       ctx.roundRect ? ctx.roundRect(24, 24, 752, 280, [24, 24, 0, 0]) : ctx.rect(24, 24, 752, 280);
@@ -880,7 +865,6 @@
 
       if (imgPortada) {
         dibujarImagenCover(ctx, imgPortada, 24, 24, 752, 280);
-        // Oscurecido gradual suave para que resalte el perfil y el diseño
         const gradPortada = ctx.createLinearGradient(0, 24, 0, 304);
         gradPortada.addColorStop(0, "rgba(5, 7, 14, 0.10)");
         gradPortada.addColorStop(0.65, "rgba(5, 7, 14, 0.45)");
@@ -888,7 +872,6 @@
         ctx.fillStyle = gradPortada;
         ctx.fillRect(24, 24, 752, 280);
       } else {
-        // Si no subió portada, ponemos un diseño de luces neón elegante en el encabezado
         const gradNoBanner = ctx.createLinearGradient(24, 24, 776, 304);
         gradNoBanner.addColorStop(0, "#0f172a");
         gradNoBanner.addColorStop(0.5, "#1e1b4b");
@@ -898,7 +881,6 @@
       }
       ctx.restore();
 
-      // Línea divisoria brillante debajo de la portada
       ctx.strokeStyle = "rgba(245, 158, 11, 0.35)";
       ctx.lineWidth = 2;
       ctx.beginPath();
@@ -906,12 +888,10 @@
       ctx.lineTo(776, 304);
       ctx.stroke();
 
-      // 3. CÍRCULO DE FOTO DE PERFIL (En el centro pisando el borde de la portada, sin deformar)
       const cx = 400;
       const cy = 275;
       const radio = 78;
 
-      // Sombra y anillo exterior oscuro del avatar
       ctx.save();
       ctx.beginPath();
       ctx.arc(cx, cy, radio + 8, 0, Math.PI * 2);
@@ -940,20 +920,17 @@
         ctx.restore();
       }
 
-      // Anillo dorado neón alrededor del círculo de perfil
       ctx.beginPath();
       ctx.arc(cx, cy, radio, 0, Math.PI * 2);
       ctx.lineWidth = 5;
       ctx.strokeStyle = "#fbbf24";
       ctx.stroke();
 
-      // 4. NOMBRE DEL NEGOCIO Y CATEGORÍA
       const esOfertazoAdmin = (negocioActual && negocioActual.slug === 'ofertazo');
       const nombreTexto = (negocioActual ? negocioActual.nombre : "OFERTAZO.CA").toUpperCase();
 
       ctx.fillStyle = "#fbbf24";
       ctx.textAlign = "center";
-      // Ajuste dinámico de tamaño de fuente si el nombre es muy largo
       let fontSizeNombre = 46;
       ctx.font = `900 ${fontSizeNombre}px 'Orbitron', sans-serif`;
       while (ctx.measureText(nombreTexto).width > 700 && fontSizeNombre > 26) {
@@ -962,7 +939,6 @@
       }
       ctx.fillText(nombreTexto, 400, 412);
 
-      // Píldora de Categoría / Actividad
       const subtitulo = esOfertazoAdmin 
         ? "🚀 PLATAFORMA DE CATÁLOGOS & TIENDAS ONLINE" 
         : `⚡ ${(negocioActual.tipo || "CATÁLOGO DIGITAL & PEDIDOS").toUpperCase()} ⚡`;
@@ -971,8 +947,6 @@
       ctx.font = "800 20px 'Plus Jakarta Sans', sans-serif";
       ctx.fillText(subtitulo, 400, 450);
 
-      // 5. MITAD INFERIOR: BLOQUE ESTRUCTURADO DEL QR Y DATOS DE PEDIDO
-      // Panel contenedor inferior
       ctx.fillStyle = "rgba(15, 23, 42, 0.75)";
       ctx.strokeStyle = "rgba(245, 158, 11, 0.3)";
       ctx.lineWidth = 2;
@@ -981,7 +955,6 @@
       ctx.fill();
       ctx.stroke();
 
-      // Marco blanco del QR centrado en la mitad de abajo
       const enlaceLimpio = obtenerEnlaceLimpio();
       const qrCanvas = await generarQREnCanvas(enlaceLimpio);
 
@@ -994,7 +967,6 @@
         ctx.drawImage(qrCanvas, 280, 525, 240, 240);
       }
 
-      // Llamado a la acción y Dirección debajo del QR
       ctx.fillStyle = "#ffffff";
       ctx.font = "800 25px 'Plus Jakarta Sans', sans-serif";
       ctx.fillText("¡ESCANEA EL QR O ENTRA AL LINK PARA PEDIR!", 400, 828);
@@ -1004,7 +976,6 @@
       const dirTexto = negocioActual && negocioActual.direccion ? `📍 ${negocioActual.direccion}` : "📍 Ciego de Ávila • Pedidos por WhatsApp";
       ctx.fillText(dirTexto, 400, 868);
 
-      // 6. Marco Exterior Neón General y Pie de Página
       ctx.lineWidth = 6;
       ctx.strokeStyle = "#f59e0b";
       ctx.beginPath();
@@ -1018,7 +989,6 @@
       return canvas;
     }
 
-    /* COMPARTIR CON IMAGEN DEL NEGOCIO ACTUAL + TEXTO + LINK */
     async function compartirConImagenNegocio() {
       const btn1 = document.getElementById("btn-wa-con-foto");
       const btn2 = document.getElementById("btn-share-qr-img");
@@ -1061,7 +1031,6 @@
       if (btn2) btn2.innerHTML = '<i class="fa-brands fa-whatsapp text-sm"></i> Enviar con Foto';
     }
 
-    /* MODAL QR */
     function abrirModalQR() {
       cerrarCompartir();
       if (!negocioActual) return;
