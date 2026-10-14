@@ -133,7 +133,7 @@
               <i id="icono-ojo-pin" class="fa-solid fa-eye"></i>
             </button>
           </div>
-          <p class="text-[10px] text-slate-400">Puedes cambiar tu contraseña aquí cuando quieras y presionar "Guardar Cambios".</p>
+          <p class="text-[10px] text-slate-400">Puedes cambiar tu contraseña personal aquí cuando quieras y presionar "Guardar Cambios".</p>
         </div>
 
         <!-- Cambio de Logo y Portada -->
@@ -268,7 +268,8 @@
 
       const pinReal = obtenerPinNegocio();
 
-      if ((pinReal !== "" && pinIngresado === pinReal) || pinIngresado === "0110") {
+      // Solo acepta exclusivamente la contraseña personal configurada para este negocio
+      if (pinReal !== "" && pinIngresado === pinReal) {
         mostrarPanel();
       } else {
         alert("Contraseña incorrecta. Inténtalo nuevamente.");
@@ -606,7 +607,8 @@
 
       const pinReal = obtenerPinNegocio();
 
-      if ((pinReal === "" || pinConfirm.trim() !== pinReal) && pinConfirm.trim() !== "0110") {
+      // Solo permite eliminar si coincide exactamente con el PIN propio del negocio
+      if (pinReal === "" || pinConfirm.trim() !== pinReal) {
         alert("Contraseña incorrecta.");
         return;
       }
