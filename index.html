@@ -11,6 +11,34 @@
   <meta id="og-desc" property="og:description" content="Explora tiendas, menús y haz tus pedidos a domicilio en Ciego de Ávila.">
   <meta id="og-image" property="og:image" content="https://qhkqznpgjirvnndriehr.supabase.co/storage/v1/object/public/imagenes/ofertazo_promo.jpg">
 
+  <!-- SCRIPT DE PROTECCIÓN ANTI-COPIA Y ANTI-INSPECCIÓN -->
+  <script>
+    // 1. Bloquear Clic Derecho
+    document.addEventListener('contextmenu', event => event.preventDefault());
+
+    // 2. Bloquear F12, Ctrl+U (Ver código), Ctrl+Shift+I (Inspeccionar), Ctrl+S (Guardar)
+    document.addEventListener('keydown', function (event) {
+      if (
+        event.key === 'F12' ||
+        (event.ctrlKey && event.shiftKey && (event.key === 'I' || event.key === 'J' || event.key === 'C')) ||
+        (event.ctrlKey && (event.key === 'U' || event.key === 's' || event.key === 'S'))
+      ) {
+        event.preventDefault();
+        return false;
+      }
+    });
+
+    // 3. Sistema Anti-Debugger (Congela la web si intentan abrir inspección de código)
+    setInterval(function() {
+      const antes = performance.now();
+      debugger;
+      const despues = performance.now();
+      if (despues - antes > 100) {
+        document.body.innerHTML = "<h1 style='color:red;text-align:center;margin-top:20vh;font-family:sans-serif;'>⚠️ Acceso protegido.</h1>";
+      }
+    }, 1000);
+  </script>
+
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
