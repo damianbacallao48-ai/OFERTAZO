@@ -240,14 +240,78 @@
       </a>
     </div>
 
-    <!-- BOTÓN AL MURO DE OPINIONES Y SUGERENCIAS (AGREGADO ABAJO) -->
+    <!-- BOTÓN PARA ABRIR EL MURO DE OPINIONES EN VENTANA EMERGENTE (MODAL) -->
     <div class="text-center pt-2 pb-6">
-      <a href="comentarios.html" class="inline-flex items-center justify-center gap-2 bg-slate-900 border border-amber-500/40 hover:border-amber-400 text-amber-300 hover:text-white px-4 py-2.5 rounded-2xl text-xs font-bold transition shadow-md active:scale-95">
+      <button onclick="abrirModalOpiniones()" class="inline-flex items-center justify-center gap-2 bg-slate-900 border border-amber-500/40 hover:border-amber-400 text-amber-300 hover:text-white px-4 py-2.5 rounded-2xl text-xs font-bold transition shadow-md active:scale-95">
         <i class="fa-solid fa-comments text-amber-400"></i> ¿Qué te parece OFERTAZO? ¡Déjanos tu idea o comentario! 💬
-      </a>
+      </button>
     </div>
 
   </main>
+
+  <!-- MODAL: MURO DE OPINIONES Y SUGERENCIAS -->
+  <div id="opiniones-modal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 hidden flex flex-col items-center justify-end sm:justify-center p-0 sm:p-4">
+    <div class="cyber-panel w-full max-w-lg rounded-t-3xl sm:rounded-3xl max-h-[92vh] flex flex-col border border-amber-500/40 shadow-2xl overflow-hidden">
+      
+      <div class="p-4 border-b border-slate-800 flex justify-between items-center bg-[#070b16]">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-xl bg-amber-500 text-slate-950 flex items-center justify-center font-black text-sm">
+            <i class="fa-solid fa-comments"></i>
+          </div>
+          <div>
+            <h2 class="text-xs font-black text-amber-400 font-cyber uppercase">MURO DE OPINIONES</h2>
+            <p class="text-[10px] text-slate-400">Ayúdanos a mejorar OFERTAZO</p>
+          </div>
+        </div>
+        <button onclick="cerrarModalOpiniones()" class="text-slate-400 hover:text-white text-xl p-1">✕</button>
+      </div>
+
+      <div class="p-4 overflow-y-auto flex-1 space-y-4">
+        
+        <!-- Mensaje de Lanzamiento -->
+        <div class="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-3.5 space-y-1.5">
+          <span class="text-[9px] font-black uppercase tracking-widest text-emerald-400 bg-emerald-950/80 border border-emerald-800/60 px-2 py-0.5 rounded-full font-cyber">
+            🌱 Fase de Lanzamiento
+          </span>
+          <h3 class="text-xs font-bold text-white">¡Estamos comenzando este sueño en Ciego de Ávila!</h3>
+          <p class="text-[11px] text-slate-300 leading-relaxed">
+            Cada comentario o idea que nos dejes aquí es recibida con los brazos abiertos para hacer que esta plataforma crezca y les sirva mejor a todos. ¡Gracias por el apoyo! ❤️
+          </p>
+        </div>
+
+        <!-- Formulario para dejar comentario -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-3.5 space-y-2.5">
+          <h3 class="text-[11px] font-black text-amber-300 font-cyber uppercase flex items-center gap-1.5">
+            <i class="fa-solid fa-pen text-cyan-400"></i> Deja tu idea o comentario
+          </h3>
+          <div>
+            <label class="text-[9px] text-slate-400 font-bold uppercase">Tu Nombre / Negocio:</label>
+            <input id="op-nombre" type="text" placeholder="Ej. Carlos (Cliente)" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-white outline-none focus:border-amber-400 mt-1">
+          </div>
+          <div>
+            <label class="text-[9px] text-slate-400 font-bold uppercase">Tu Mensaje o Sugerencia:</label>
+            <textarea id="op-mensaje" rows="2" placeholder="Ej. Me encanta la plataforma, estaría genial si..." class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-white outline-none focus:border-amber-400 resize-none mt-1"></textarea>
+          </div>
+          <button onclick="enviarComentarioModal()" id="btn-enviar-op" class="w-full btn-neon text-slate-950 font-black py-2.5 rounded-xl text-xs uppercase tracking-wider active:scale-95 transition shadow-lg">
+            Publicar Comentario
+          </button>
+        </div>
+
+        <!-- Lista de opiniones -->
+        <div class="space-y-2">
+          <h3 class="text-[11px] font-black text-white font-cyber uppercase flex justify-between items-center">
+            <span>💬 Opiniones de la Comunidad</span>
+            <span id="op-contador" class="text-[10px] text-amber-400 font-mono">0</span>
+          </h3>
+          <div id="op-lista" class="space-y-2">
+            <div class="text-center py-8 text-slate-500 text-xs">Cargando comentarios...</div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
 
   <!-- MODAL: DIRECTORIO COMPLETO INTERACTIVO -->
   <div id="directory-modal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 hidden flex flex-col items-center justify-end sm:justify-center p-0 sm:p-4">
@@ -477,6 +541,97 @@
     let listaTodosNegocios = [];
     let mapaImagenesNegocios = {};
     let qrInstancia = null;
+
+    function abrirModalOpiniones() {
+      document.getElementById("opiniones-modal").classList.remove("hidden");
+      cargarComentariosModal();
+    }
+
+    function cerrarModalOpiniones() {
+      document.getElementById("opiniones-modal").classList.add("hidden");
+    }
+
+    async function cargarComentariosModal() {
+      const listaEl = document.getElementById("op-lista");
+      const { data, error } = await supabaseClient
+        .from('comentarios')
+        .select('*')
+        .order('id', { ascending: false });
+
+      if (error || !data) {
+        listaEl.innerHTML = '<div class="text-center py-6 text-slate-500 text-xs">Sé el primero en dejar tu comentario.</div>';
+        return;
+      }
+
+      document.getElementById("op-contador").innerText = data.length;
+
+      if (data.length === 0) {
+        listaEl.innerHTML = '<div class="text-center py-6 text-slate-500 text-xs">No hay opiniones aún. ¡Escribe la primera!</div>';
+        return;
+      }
+
+      let html = '';
+      data.forEach(c => {
+        const fecha = new Date(c.created_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+        html += `
+          <div class="bg-slate-950/80 border border-slate-800 p-3 rounded-xl space-y-1.5 shadow-sm">
+            <div class="flex justify-between items-center">
+              <span class="text-xs font-bold text-amber-400 font-cyber truncate">${c.nombre}</span>
+              <span class="text-[9px] text-slate-500">${fecha}</span>
+            </div>
+            <p class="text-[11px] text-slate-200 leading-relaxed">${c.mensaje}</p>
+            <div class="flex justify-end pt-1">
+              <button onclick="darLikeModal(${c.id}, ${c.likes || 0})" class="bg-slate-900 hover:bg-slate-800 text-rose-400 border border-slate-800 px-2 py-0.5 rounded-lg text-[10px] font-bold flex items-center gap-1 active:scale-95 transition">
+                <i class="fa-solid fa-heart"></i> <span>Me gusta (${c.likes || 0})</span>
+              </button>
+            </div>
+          </div>
+        `;
+      });
+      listaEl.innerHTML = html;
+    }
+
+    async function enviarComentarioModal() {
+      const nombre = document.getElementById("op-nombre").value.trim();
+      const mensaje = document.getElementById("op-mensaje").value.trim();
+      const btn = document.getElementById("btn-enviar-op");
+
+      if (!nombre || !mensaje) {
+        alert("Escribe tu nombre y tu mensaje.");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerText = "Publicando...";
+
+      const { error } = await supabaseClient.from('comentarios').insert([{
+        nombre: nombre,
+        mensaje: mensaje,
+        likes: 0
+      }]);
+
+      if (error) {
+        alert("Error al publicar: " + error.message);
+      } else {
+        document.getElementById("op-nombre").value = "";
+        document.getElementById("op-mensaje").value = "";
+        await cargarComentariosModal();
+      }
+
+      btn.disabled = false;
+      btn.innerText = "Publicar Comentario";
+    }
+
+    async function darLikeModal(id, likesActuales) {
+      const { error } = await supabaseClient
+        .from('comentarios')
+        .update({ likes: likesActuales + 1 })
+        .eq('id', id);
+
+      if (!error) {
+        cargarComentariosModal();
+      }
+    }
 
     function esImagenValida(str) {
       if (!str || typeof str !== 'string') return false;
