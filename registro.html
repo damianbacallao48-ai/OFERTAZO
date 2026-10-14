@@ -25,7 +25,7 @@
     <div id="form-registro" class="space-y-3 pt-2">
       <div>
         <label class="text-[11px] font-bold text-slate-400 uppercase">Nombre de tu Negocio *</label>
-        <input id="reg-nombre" type="text" placeholder="Ej. Bar Habana o Pizzería Rossi" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
+        <input id="reg-nombre" type="text" placeholder="Ej. Bar Habana o Pizzería Rossi" oninput="autocompletarSlug(this.value)" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
       </div>
 
       <div>
@@ -43,8 +43,8 @@
           <input id="reg-wa" type="text" placeholder="535XXXXXXX" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400 font-mono">
         </div>
         <div>
-          <label class="text-[11px] font-bold text-slate-400 uppercase">PIN de Acceso (4 dígitos) *</label>
-          <input id="reg-pin" type="password" maxlength="4" placeholder="1234" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-amber-300 outline-none focus:border-amber-400 text-center font-bold tracking-widest">
+          <label class="text-[11px] font-bold text-slate-400 uppercase">PIN / Contraseña *</label>
+          <input id="reg-pin" type="password" placeholder="Mín. 4 dígitos" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-amber-300 outline-none focus:border-amber-400 text-center font-bold tracking-widest">
         </div>
       </div>
 
@@ -67,6 +67,41 @@
       <div>
         <label class="text-[11px] font-bold text-slate-400 uppercase">Dirección en Ciego de Ávila</label>
         <input id="reg-dir" type="text" placeholder="Calle, reparto o punto de referencia" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
+      </div>
+
+      <!-- SUBIDA DE LOGO Y PORTADA -->
+      <div class="bg-slate-950/80 border border-slate-800 rounded-2xl p-3 space-y-2.5">
+        <p class="text-[11px] font-bold text-amber-400 uppercase flex items-center gap-1.5">
+          <i class="fa-solid fa-image"></i> Imagen de tu Negocio (Opcional)
+        </p>
+
+        <div class="grid grid-cols-2 gap-2.5">
+          <!-- Selector de Logo -->
+          <div class="space-y-1.5">
+            <label class="text-[10px] text-slate-400 font-bold uppercase block">Logo de la Tienda:</label>
+            <label for="reg-file-logo" class="cursor-pointer flex flex-col items-center justify-center h-20 rounded-xl border border-dashed border-slate-700 hover:border-amber-400 bg-slate-900 overflow-hidden relative transition">
+              <div id="preview-box-logo" class="text-center p-2">
+                <i class="fa-solid fa-camera text-amber-400 text-sm mb-1"></i>
+                <p class="text-[9px] text-slate-400 leading-tight">Subir Logo</p>
+              </div>
+              <img id="img-preview-logo" class="hidden w-full h-full object-cover" alt="Vista previa logo">
+            </label>
+            <input id="reg-file-logo" type="file" accept="image/*" class="hidden" onchange="mostrarVistaPrevia(this, 'img-preview-logo', 'preview-box-logo')">
+          </div>
+
+          <!-- Selector de Portada -->
+          <div class="space-y-1.5">
+            <label class="text-[10px] text-slate-400 font-bold uppercase block">Foto de Portada:</label>
+            <label for="reg-file-portada" class="cursor-pointer flex flex-col items-center justify-center h-20 rounded-xl border border-dashed border-slate-700 hover:border-amber-400 bg-slate-900 overflow-hidden relative transition">
+              <div id="preview-box-portada" class="text-center p-2">
+                <i class="fa-solid fa-panorama text-cyan-400 text-sm mb-1"></i>
+                <p class="text-[9px] text-slate-400 leading-tight">Subir Portada</p>
+              </div>
+              <img id="img-preview-portada" class="hidden w-full h-full object-cover" alt="Vista previa portada">
+            </label>
+            <input id="reg-file-portada" type="file" accept="image/*" class="hidden" onchange="mostrarVistaPrevia(this, 'img-preview-portada', 'preview-box-portada')">
+          </div>
+        </div>
       </div>
 
       <div class="p-3 bg-amber-500/10 border border-amber-500/30 rounded-2xl text-[11px] text-amber-300 leading-snug">
@@ -104,7 +139,7 @@
           <i class="fa-solid fa-copy"></i> Copiar mis enlaces
         </button>
         <button onclick="irAPanel()" class="w-full bg-amber-500 text-slate-950 font-black py-2.5 rounded-xl text-xs uppercase tracking-wider active:scale-95">
-          Entrar a Mi Panel y Subir Fotos
+          Entrar a Mi Panel y Subir Productos
         </button>
       </div>
     </div>
@@ -117,6 +152,119 @@
 
     let urlClienteFinal = "";
     let urlPanelFinal = "";
+    let slugEditadoManual = false;
+
+    document.getElementById("reg-slug").addEventListener("input", () => {
+      slugEditadoManual = true;
+    });
+
+    function autocompletarSlug(valor) {
+      if (slugEditadoManual) return;
+      const limpio = valor
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+      document.getElementById("reg-slug").value = limpio;
+    }
+
+    function mostrarVistaPrevia(input, idImg, idBox) {
+      if (input.files && input.files[0]) {
+        const url = URL.createObjectURL(input.files[0]);
+        const img = document.getElementById(idImg);
+        const box = document.getElementById(idBox);
+        img.src = url;
+        img.classList.remove("hidden");
+        box.classList.add("hidden");
+      }
+    }
+
+    /* COMPRESIÓN Y SUBIDA BLINDADA DE IMÁGENES */
+    function comprimirImagen(file, maxDimension = 550, calidad = 0.65) {
+      return new Promise((resolve) => {
+        const objectUrl = URL.createObjectURL(file);
+        const img = new Image();
+
+        img.onload = () => {
+          URL.revokeObjectURL(objectUrl);
+          try {
+            const canvas = document.createElement("canvas");
+            let ancho = img.width;
+            let alto = img.height;
+
+            if (ancho > alto) {
+              if (ancho > maxDimension) {
+                alto = Math.round((alto * maxDimension) / ancho);
+                ancho = maxDimension;
+              }
+            } else {
+              if (alto > maxDimension) {
+                ancho = Math.round((ancho * maxDimension) / alto);
+                alto = maxDimension;
+              }
+            }
+
+            canvas.width = ancho;
+            canvas.height = alto;
+            const ctx = canvas.getContext("2d");
+
+            ctx.fillStyle = "#FFFFFF";
+            ctx.fillRect(0, 0, ancho, alto);
+            ctx.drawImage(img, 0, 0, ancho, alto);
+
+            const base64Data = canvas.toDataURL("image/jpeg", calidad);
+
+            canvas.toBlob((blob) => {
+              resolve({ blob: blob, base64: base64Data });
+            }, "image/jpeg", calidad);
+          } catch (err) {
+            console.error("Error procesando imagen:", err);
+            resolve(null);
+          }
+        };
+
+        img.onerror = () => {
+          URL.revokeObjectURL(objectUrl);
+          alert("⚠️ No se pudo leer una de las imágenes seleccionadas. Usa formato JPG o PNG.");
+          resolve(null);
+        };
+
+        img.src = objectUrl;
+      });
+    }
+
+    async function subirArchivoOptimizado(file, slug) {
+      if (!file) return null;
+      try {
+        const optimizado = await comprimirImagen(file);
+        if (!optimizado) return null;
+
+        const randomStr = Math.random().toString(36).substring(2, 7);
+        const fileName = `${slug}_${Date.now()}_${randomStr}.jpg`;
+
+        if (optimizado.blob) {
+          const { data, error } = await supabaseClient.storage
+            .from('imagenes')
+            .upload(fileName, optimizado.blob, {
+              contentType: 'image/jpeg',
+              upsert: true
+            });
+
+          if (!error && data) {
+            const { data: pub } = supabaseClient.storage.from('imagenes').getPublicUrl(fileName);
+            if (pub && pub.publicUrl) {
+              return pub.publicUrl;
+            }
+          }
+        }
+
+        return optimizado.base64;
+      } catch (err) {
+        console.error("Fallo al subir imagen:", err);
+        return null;
+      }
+    }
 
     async function registrarNegocio() {
       const nombre = document.getElementById("reg-nombre").value.trim();
@@ -133,32 +281,54 @@
       }
 
       if (pin.length < 4) {
-        alert("El PIN debe tener 4 dígitos.");
+        alert("El PIN o contraseña debe tener al menos 4 caracteres.");
         return;
       }
 
       const btn = document.getElementById("btn-reg");
-      btn.innerText = "Creando catálogo...";
       btn.disabled = true;
+
+      // Subir Logo y Portada si el usuario seleccionó archivos
+      let logoUrl = null;
+      let portadaUrl = null;
+
+      const fileLogo = document.getElementById("reg-file-logo").files[0];
+      if (fileLogo) {
+        btn.innerText = "Subiendo logo...";
+        logoUrl = await subirArchivoOptimizado(fileLogo, slug);
+      }
+
+      const filePortada = document.getElementById("reg-file-portada").files[0];
+      if (filePortada) {
+        btn.innerText = "Subiendo portada...";
+        portadaUrl = await subirArchivoOptimizado(filePortada, slug);
+      }
+
+      btn.innerText = "Creando catálogo...";
 
       // Calcular fecha de vencimiento a 10 días a partir de hoy
       const fechaVence = new Date();
       fechaVence.setDate(fechaVence.getDate() + 10);
 
+      const nuevoNegocio = {
+        nombre,
+        slug,
+        telefono_whatsapp: wa,
+        pin_admin: pin,
+        tipo,
+        costo_mensajeria: fee,
+        direccion: dir,
+        activo: true,
+        estado_pago: 'prueba',
+        fecha_vencimiento: fechaVence.toISOString()
+      };
+
+      if (logoUrl) nuevoNegocio.logo_url = logoUrl;
+      if (portadaUrl) nuevoNegocio.portada_url = portadaUrl;
+
       const { data, error } = await supabaseClient
         .from('negocios')
-        .insert([{
-          nombre,
-          slug,
-          telefono_whatsapp: wa,
-          pin_admin: pin,
-          tipo,
-          costo_mensajeria: fee,
-          direccion: dir,
-          activo: true,
-          estado_pago: 'prueba',
-          fecha_vencimiento: fechaVence.toISOString()
-        }])
+        .insert([nuevoNegocio])
         .select();
 
       btn.innerText = "Crear Mi Catálogo Ahora";
