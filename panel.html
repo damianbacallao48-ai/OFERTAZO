@@ -235,7 +235,7 @@
 
     let negocioActual = null;
     let productos = [];
-    let idProductoEditando = null; // Variable para controlar si se está editando un producto
+    let idProductoEditando = null;
 
     async function init() {
       sessionStorage.clear();
@@ -260,7 +260,8 @@
       ).trim();
     }
 
-    function verificarPIN() {
+    // FUNCIÓN DE VERIFICACIÓN CONECTADA AL BACKEND SEGURO EN TERMUX
+    async function verificarPIN() {
       if (!negocioActual) {
         alert("Cargando datos del negocio, espera un momento...");
         return;
@@ -272,12 +273,27 @@
         return;
       }
 
-      const pinReal = obtenerPinNegocio();
+      try {
+        const response = await fetch('http://localhost:3000/api/tienda/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ slug: TIENDA_SLUG, pin: pinIngresado })
+        });
 
-      if (pinReal !== "" && pinIngresado === pinReal) {
-        mostrarPanel();
-      } else {
-        alert("Contraseña incorrecta. Inténtalo nuevamente.");
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          sessionStorage.setItem("tienda_token", data.token);
+          negocioActual = data.negocio;
+          mostrarPanel();
+        } else {
+          alert(data.message || "Contraseña incorrecta. Inténtalo nuevamente.");
+        }
+      } catch (err) {
+        console.error("Error conectando con el backend:", err);
+        alert("⚠️ No se pudo conectar con el servidor backend en Termux. Asegúrate de que 'node server.js' esté activo.");
       }
     }
 
