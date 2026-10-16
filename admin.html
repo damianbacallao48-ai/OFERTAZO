@@ -80,16 +80,37 @@
     const SUPABASE_KEY = "sb_publishable_Ih_3RgWJTptRasXqF9UcxQ_eTkkw7j-";
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    const PIN_MAESTRO = "0110";
     let negocios = [];
 
-    function desbloquearAdmin() {
+    // Función conectada al backend seguro en Termux
+    async function desbloquearAdmin() {
       const pin = document.getElementById("super-pin").value.trim();
-      if (pin === PIN_MAESTRO) {
-        sessionStorage.setItem("superadmin_ok", "1");
-        mostrarAdmin();
-      } else {
-        alert("PIN Maestro incorrecto.");
+      if (!pin) {
+        alert("Por favor ingresa el PIN Maestro.");
+        return;
+      }
+
+      try {
+        const response = await fetch('http://localhost:3000/api/admin/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ pin: pin })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          sessionStorage.setItem("superadmin_token", data.token);
+          sessionStorage.setItem("superadmin_ok", "1");
+          mostrarAdmin();
+        } else {
+          alert(data.message || "PIN Maestro incorrecto.");
+        }
+      } catch (err) {
+        console.error("Error conectando con el backend:", err);
+        alert("⚠️ No se pudo conectar con el servidor backend en Termux. Asegúrate de que 'node server.js' esté activo.");
       }
     }
 
@@ -222,7 +243,6 @@
       }
 
       try {
-        // 1. Primero eliminar todos los productos asociados a este negocio para evitar bloqueo por llave foránea
         const { error: errProd } = await supabaseClient
           .from('productos')
           .delete()
@@ -232,7 +252,6 @@
           console.warn("Aviso al borrar productos:", errProd.message);
         }
 
-        // 2. Eliminar el negocio
         const { data: borrados, error: errNeg } = await supabaseClient
           .from('negocios')
           .delete()
