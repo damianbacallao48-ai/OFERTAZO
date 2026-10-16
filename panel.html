@@ -156,9 +156,14 @@
 
     <!-- SECCIÓN 2: AGREGAR NUEVO PRODUCTO / ARTÍCULO (PESTAÑA 2) -->
     <section id="seccion-panel-productos" class="hidden bg-[#0b1326] border border-slate-800 rounded-2xl p-4 space-y-3.5 shadow-xl">
-      <h2 class="text-xs font-black text-emerald-400 font-cyber flex items-center gap-1.5">
-        <i class="fa-solid fa-plus-circle text-emerald-400"></i> AGREGAR NUEVO PRODUCTO / ARTÍCULO
-      </h2>
+      <div class="flex justify-between items-center">
+        <h2 id="titulo-form-producto" class="text-xs font-black text-emerald-400 font-cyber flex items-center gap-1.5">
+          <i class="fa-solid fa-plus-circle text-emerald-400"></i> AGREGAR NUEVO PRODUCTO / ARTÍCULO
+        </h2>
+        <button id="btn-cancelar-edicion" onclick="cancelarEdicionProducto()" class="hidden text-[10px] text-amber-400 bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 rounded-lg font-bold">
+          Cancelar Edición
+        </button>
+      </div>
 
       <div class="space-y-2.5 text-xs">
         <div>
@@ -187,7 +192,7 @@
           <input id="prod-file" type="file" accept="image/*" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-1.5 text-xs text-slate-400 file:mr-2 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:bg-emerald-500 file:text-slate-950 file:font-bold">
         </div>
 
-        <button onclick="crearProducto()" id="btn-crear-prod" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-2.5 rounded-xl text-xs uppercase tracking-wider active:scale-95 transition shadow-lg">
+        <button onclick="guardarOActualizarProducto()" id="btn-crear-prod" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-2.5 rounded-xl text-xs uppercase tracking-wider active:scale-95 transition shadow-lg">
           Publicar Artículo
         </button>
       </div>
@@ -230,6 +235,7 @@
 
     let negocioActual = null;
     let productos = [];
+    let idProductoEditando = null; // Variable para controlar si se está editando un producto
 
     async function init() {
       sessionStorage.clear();
@@ -420,7 +426,6 @@
           }
         }
 
-        // Respaldo garantizado en Base64 ligero si Storage falla
         return optimizado.base64;
       } catch (err) {
         console.error("Fallo al procesar imagen:", err);
@@ -525,7 +530,10 @@
               <button onclick="alternarDisponible(${p.id}, ${p.disponible !== false})" class="text-[10px] px-2 py-1 rounded-lg font-bold ${p.disponible !== false ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-red-950 text-red-400 border border-red-800'}">
                 ${p.disponible !== false ? 'Disponible' : 'Agotado'}
               </button>
-              <button onclick="eliminarProducto(${p.id})" class="text-slate-500 hover:text-red-400 p-1">
+              <button onclick="prepararEdicionProducto(${p.id})" class="bg-amber-500/20 text-amber-400 hover:bg-amber-500/30 p-1.5 rounded-lg text-xs border border-amber-500/30" title="Editar Producto">
+                <i class="fa-solid fa-pen-to-square"></i>
+              </button>
+              <button onclick="eliminarProducto(${p.id})" class="text-slate-500 hover:text-red-400 p-1" title="Eliminar">
                 <i class="fa-solid fa-trash"></i>
               </button>
             </div>
@@ -535,7 +543,52 @@
       listEl.innerHTML = html;
     }
 
-    async function crearProducto() {
+    /* FUNCIÓN PARA PREPARAR LA EDICIÓN DE UN PRODUCTO */
+    function prepararEdicionProducto(id) {
+      const prod = productos.find(item => item.id === id);
+      if (!prod) return;
+
+      idProductoEditando = id;
+
+      // Cambiar a la pestaña de productos automáticamente
+      cambiarPestanaPanel('productos');
+
+      // Rellenar el formulario con los datos actuales
+      document.getElementById("prod-nombre").value = prod.nombre || "";
+      document.getElementById("prod-precio").value = prod.precio || "";
+      document.getElementById("prod-categoria").value = prod.categoria || "";
+      document.getElementById("prod-desc").value = prod.descripcion || "";
+      document.getElementById("prod-file").value = "";
+
+      // Cambiar textos y botones visualmente
+      document.getElementById("titulo-form-producto").innerHTML = `<i class="fa-solid fa-pen-to-square text-amber-400"></i> EDITAR PRODUCTO / ARTÍCULO`;
+      document.getElementById("btn-cancelar-edicion").classList.remove("hidden");
+      
+      const btnAccion = document.getElementById("btn-crear-prod");
+      btnAccion.innerText = "Guardar Cambios del Artículo";
+      btnAccion.className = "w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-2.5 rounded-xl text-xs uppercase tracking-wider active:scale-95 transition shadow-lg";
+
+      // Desplazarse suavemente hacia arriba
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function cancelarEdicionProducto() {
+      idProductoEditando = null;
+      document.getElementById("prod-nombre").value = "";
+      document.getElementById("prod-precio").value = "";
+      document.getElementById("prod-categoria").value = "";
+      document.getElementById("prod-desc").value = "";
+      document.getElementById("prod-file").value = "";
+
+      document.getElementById("titulo-form-producto").innerHTML = `<i class="fa-solid fa-plus-circle text-emerald-400"></i> AGREGAR NUEVO PRODUCTO / ARTÍCULO`;
+      document.getElementById("btn-cancelar-edicion").classList.add("hidden");
+
+      const btnAccion = document.getElementById("btn-crear-prod");
+      btnAccion.innerText = "Publicar Artículo";
+      btnAccion.className = "w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-2.5 rounded-xl text-xs uppercase tracking-wider active:scale-95 transition shadow-lg";
+    }
+
+    async function guardarOActualizarProducto() {
       const nombre = document.getElementById("prod-nombre").value.trim();
       const precio = parseFloat(document.getElementById("prod-precio").value);
       const categoria = document.getElementById("prod-categoria").value.trim().toUpperCase() || 'GENERAL';
@@ -556,37 +609,61 @@
         const resultadoImg = await subirArchivoOptimizado(fileInput.files[0]);
         if (!resultadoImg) {
           btn.disabled = false;
-          btn.innerText = "Publicar Artículo";
+          btn.innerText = idProductoEditando ? "Guardar Cambios del Artículo" : "Publicar Artículo";
           return;
         }
         imagenUrl = resultadoImg;
       }
 
-      btn.innerText = "Publicando artículo...";
-
-      const { error } = await supabaseClient.from('productos').insert([{
-        negocio_id: negocioActual.id,
+      const datosProducto = {
         nombre: nombre,
         precio: precio,
         categoria: categoria,
-        descripcion: desc,
-        imagen: imagenUrl,
-        disponible: true
-      }]);
+        descripcion: desc
+      };
 
-      if (error) {
-        alert("Error al publicar: " + error.message);
+      if (imagenUrl) {
+        datosProducto.imagen = imagenUrl;
+      }
+
+      if (idProductoEditando) {
+        // --- MODO ACTUALIZACIÓN ---
+        btn.innerText = "Actualizando artículo...";
+        const { error } = await supabaseClient
+          .from('productos')
+          .update(datosProducto)
+          .eq('id', idProductoEditando);
+
+        if (error) {
+          alert("Error al actualizar: " + error.message);
+        } else {
+          alert("¡Artículo actualizado correctamente!");
+          cancelarEdicionProducto();
+          await cargarProductos();
+        }
       } else {
-        document.getElementById("prod-nombre").value = "";
-        document.getElementById("prod-precio").value = "";
-        document.getElementById("prod-desc").value = "";
-        fileInput.value = "";
-        await cargarProductos();
-        alert("¡Artículo publicado exitosamente!");
+        // --- MODO CREACIÓN NUEVA ---
+        btn.innerText = "Publicando artículo...";
+        datosProducto.negocio_id = negocioActual.id;
+        datosProducto.disponible = true;
+        if (!imagenUrl) datosProducto.imagen = "";
+
+        const { error } = await supabaseClient.from('productos').insert([datosProducto]);
+
+        if (error) {
+          alert("Error al publicar: " + error.message);
+        } else {
+          document.getElementById("prod-nombre").value = "";
+          document.getElementById("prod-precio").value = "";
+          document.getElementById("prod-desc").value = "";
+          fileInput.value = "";
+          await cargarProductos();
+          alert("¡Artículo publicado exitosamente!");
+        }
       }
 
       btn.disabled = false;
-      btn.innerText = "Publicar Artículo";
+      btn.innerText = idProductoEditando ? "Guardar Cambios del Artículo" : "Publicar Artículo";
     }
 
     async function alternarDisponible(id, estadoActual) {
