@@ -340,7 +340,8 @@
         return;
       }
 
-      const base = window.location.origin + window.location.pathname.replace('registro.html', '');
+      // Enlace base limpio adaptado al nuevo dominio raíz de GitHub Pages
+      const base = window.location.origin + "/";
       urlClienteFinal = `${base}index.html?tienda=${slug}`;
       urlPanelFinal = `${base}panel.html?tienda=${slug}`;
 
