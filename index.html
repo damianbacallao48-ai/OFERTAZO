@@ -418,17 +418,23 @@
       window.location.href = "index.html";
     }
 
-            // Función de compartir ultra limpia y sin duplicar enlaces
+              // Función de compartir nativa corregida (abre tus apps sin duplicar enlaces)
     function compartirPlataforma() {
-      const textoCompartir = "🔥 *OFERTAZO.CA - Catálogo Digital & Directorio Comercial*\n\n¡Explora tiendas, menús y haz tus pedidos a domicilio en Ciego de Ávila!\n\n👉 Entra aquí: https://ofertazo-cuba.github.io/";
+      const urlCompartir = "https://ofertazo-cuba.github.io/";
+      const textoCompartir = "🔥 *OFERTAZO.CA - Catálogo Digital & Directorio Comercial*\n\n¡Explora tiendas, menús y haz tus pedidos a domicilio en Ciego de Ávila!\n\n👉 Entra aquí: " + urlCompartir;
 
-      navigator.clipboard.writeText(textoCompartir).then(() => {
-        alert("¡Enlace copiado! Ya puedes pegarlo en WhatsApp o tus redes.");
-      }).catch(() => {
-        // Fallback por si acaso
-        prompt("Copia este enlace para compartir:", "https://ofertazo-cuba.github.io/");
-      });
+      if (navigator.share) {
+        navigator.share({
+          title: 'OFERTAZO - Directorio Comercial',
+          text: textoCompartir
+          // Omitimos pasar la 'url' por separado aquí para evitar que el sistema la duplique automáticamente
+        }).catch(() => {});
+      } else {
+        navigator.clipboard.writeText(textoCompartir);
+        alert("¡Enlace copiado al portapapeles!");
+      }
     }
+
 
 
 
