@@ -39,30 +39,29 @@
       </a>
     </header>
 
-    <!-- NUEVA SECCIÓN: PERSONALIZACIÓN DE LA PLATAFORMA (LOGO PRINCIPAL) -->
+    <!-- SECCIÓN: SUBIR LOGO DE LA PLATAFORMA DESDE LA GALERÍA -->
     <section class="bg-slate-900 border border-amber-500/40 rounded-3xl p-4 shadow-xl space-y-3">
       <div class="flex items-center gap-2 border-b border-slate-800 pb-2">
         <i class="fa-solid fa-image text-amber-400 text-lg"></i>
         <div>
           <h3 class="text-xs font-black text-white uppercase">Logo / Foto de la Página Principal</h3>
-          <p class="text-[10px] text-slate-400">Aparece al lado de OFERTAZO en el inicio</p>
+          <p class="text-[10px] text-slate-400">Sube tu logo directo desde la galería de tu dispositivo</p>
         </div>
       </div>
 
-      <div class="space-y-2.5 pt-1">
+      <div class="space-y-3 pt-1">
         <div class="flex items-center gap-3">
-          <div id="preview-logo-box" class="w-12 h-12 rounded-2xl bg-slate-950 border border-amber-500/50 flex items-center justify-center overflow-hidden shrink-0">
-            <i class="fa-solid fa-store text-amber-400" id="preview-icon"></i>
+          <div id="preview-logo-box" class="w-14 h-14 rounded-2xl bg-slate-950 border border-amber-500/50 flex items-center justify-center overflow-hidden shrink-0 shadow-inner">
+            <i class="fa-solid fa-store text-amber-400 text-lg" id="preview-icon"></i>
             <img id="preview-img" class="w-full h-full object-cover hidden" alt="Logo">
           </div>
-          <div class="flex-1">
-            <label class="text-[10px] text-slate-400 font-bold uppercase">URL de la Imagen (Supabase u otro enlace):</label>
-            <input id="input-platform-logo" type="text" placeholder="https://..." oninput="actualizarPreviaLogo(this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400 mt-1">
+          <div class="flex-1 space-y-1">
+            <label class="text-[10px] text-slate-400 font-bold uppercase">Seleccionar imagen de la galería:</label>
+            <input id="input-file-logo" type="file" accept="image/*" onchange="subirLogoGaleria(this)" class="w-full text-xs text-slate-400 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-amber-500 file:text-slate-950 hover:file:bg-amber-400 cursor-pointer">
           </div>
         </div>
-        <button onclick="guardarLogoPlataforma()" class="w-full bg-slate-800 hover:bg-slate-700 text-amber-400 font-bold py-2 rounded-xl text-xs uppercase tracking-wider active:scale-95 transition border border-slate-700">
-          Guardar Logo Principal
-        </button>
+        <input id="input-platform-logo" type="hidden">
+        <div id="status-upload" class="text-[10px] text-cyan-400 text-center font-bold hidden">Subiendo imagen a Supabase...</div>
       </div>
     </section>
 
@@ -185,6 +184,40 @@
       mostrarAdmin();
     }
 
+    async function subirLogoGaleria(input) {
+      if (!input.files || input.files.length === 0) return;
+      const file = input.files[0];
+      const statusEl = document.getElementById("status-upload");
+      statusEl.classList.remove("hidden");
+
+      try {
+        const fileName = `logo_plataforma_${Date.now()}.${file.name.split('.').pop()}`;
+        const { data, error } = await supabaseClient.storage.from('imagenes').upload(fileName, file);
+
+        if (error) throw error;
+
+        const { data: publicUrlData } = supabaseClient.storage.from('imagenes').getPublicUrl(fileName);
+        const urlFinal = publicUrlData.publicUrl;
+
+        document.getElementById("input-platform-logo").value = urlFinal;
+        
+        // Guardar automáticamente en la tabla de configuración
+        await supabaseClient.from('configuracion').upsert({ clave: 'platform_logo', valor: urlFinal });
+
+        const img = document.getElementById("preview-img");
+        const icon = document.getElementById("preview-icon");
+        img.src = urlFinal;
+        img.classList.remove("hidden");
+        icon.classList.add("hidden");
+
+        statusEl.innerText = "¡Logo subido y guardado con éxito!";
+        setTimeout(() => { statusEl.classList.add("hidden"); }, 3000);
+      } catch (err) {
+        alert("Error al subir la imagen: " + err.message);
+        statusEl.classList.add("hidden");
+      }
+    }
+
     function actualizarPreviaLogo(url) {
       const img = document.getElementById("preview-img");
       const icon = document.getElementById("preview-icon");
@@ -192,16 +225,7 @@
         img.src = url;
         img.classList.remove("hidden");
         icon.classList.add("hidden");
-      } else {
-        img.classList.add("hidden");
-        icon.classList.remove("hidden");
       }
-    }
-
-    async function guardarLogoPlataforma() {
-      const url = document.getElementById("input-platform-logo").value.trim();
-      await supabaseClient.from('configuracion').upsert({ clave: 'platform_logo', valor: url });
-      alert("¡Logo principal de la plataforma actualizado con éxito!");
     }
 
     async function cargarNegocios() {
@@ -271,6 +295,7 @@
 
       let html = '';
       data.forEach(c => {
+        const respuestaActual = c.mensaje_admin || c.respuesta || '';
         html += `
           <div class="bg-slate-950 border border-slate-800 rounded-2xl p-3 space-y-2">
             <div class="flex justify-between items-center">
@@ -279,9 +304,8 @@
             </div>
             <p class="text-[11px] text-slate-200">${c.mensaje || c.comentario}</p>
             
-            <!-- Responder comentario -->
             <div class="flex gap-2 pt-1">
-              <input id="resp-${c.id}" type="text" placeholder="Escribir respuesta oficial..." value="${c.respuesta || ''}" class="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-2.5 py-1 text-[11px] text-white outline-none focus:border-cyan-400">
+              <input id="resp-${c.id}" type="text" placeholder="Escribir respuesta oficial..." value="${respuestaActual}" class="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-2.5 py-1 text-[11px] text-white outline-none focus:border-cyan-400">
               <button onclick="responderComentario(${c.id})" class="bg-cyan-600 hover:bg-cyan-500 text-white px-3 py-1 rounded-xl text-[11px] font-bold">Responder</button>
             </div>
           </div>
@@ -292,9 +316,17 @@
 
     async function responderComentario(id) {
       const resp = document.getElementById(`resp-${id}`).value.trim();
-      const { error } = await supabaseClient.from('comentarios').update({ respuesta: resp }).eq('id', id);
-      if (error) alert("Error al responder: " + error.message);
-      else alert("¡Respuesta guardada con éxito!");
+      // Usamos 'mensaje_admin' para prevenir errores de columnas en Supabase
+      const { error } = await supabaseClient.from('comentarios').update({ mensaje_admin: resp }).eq('id', id);
+      if (error) {
+        // Fallback si la columna fuera 'respuesta'
+        const { error: err2 } = await supabaseClient.from('comentarios').update({ respuesta: resp }).eq('id', id);
+        if (err2) {
+          alert("Error al guardar respuesta. Asegúrate de que la tabla 'comentarios' tenga la columna 'mensaje_admin' o 'respuesta'.");
+          return;
+        }
+      }
+      alert("¡Respuesta guardada con éxito!");
     }
 
     async function eliminarComentario(id) {
