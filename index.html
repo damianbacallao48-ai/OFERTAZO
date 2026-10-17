@@ -3,25 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OFERTAZO - Catálogo General de Tiendas</title>
+  <title>OFERTAZO - Online Shopping & Digital Catalog</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen p-4 pb-28 font-sans max-w-lg mx-auto antialiased">
 
-  <!-- ================= VISTA 1: DIRECTORIO GENERAL (PÁGINA PRINCIPAL) ================= -->
-  <div id="vista-directorio">
-    <!-- CABECERA CON TU LOGO OFICIAL -->
-    <header class="text-center py-6 border-b border-slate-800/80 mb-6 space-y-3">
+  <!-- ================= VISTA 1: DIRECTORIO GENERAL CON TU LOGO OFICIAL ================= -->
+  <div id="vista-directorio" class="space-y-4">
+    <!-- CABECERA CON TU LOGO -->
+    <header class="text-center py-5 border-b border-slate-800/80 mb-4 space-y-3">
       <div class="flex justify-center">
-        <div class="w-20 h-20 rounded-3xl bg-slate-900 border border-amber-500/40 flex items-center justify-center shadow-lg shadow-amber-500/10">
-          <i class="fa-solid fa-cube text-3xl text-amber-400"></i>
+        <!-- Contenedor con la estética futurista de tu logo -->
+        <div class="w-24 h-24 rounded-3xl bg-slate-900 border border-amber-500/50 flex items-center justify-center shadow-lg shadow-amber-500/20 overflow-hidden p-2">
+          <!-- Aquí puedes cambiar el enlace de la imagen por la URL de tu logo en GitHub o Supabase si lo subiste -->
+          <div class="text-center">
+            <i class="fa-solid fa-cube text-4xl text-amber-400"></i>
+          </div>
         </div>
       </div>
       <div>
         <h1 class="text-2xl font-black text-white tracking-widest">OFERTAZO</h1>
-        <p class="text-[11px] text-cyan-400 tracking-wider font-semibold uppercase mt-0.5">Online Shopping & Digital Catalog</p>
+        <p class="text-[10px] text-cyan-400 tracking-widest font-bold uppercase mt-0.5">Online Shopping & Digital Catalog</p>
         <p class="text-xs text-slate-400 mt-1">El centro comercial digital de Ciego de Ávila</p>
       </div>
 
@@ -37,13 +41,13 @@
     </header>
 
     <!-- BUSCADOR GENERAL -->
-    <div class="mb-4 relative">
+    <div class="relative">
       <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-500"></i>
       <input id="buscador-general" type="text" placeholder="Buscar tiendas, productos o servicios..." oninput="filtrarDirectorio()" class="w-full bg-slate-900 border border-slate-800 rounded-2xl pl-11 pr-4 py-3 text-xs text-white placeholder-slate-500 outline-none focus:border-amber-400 shadow-inner">
     </div>
 
     <!-- FILTROS DE CATEGORÍAS -->
-    <div class="flex gap-2 overflow-x-auto pb-2 mb-6 scrollbar-none">
+    <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
       <button onclick="cambiarCat('todos')" id="btn-cat-todos" class="px-4 py-1.5 rounded-full text-xs font-bold bg-amber-500 text-slate-950 shrink-0 transition">Todas</button>
       <button onclick="cambiarCat('Gastronomía')" id="btn-cat-Gastronomía" class="px-4 py-1.5 rounded-full text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 shrink-0 transition">🍔 Gastronomía</button>
       <button onclick="cambiarCat('Tecnología')" id="btn-cat-Tecnología" class="px-4 py-1.5 rounded-full text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 shrink-0 transition">📱 Tecnología</button>
@@ -51,8 +55,8 @@
       <button onclick="cambiarCat('Servicios')" id="btn-cat-Servicios" class="px-4 py-1.5 rounded-full text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 shrink-0 transition">⚙️ Servicios</button>
     </div>
 
-    <!-- LISTA DE NEGOCIOS ORDENADOS POR TIPO -->
-    <section class="space-y-3 mb-8">
+    <!-- LISTA DE TIENDAS DISPONIBLES -->
+    <section class="space-y-3 pt-2">
       <div class="flex justify-between items-center px-1">
         <h2 class="text-xs font-black text-white uppercase tracking-wider flex items-center gap-1.5">
           <i class="fa-solid fa-store text-amber-400"></i> Tiendas Disponibles (<span id="total-directorio">0</span>)
@@ -67,8 +71,8 @@
       </div>
     </section>
 
-    <!-- SECCIÓN DE OPINIONES -->
-    <section class="bg-slate-900 border border-slate-800 rounded-3xl p-4 shadow-xl space-y-4 mb-6">
+    <!-- SECCIÓN DE OPINIONES DE LA PLATAFORMA -->
+    <section class="bg-slate-900 border border-slate-800 rounded-3xl p-4 shadow-xl space-y-3 mt-6">
       <div class="flex justify-between items-center">
         <h3 class="text-xs font-black text-amber-400 uppercase flex items-center gap-1.5">
           <i class="fa-solid fa-comments"></i> Opiniones sobre la Plataforma
@@ -77,16 +81,16 @@
           + Dejar Opinión
         </button>
       </div>
-      <div id="lista-opiniones" class="space-y-2.5 max-h-56 overflow-y-auto pr-1">
-        <div class="text-center py-4 text-slate-500 text-xs">Cargando opiniones...</div>
+      <div id="lista-opiniones" class="space-y-2.5 max-h-52 overflow-y-auto pr-1">
+        <div class="text-center py-3 text-slate-500 text-xs">Cargando opiniones...</div>
       </div>
     </section>
   </div>
 
 
-  <!-- ================= VISTA 2: TIENDA INDIVIDUAL (CATÁLOGO DE PRODUCTOS) ================= -->
+  <!-- ================= VISTA 2: TIENDA INDIVIDUAL (ESTÉTICA ORIGINAL) ================= -->
   <div id="vista-tienda" class="hidden space-y-4">
-    <!-- Cabecera de la tienda -->
+    <!-- Cabecera de la tienda con tu estilo original -->
     <div class="flex justify-between items-center py-3 border-b border-slate-800">
       <a href="index.html" class="bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl text-xs text-amber-400 font-bold flex items-center gap-1">
         <i class="fa-solid fa-arrow-left"></i> Volver al Directorio
@@ -96,9 +100,12 @@
       </a>
     </div>
 
-    <!-- Info del Negocio -->
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 text-center space-y-2 shadow-xl">
-      <h1 id="tienda-nombre" class="text-xl font-black text-amber-400">Cargando...</h1>
+    <!-- Info del Negocio (Estética original con tu logo o iniciales) -->
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 text-center space-y-2 shadow-xl">
+      <div class="w-16 h-16 rounded-2xl bg-slate-950 border border-amber-500/30 flex items-center justify-center mx-auto text-amber-400 text-2xl font-black shadow-inner" id="tienda-inicial">
+        <i class="fa-solid fa-store"></i>
+      </div>
+      <h1 id="tienda-nombre" class="text-lg font-black text-amber-400">Cargando...</h1>
       <p id="tienda-desc" class="text-xs text-slate-400">...</p>
     </div>
 
@@ -108,7 +115,7 @@
       <input id="buscador-productos" type="text" placeholder="Buscar producto en esta tienda..." oninput="filtrarProductos()" class="w-full bg-slate-900 border border-slate-800 rounded-2xl pl-11 pr-4 py-3 text-xs text-white placeholder-slate-500 outline-none focus:border-amber-400">
     </div>
 
-    <!-- Listado de productos -->
+    <!-- Listado de productos (Estética original en 2 columnas) -->
     <div id="grid-productos" class="grid grid-cols-2 gap-3">
       <div class="col-span-2 text-center py-10 text-slate-500 text-xs">Cargando productos...</div>
     </div>
@@ -136,19 +143,16 @@
     let listadoNegocios = [];
     let categoriaSeleccionada = 'todos';
     let productosTiendaActual = [];
-    let negocioActualID = null;
 
     const urlParams = new URLSearchParams(window.location.search);
     const slugTienda = urlParams.get('tienda');
 
     window.onload = () => {
       if (slugTienda) {
-        // Si hay parámetro en la URL, mostramos la vista de tienda individual
         document.getElementById("vista-directorio").classList.add("hidden");
         document.getElementById("vista-tienda").classList.remove("hidden");
         cargarTiendaIndividual(slugTienda);
       } else {
-        // Si no, mostramos la página principal con el directorio general por categorías
         document.getElementById("vista-tienda").classList.add("hidden");
         document.getElementById("vista-directorio").classList.remove("hidden");
         cargarDirectorio();
@@ -156,7 +160,7 @@
       }
     };
 
-    // --- FUNCIONES DEL DIRECTORIO GENERAL ---
+    // --- DIRECTORIO GENERAL ---
     async function cargarDirectorio() {
       const { data, error } = await supabaseClient
         .from('negocios')
@@ -185,13 +189,16 @@
       let html = '';
       lista.forEach(t => {
         const cat = t.categoria || 'General';
+        // Mostramos la dirección o ubicación en lugar del teléfono
+        const direccion = t.direccion || t.municipio || 'Ciego de Ávila';
+        
         html += `
           <div class="bg-slate-900 border border-slate-800 hover:border-amber-500/40 rounded-2xl p-4 transition shadow-md flex justify-between items-center">
             <div class="space-y-1">
               <span class="bg-slate-800 text-amber-400 border border-slate-700 text-[9px] font-bold px-2 py-0.5 rounded-full">${cat}</span>
               <h3 class="text-sm font-bold text-white">${t.nombre}</h3>
               <p class="text-[11px] text-slate-400">${t.descripcion || 'Tienda digital en OFERTAZO.'}</p>
-              <p class="text-[10px] text-emerald-400 font-mono"><i class="fa-brands fa-whatsapp"></i> +${t.telefono_whatsapp || ''}</p>
+              <p class="text-[10px] text-cyan-400 font-mono"><i class="fa-solid fa-location-dot"></i> ${direccion}</p>
             </div>
             <a href="index.html?tienda=${t.slug}" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-xs shadow shrink-0 flex items-center gap-1 active:scale-95 transition">
               Visitar <i class="fa-solid fa-arrow-right"></i>
@@ -227,7 +234,7 @@
       renderizarDirectorio(filtrados);
     }
 
-    // --- FUNCIONES DE LA TIENDA INDIVIDUAL ---
+    // --- TIENDA INDIVIDUAL ---
     async function cargarTiendaIndividual(slug) {
       const { data: negocio, error } = await supabaseClient
         .from('negocios')
@@ -241,9 +248,9 @@
         return;
       }
 
-      negocioActualID = negocio.id;
       document.getElementById("tienda-nombre").innerText = negocio.nombre;
       document.getElementById("tienda-desc").innerText = negocio.descripcion || 'Bienvenido a nuestro catálogo digital.';
+      document.getElementById("tienda-inicial").innerHTML = negocio.nombre.charAt(0).toUpperCase();
       
       if (negocio.telefono_whatsapp) {
         document.getElementById("link-whatsapp-tienda").href = `https://wa.me/${negocio.telefono_whatsapp}`;
@@ -296,7 +303,7 @@
       renderizarProductos(filtrados);
     }
 
-    // --- OPINIONES DE LA PLATAFORMA ---
+    // --- OPINIONES ---
     async function cargarOpiniones() {
       const cont = document.getElementById("lista-opiniones");
       try {
@@ -307,7 +314,7 @@
           .limit(10);
 
         if (!data || data.length === 0) {
-          cont.innerHTML = '<div class="text-xs text-slate-500 text-center py-3">Sé el primero en opinar sobre la plataforma.</div>';
+          cont.innerHTML = '<div class="text-xs text-slate-500 text-center py-2">Sé el primero en opinar sobre la plataforma.</div>';
           return;
         }
 
@@ -325,7 +332,7 @@
         });
         cont.innerHTML = html;
       } catch (e) {
-        cont.innerHTML = '<div class="text-xs text-slate-500 text-center py-3">Sin opiniones aún.</div>';
+        cont.innerHTML = '<div class="text-xs text-slate-500 text-center py-2">Sin opiniones aún.</div>';
       }
     }
 
@@ -353,7 +360,7 @@
         .insert([{ nombre, comentario }]);
 
       if (error) {
-        alert("⚠️ Recuerda crear la tabla 'comentarios_plataforma' en Supabase. Error: " + error.message);
+        alert("⚠️ Crea la tabla 'comentarios_plataforma' en Supabase. Error: " + error.message);
       } else {
         alert("¡Opinión publicada con éxito!");
         document.getElementById("input-nombre-op").value = '';
