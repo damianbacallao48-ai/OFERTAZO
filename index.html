@@ -3,31 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OFERTAZO - Online Shopping & Digital Catalog</title>
+  <title>OFERTAZO - Catálogo Digital</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen p-4 pb-28 font-sans max-w-lg mx-auto antialiased">
 
-  <!-- ================= VISTA 1: DIRECTORIO GENERAL ================= -->
+  <!-- ================= VISTA PRINCIPAL (DIRECTORIO + PORTADA) ================= -->
   <div id="vista-directorio" class="space-y-4">
-    <!-- CABECERA CON TU LOGO OFICIAL -->
-    <header class="text-center py-5 border-b border-slate-800/80 mb-4 space-y-3">
+    <!-- PORTADA Y LOGO DE LA PLATAFORMA -->
+    <header class="text-center py-4 border-b border-slate-800/80 mb-4 space-y-3">
       <div class="flex justify-center">
-        <div class="w-24 h-24 rounded-3xl bg-slate-900 border border-amber-500/50 flex items-center justify-center shadow-lg shadow-amber-500/20 overflow-hidden p-2">
-          <i class="fa-solid fa-cube text-4xl text-amber-400"></i>
+        <div class="w-20 h-20 rounded-3xl bg-slate-900 border border-amber-500/40 flex items-center justify-center shadow-lg shadow-amber-500/10 overflow-hidden">
+          <i class="fa-solid fa-cube text-3xl text-amber-400"></i>
         </div>
       </div>
       <div>
-        <h1 class="text-2xl font-black text-white tracking-widest">OFERTAZO</h1>
-        <p class="text-[10px] text-cyan-400 tracking-widest font-bold uppercase mt-0.5">Online Shopping & Digital Catalog</p>
+        <h1 class="text-2xl font-black text-white tracking-wider">OFERTAZO</h1>
+        <p class="text-[10px] text-cyan-400 tracking-wider font-bold uppercase mt-0.5">Online Shopping & Digital Catalog</p>
         <p class="text-xs text-slate-400 mt-1">El centro comercial digital de Ciego de Ávila</p>
       </div>
 
       <div class="flex gap-2 justify-center pt-2">
         <a href="registro.html" target="_blank" class="bg-emerald-600 hover:bg-emerald-500 text-xs px-4 py-2.5 rounded-xl text-white font-bold flex items-center gap-1.5 active:scale-95 shadow transition">
-          <i class="fa-solid fa-store"></i> Crear mi Tienda
+          <i class="fa-solid fa-store"></i> Crear Tienda
         </a>
         <a href="admin.html" target="_blank" class="bg-slate-900 hover:bg-slate-800 text-xs px-4 py-2.5 rounded-xl text-amber-400 border border-amber-500/30 font-bold flex items-center gap-1.5 active:scale-95 shadow transition">
           <i class="fa-solid fa-user-shield"></i> Admin
@@ -43,14 +43,14 @@
 
     <!-- FILTROS DE CATEGORÍAS -->
     <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
-      <button onclick="cambiarCat('todos')" id="btn-cat-todos" class="px-4 py-1.5 rounded-full text-xs font-bold bg-amber-500 text-slate-950 shrink-0 transition">Todas</button>
+      <button onclick="cambiarCat('todos')" id="btn-cat-todos" class="px-4 py-1.5 rounded-full text-xs font-bold bg-amber-500 text-slate-950 shrink-0 transition">🔥 Todos</button>
       <button onclick="cambiarCat('Gastronomía')" id="btn-cat-Gastronomía" class="px-4 py-1.5 rounded-full text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 shrink-0 transition">🍔 Gastronomía</button>
       <button onclick="cambiarCat('Tecnología')" id="btn-cat-Tecnología" class="px-4 py-1.5 rounded-full text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 shrink-0 transition">📱 Tecnología</button>
       <button onclick="cambiarCat('Ropa y Calzado')" id="btn-cat-Ropa y Calzado" class="px-4 py-1.5 rounded-full text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 shrink-0 transition">👕 Ropa y Calzado</button>
       <button onclick="cambiarCat('Servicios')" id="btn-cat-Servicios" class="px-4 py-1.5 rounded-full text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 shrink-0 transition">⚙️ Servicios</button>
     </div>
 
-    <!-- LISTA DE TIENDAS CON LA ESTÉTICA ORIGINAL GRANDE -->
+    <!-- LISTA DE NEGOCIOS (ESTÉTICA ORIGINAL CON TARJETAS HORIZONTALES) -->
     <section class="space-y-3 pt-2">
       <div class="flex justify-between items-center px-1">
         <h2 class="text-xs font-black text-white uppercase tracking-wider flex items-center gap-1.5">
@@ -61,7 +61,7 @@
         </button>
       </div>
 
-      <div id="grid-directorio" class="space-y-4">
+      <div id="grid-directorio" class="space-y-3">
         <div class="text-center py-12 text-slate-500 text-xs">Cargando directorio de tiendas...</div>
       </div>
     </section>
@@ -83,8 +83,9 @@
   </div>
 
 
-  <!-- ================= VISTA 2: TIENDA INDIVIDUAL ================= -->
+  <!-- ================= VISTA 2: TIENDA INDIVIDUAL (ESTÉTICA EXACTA DEL INICIO) ================= -->
   <div id="vista-tienda" class="hidden space-y-4">
+    <!-- Cabecera de la tienda individual -->
     <div class="flex justify-between items-center py-3 border-b border-slate-800">
       <a href="index.html" class="bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl text-xs text-amber-400 font-bold flex items-center gap-1">
         <i class="fa-solid fa-arrow-left"></i> Volver al Directorio
@@ -94,6 +95,7 @@
       </a>
     </div>
 
+    <!-- Banner de la tienda -->
     <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 text-center space-y-2 shadow-xl">
       <div class="w-16 h-16 rounded-2xl bg-slate-950 border border-amber-500/30 flex items-center justify-center mx-auto text-amber-400 text-2xl font-black shadow-inner" id="tienda-inicial">
         <i class="fa-solid fa-store"></i>
@@ -102,18 +104,20 @@
       <p id="tienda-desc" class="text-xs text-slate-400">...</p>
     </div>
 
+    <!-- Buscador de productos -->
     <div class="relative">
       <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-500"></i>
       <input id="buscador-productos" type="text" placeholder="Buscar producto en esta tienda..." oninput="filtrarProductos()" class="w-full bg-slate-900 border border-slate-800 rounded-2xl pl-11 pr-4 py-3 text-xs text-white placeholder-slate-500 outline-none focus:border-amber-400">
     </div>
 
+    <!-- Grid de productos original (2 columnas con diseño limpio) -->
     <div id="grid-productos" class="grid grid-cols-2 gap-3">
       <div class="col-span-2 text-center py-10 text-slate-500 text-xs">Cargando productos...</div>
     </div>
   </div>
 
 
-  <!-- MODAL OPINIÓN -->
+  <!-- MODAL DE OPINIÓN -->
   <div id="modal-opinion" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
     <div class="bg-slate-900 border border-slate-700 rounded-3xl p-5 w-full max-w-xs space-y-3 shadow-2xl">
       <h3 class="text-sm font-black text-white text-center">¿Qué opinas de OFERTAZO?</h3>
@@ -181,27 +185,23 @@
         const cat = t.categoria || 'General';
         const direccion = t.direccion || t.municipio || 'Ciego de Ávila';
         
-        // Estética original con tarjeta grande vertical y botón de visitar abajo o destacado
+        // Estética original exacta de las tarjetas de tiendas
         html += `
-          <div class="bg-slate-900 border border-slate-800 hover:border-amber-500/40 rounded-3xl p-5 transition shadow-xl space-y-3">
+          <div class="bg-slate-900 border border-slate-800 hover:border-amber-500/40 rounded-2xl p-3.5 space-y-2.5 shadow-md">
             <div class="flex justify-between items-start">
-              <div class="space-y-1">
-                <span class="bg-slate-800 text-amber-400 border border-slate-700 text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase">${cat}</span>
-                <h3 class="text-base font-black text-white mt-1">${t.nombre}</h3>
-                <p class="text-xs text-slate-400">${t.descripcion || 'Tienda digital en OFERTAZO.'}</p>
+              <div>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <h3 class="text-sm font-bold text-white">${t.nombre}</h3>
+                  <span class="bg-slate-800 text-amber-400 border border-slate-700 text-[9px] font-bold px-2 py-0.5 rounded-full">${cat}</span>
+                </div>
+                <p class="text-[11px] text-slate-400 mt-0.5">${t.descripcion || 'Tienda digital en OFERTAZO.'}</p>
+                <p class="text-[10px] text-cyan-400 mt-1 font-mono"><i class="fa-solid fa-location-dot"></i> ${direccion}</p>
               </div>
-              <div class="w-12 h-12 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-center text-amber-400 font-bold text-sm shadow">
-                ${t.nombre.charAt(0).toUpperCase()}
+              <div class="flex items-center gap-1.5 shrink-0">
+                <a href="index.html?tienda=${t.slug}" class="p-2 bg-amber-500 text-slate-950 font-bold rounded-xl text-xs flex items-center gap-1 shadow active:scale-95 transition">
+                  Visitar <i class="fa-solid fa-arrow-right"></i>
+                </a>
               </div>
-            </div>
-
-            <div class="flex justify-between items-center pt-2 border-t border-slate-800 text-xs">
-              <span class="text-cyan-400 font-medium flex items-center gap-1">
-                <i class="fa-solid fa-location-dot"></i> ${direccion}
-              </span>
-              <a href="index.html?tienda=${t.slug}" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-5 py-2.5 rounded-xl text-xs shadow active:scale-95 transition flex items-center gap-1.5">
-                Ver Tienda <i class="fa-solid fa-arrow-right"></i>
-              </a>
             </div>
           </div>
         `;
