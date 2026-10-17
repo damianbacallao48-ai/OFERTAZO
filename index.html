@@ -675,15 +675,12 @@
     }
 
     function abrirCompartir() {
-      if (navigator.share) {
-        navigator.share({
-          title: negocioActual ? negocioActual.nombre : 'OFERTAZO',
-          text: '¡Visita este catálogo digital en OFERTAZO!',
-          url: window.location.href
-        }).catch(() => {});
-      } else {
-        alert("Enlace copiado al portapapeles: " + window.location.href);
-      }
+      const nombre = negocioActual ? negocioActual.nombre : 'OFERTAZO';
+      const base = window.location.origin + window.location.pathname;
+      const urlTienda = `${base}?tienda=${negocioActual ? negocioActual.slug : 'ofertazo'}`;
+      
+      const txt = encodeURIComponent(`🔥 ¡Pide en ${nombre}! Catálogo digital directo:\n${urlTienda}`);
+      window.open(`https://api.whatsapp.com/send?text=${txt}`, '_blank');
     }
 
     /* --- GESTIÓN AVANZADA DEL CARRITO --- */
