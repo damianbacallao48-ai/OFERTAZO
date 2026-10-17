@@ -419,17 +419,19 @@
     }
 
               
-    // Función de compartir definitiva (copia limpia al portapapeles)
-    function compartirPlataforma() {
-      const urlCompartir = "https://ofertazo-cuba.github.io/?v=3";
-      const textoCompartir = "🔥 *OFERTAZO.CA - Catálogo Digital & Directorio Comercial*\n\n¡Explora tiendas, menús y haz tus pedidos a domicilio en Ciego de Ávila!\n\n👉 Entra aquí: " + urlCompartir;
-
-      navigator.clipboard.writeText(textoCompartir).then(() => {
-        alert("¡Enlace copiado! Pégalo en WhatsApp para compartir tu plataforma.");
-      }).catch(() => {
-        prompt("Copia este enlace para compartir:", textoCompartir);
-      });
+       function abrirCompartir() {
+      // Función original e intacta de las tiendas individuales
+      if (navigator.share) {
+        navigator.share({
+          title: negocioActual ? negocioActual.nombre : 'OFERTAZO',
+          text: '¡Visita este catálogo digital en OFERTAZO!',
+          url: window.location.href
+        }).catch(() => {});
+      } else {
+        alert("Enlace copiado al portapapeles: " + window.location.href);
+      }
     }
+
 
 
 
