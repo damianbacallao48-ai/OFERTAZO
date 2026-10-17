@@ -10,117 +10,77 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen p-4 pb-28 font-sans max-w-lg mx-auto antialiased">
 
-  <!-- ================= VISTA 1: DIRECTORIO GENERAL CON TU LOGO OFICIAL ================= -->
-  <div id="vista-directorio" class="space-y-4">
-    <!-- CABECERA CON TU LOGO -->
-    <header class="text-center py-5 border-b border-slate-800/80 mb-4 space-y-3">
-      <div class="flex justify-center">
-        <!-- Contenedor con la estética futurista de tu logo -->
-        <div class="w-24 h-24 rounded-3xl bg-slate-900 border border-amber-500/50 flex items-center justify-center shadow-lg shadow-amber-500/20 overflow-hidden p-2">
-          <!-- Aquí puedes cambiar el enlace de la imagen por la URL de tu logo en GitHub o Supabase si lo subiste -->
-          <div class="text-center">
-            <i class="fa-solid fa-cube text-4xl text-amber-400"></i>
-          </div>
-        </div>
+  <!-- CABECERA CON TU LOGO OFICIAL -->
+  <header class="text-center py-6 border-b border-slate-800/80 mb-6 space-y-3">
+    <div class="flex justify-center">
+      <!-- Contenedor del logo con un toque neón sutil acorde a tu imagen -->
+      <div class="w-20 h-20 rounded-3xl bg-slate-900 border border-amber-500/40 flex items-center justify-center shadow-lg shadow-amber-500/10">
+        <i class="fa-solid fa-cube text-3xl text-amber-400"></i>
       </div>
-      <div>
-        <h1 class="text-2xl font-black text-white tracking-widest">OFERTAZO</h1>
-        <p class="text-[10px] text-cyan-400 tracking-widest font-bold uppercase mt-0.5">Online Shopping & Digital Catalog</p>
-        <p class="text-xs text-slate-400 mt-1">El centro comercial digital de Ciego de Ávila</p>
-      </div>
-
-      <!-- Botones principales -->
-      <div class="flex gap-2 justify-center pt-2">
-        <a href="registro.html" target="_blank" class="bg-emerald-600 hover:bg-emerald-500 text-xs px-4 py-2.5 rounded-xl text-white font-bold flex items-center gap-1.5 active:scale-95 shadow transition">
-          <i class="fa-solid fa-store"></i> Crear mi Tienda
-        </a>
-        <a href="admin.html" target="_blank" class="bg-slate-900 hover:bg-slate-800 text-xs px-4 py-2.5 rounded-xl text-amber-400 border border-amber-500/30 font-bold flex items-center gap-1.5 active:scale-95 shadow transition">
-          <i class="fa-solid fa-user-shield"></i> Admin
-        </a>
-      </div>
-    </header>
-
-    <!-- BUSCADOR GENERAL -->
-    <div class="relative">
-      <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-500"></i>
-      <input id="buscador-general" type="text" placeholder="Buscar tiendas, productos o servicios..." oninput="filtrarDirectorio()" class="w-full bg-slate-900 border border-slate-800 rounded-2xl pl-11 pr-4 py-3 text-xs text-white placeholder-slate-500 outline-none focus:border-amber-400 shadow-inner">
+    </div>
+    <div>
+      <h1 class="text-2xl font-black text-white tracking-widest">OFERTAZO</h1>
+      <p class="text-[11px] text-cyan-400 tracking-wider font-semibold uppercase mt-0.5">Online Shopping & Digital Catalog</p>
+      <p class="text-xs text-slate-400 mt-1">El centro comercial digital de Ciego de Ávila</p>
     </div>
 
-    <!-- FILTROS DE CATEGORÍAS -->
-    <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
-      <button onclick="cambiarCat('todos')" id="btn-cat-todos" class="px-4 py-1.5 rounded-full text-xs font-bold bg-amber-500 text-slate-950 shrink-0 transition">Todas</button>
-      <button onclick="cambiarCat('Gastronomía')" id="btn-cat-Gastronomía" class="px-4 py-1.5 rounded-full text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 shrink-0 transition">🍔 Gastronomía</button>
-      <button onclick="cambiarCat('Tecnología')" id="btn-cat-Tecnología" class="px-4 py-1.5 rounded-full text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 shrink-0 transition">📱 Tecnología</button>
-      <button onclick="cambiarCat('Ropa y Calzado')" id="btn-cat-Ropa y Calzado" class="px-4 py-1.5 rounded-full text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 shrink-0 transition">👕 Ropa y Calzado</button>
-      <button onclick="cambiarCat('Servicios')" id="btn-cat-Servicios" class="px-4 py-1.5 rounded-full text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 shrink-0 transition">⚙️ Servicios</button>
-    </div>
-
-    <!-- LISTA DE TIENDAS DISPONIBLES -->
-    <section class="space-y-3 pt-2">
-      <div class="flex justify-between items-center px-1">
-        <h2 class="text-xs font-black text-white uppercase tracking-wider flex items-center gap-1.5">
-          <i class="fa-solid fa-store text-amber-400"></i> Tiendas Disponibles (<span id="total-directorio">0</span>)
-        </h2>
-        <button onclick="cargarDirectorio()" class="text-xs text-cyan-400 font-bold hover:underline">
-          <i class="fa-solid fa-rotate"></i> Actualizar
-        </button>
-      </div>
-
-      <div id="grid-directorio" class="space-y-3">
-        <div class="text-center py-12 text-slate-500 text-xs">Cargando directorio de tiendas...</div>
-      </div>
-    </section>
-
-    <!-- SECCIÓN DE OPINIONES DE LA PLATAFORMA -->
-    <section class="bg-slate-900 border border-slate-800 rounded-3xl p-4 shadow-xl space-y-3 mt-6">
-      <div class="flex justify-between items-center">
-        <h3 class="text-xs font-black text-amber-400 uppercase flex items-center gap-1.5">
-          <i class="fa-solid fa-comments"></i> Opiniones sobre la Plataforma
-        </h3>
-        <button onclick="abrirModalOpinion()" class="text-[11px] text-cyan-400 font-bold hover:underline">
-          + Dejar Opinión
-        </button>
-      </div>
-      <div id="lista-opiniones" class="space-y-2.5 max-h-52 overflow-y-auto pr-1">
-        <div class="text-center py-3 text-slate-500 text-xs">Cargando opiniones...</div>
-      </div>
-    </section>
-  </div>
-
-
-  <!-- ================= VISTA 2: TIENDA INDIVIDUAL (ESTÉTICA ORIGINAL) ================= -->
-  <div id="vista-tienda" class="hidden space-y-4">
-    <!-- Cabecera de la tienda con tu estilo original -->
-    <div class="flex justify-between items-center py-3 border-b border-slate-800">
-      <a href="index.html" class="bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl text-xs text-amber-400 font-bold flex items-center gap-1">
-        <i class="fa-solid fa-arrow-left"></i> Volver al Directorio
+    <!-- Botones principales de acción -->
+    <div class="flex gap-2 justify-center pt-2">
+      <a href="registro.html" target="_blank" class="bg-emerald-600 hover:bg-emerald-500 text-xs px-4 py-2.5 rounded-xl text-white font-bold flex items-center gap-1.5 active:scale-95 shadow transition">
+        <i class="fa-solid fa-store"></i> Crear mi Tienda
       </a>
-      <a id="link-whatsapp-tienda" href="#" target="_blank" class="bg-emerald-600 text-white text-xs px-3 py-1.5 rounded-xl font-bold flex items-center gap-1 shadow">
-        <i class="fa-brands fa-whatsapp"></i> Contactar
+      <a href="admin.html" target="_blank" class="bg-slate-900 hover:bg-slate-800 text-xs px-4 py-2.5 rounded-xl text-amber-400 border border-amber-500/30 font-bold flex items-center gap-1.5 active:scale-95 shadow transition">
+        <i class="fa-solid fa-user-shield"></i> Admin
       </a>
     </div>
+  </header>
 
-    <!-- Info del Negocio (Estética original con tu logo o iniciales) -->
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 text-center space-y-2 shadow-xl">
-      <div class="w-16 h-16 rounded-2xl bg-slate-950 border border-amber-500/30 flex items-center justify-center mx-auto text-amber-400 text-2xl font-black shadow-inner" id="tienda-inicial">
-        <i class="fa-solid fa-store"></i>
-      </div>
-      <h1 id="tienda-nombre" class="text-lg font-black text-amber-400">Cargando...</h1>
-      <p id="tienda-desc" class="text-xs text-slate-400">...</p>
-    </div>
-
-    <!-- Buscador de productos de la tienda -->
-    <div class="relative">
-      <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-500"></i>
-      <input id="buscador-productos" type="text" placeholder="Buscar producto en esta tienda..." oninput="filtrarProductos()" class="w-full bg-slate-900 border border-slate-800 rounded-2xl pl-11 pr-4 py-3 text-xs text-white placeholder-slate-500 outline-none focus:border-amber-400">
-    </div>
-
-    <!-- Listado de productos (Estética original en 2 columnas) -->
-    <div id="grid-productos" class="grid grid-cols-2 gap-3">
-      <div class="col-span-2 text-center py-10 text-slate-500 text-xs">Cargando productos...</div>
-    </div>
+  <!-- BUSCADOR GENERAL -->
+  <div class="mb-4 relative">
+    <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-500"></i>
+    <input id="buscador-general" type="text" placeholder="Buscar tiendas, productos o servicios..." oninput="filtrarDirectorio()" class="w-full bg-slate-900 border border-slate-800 rounded-2xl pl-11 pr-4 py-3 text-xs text-white placeholder-slate-500 outline-none focus:border-amber-400 shadow-inner">
   </div>
 
+  <!-- FILTROS DE CATEGORÍAS -->
+  <div class="flex gap-2 overflow-x-auto pb-2 mb-6 scrollbar-none">
+    <button onclick="cambiarCat('todos')" id="btn-cat-todos" class="px-4 py-1.5 rounded-full text-xs font-bold bg-amber-500 text-slate-950 shrink-0 transition">Todas</button>
+    <button onclick="cambiarCat('Gastronomía')" id="btn-cat-Gastronomía" class="px-4 py-1.5 rounded-full text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 shrink-0 transition">🍔 Gastronomía</button>
+    <button onclick="cambiarCat('Tecnología')" id="btn-cat-Tecnología" class="px-4 py-1.5 rounded-full text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 shrink-0 transition">📱 Tecnología</button>
+    <button onclick="cambiarCat('Ropa y Calzado')" id="btn-cat-Ropa y Calzado" class="px-4 py-1.5 rounded-full text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 shrink-0 transition">👕 Ropa y Calzado</button>
+    <button onclick="cambiarCat('Servicios')" id="btn-cat-Servicios" class="px-4 py-1.5 rounded-full text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 shrink-0 transition">⚙️ Servicios</button>
+  </div>
+
+  <!-- LISTA DE NEGOCIOS DISPONIBLES -->
+  <section class="space-y-3 mb-8">
+    <div class="flex justify-between items-center px-1">
+      <h2 class="text-xs font-black text-white uppercase tracking-wider flex items-center gap-1.5">
+        <i class="fa-solid fa-store text-amber-400"></i> Tiendas Activas (<span id="total-directorio">0</span>)
+      </h2>
+      <button onclick="cargarDirectorio()" class="text-xs text-cyan-400 font-bold hover:underline">
+        <i class="fa-solid fa-rotate"></i> Actualizar
+      </button>
+    </div>
+
+    <div id="grid-directorio" class="space-y-3">
+      <div class="text-center py-12 text-slate-500 text-xs">Cargando directorio de tiendas...</div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN DE OPINIONES DE LA PLATAFORMA -->
+  <section class="bg-slate-900 border border-slate-800 rounded-3xl p-4 shadow-xl space-y-4 mb-6">
+    <div class="flex justify-between items-center">
+      <h3 class="text-xs font-black text-amber-400 uppercase flex items-center gap-1.5">
+        <i class="fa-solid fa-comments"></i> Opiniones sobre la Plataforma
+      </h3>
+      <button onclick="abrirModalOpinion()" class="text-[11px] text-cyan-400 font-bold hover:underline">
+        + Dejar Opinión
+      </button>
+    </div>
+
+    <div id="lista-opiniones" class="space-y-2.5 max-h-56 overflow-y-auto pr-1">
+      <div class="text-center py-4 text-slate-500 text-xs">Cargando opiniones...</div>
+    </div>
+  </section>
 
   <!-- MODAL DE OPINIÓN -->
   <div id="modal-opinion" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
@@ -142,25 +102,21 @@
 
     let listadoNegocios = [];
     let categoriaSeleccionada = 'todos';
-    let productosTiendaActual = [];
 
+    // Soporte opcional por si alguien entra directo a una tienda individual con ?tienda=slug
     const urlParams = new URLSearchParams(window.location.search);
     const slugTienda = urlParams.get('tienda');
 
+    if (slugTienda) {
+      // Si hay parámetro de tienda, redirigimos o cargamos la vista de tienda individual
+      // Puedes mantener tu lógica de tienda individual aquí o dejar que cargue el directorio general.
+    }
+
     window.onload = () => {
-      if (slugTienda) {
-        document.getElementById("vista-directorio").classList.add("hidden");
-        document.getElementById("vista-tienda").classList.remove("hidden");
-        cargarTiendaIndividual(slugTienda);
-      } else {
-        document.getElementById("vista-tienda").classList.add("hidden");
-        document.getElementById("vista-directorio").classList.remove("hidden");
-        cargarDirectorio();
-        cargarOpiniones();
-      }
+      cargarDirectorio();
+      cargarOpiniones();
     };
 
-    // --- DIRECTORIO GENERAL ---
     async function cargarDirectorio() {
       const { data, error } = await supabaseClient
         .from('negocios')
@@ -189,17 +145,15 @@
       let html = '';
       lista.forEach(t => {
         const cat = t.categoria || 'General';
-        // Mostramos la dirección o ubicación en lugar del teléfono
-        const direccion = t.direccion || t.municipio || 'Ciego de Ávila';
-        
         html += `
           <div class="bg-slate-900 border border-slate-800 hover:border-amber-500/40 rounded-2xl p-4 transition shadow-md flex justify-between items-center">
             <div class="space-y-1">
               <span class="bg-slate-800 text-amber-400 border border-slate-700 text-[9px] font-bold px-2 py-0.5 rounded-full">${cat}</span>
               <h3 class="text-sm font-bold text-white">${t.nombre}</h3>
               <p class="text-[11px] text-slate-400">${t.descripcion || 'Tienda digital en OFERTAZO.'}</p>
-              <p class="text-[10px] text-cyan-400 font-mono"><i class="fa-solid fa-location-dot"></i> ${direccion}</p>
+              <p class="text-[10px] text-emerald-400 font-mono"><i class="fa-brands fa-whatsapp"></i> +${t.telefono_whatsapp || ''}</p>
             </div>
+            <!-- Enlace para visitar la tienda añadiendo ?tienda=slug -->
             <a href="index.html?tienda=${t.slug}" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-xs shadow shrink-0 flex items-center gap-1 active:scale-95 transition">
               Visitar <i class="fa-solid fa-arrow-right"></i>
             </a>
@@ -234,76 +188,6 @@
       renderizarDirectorio(filtrados);
     }
 
-    // --- TIENDA INDIVIDUAL ---
-    async function cargarTiendaIndividual(slug) {
-      const { data: negocio, error } = await supabaseClient
-        .from('negocios')
-        .select('*')
-        .eq('slug', slug)
-        .single();
-
-      if (error || !negocio) {
-        document.getElementById("tienda-nombre").innerText = "Tienda no encontrada";
-        document.getElementById("tienda-desc").innerText = "El enlace no es válido o la tienda ya no existe.";
-        return;
-      }
-
-      document.getElementById("tienda-nombre").innerText = negocio.nombre;
-      document.getElementById("tienda-desc").innerText = negocio.descripcion || 'Bienvenido a nuestro catálogo digital.';
-      document.getElementById("tienda-inicial").innerHTML = negocio.nombre.charAt(0).toUpperCase();
-      
-      if (negocio.telefono_whatsapp) {
-        document.getElementById("link-whatsapp-tienda").href = `https://wa.me/${negocio.telefono_whatsapp}`;
-      } else {
-        document.getElementById("link-whatsapp-tienda").style.display = 'none';
-      }
-
-      cargarProductosTienda(negocio.id);
-    }
-
-    async function cargarProductosTienda(negocioId) {
-      const { data, error } = await supabaseClient
-        .from('productos')
-        .select('*')
-        .eq('negocio_id', negocioId)
-        .order('id', { ascending: false });
-
-      if (error) {
-        document.getElementById("grid-productos").innerHTML = '<div class="col-span-2 text-center text-red-400 text-xs">Error cargando productos.</div>';
-        return;
-      }
-
-      productosTiendaActual = data || [];
-      renderizarProductos(productosTiendaActual);
-    }
-
-    function renderizarProductos(lista) {
-      const grid = document.getElementById("grid-productos");
-      if (lista.length === 0) {
-        grid.innerHTML = '<div class="col-span-2 text-center text-slate-500 text-xs py-10">No hay productos en este catálogo.</div>';
-        return;
-      }
-
-      let html = '';
-      lista.forEach(p => {
-        html += `
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-3 space-y-2 shadow-md">
-            ${p.imagen_url ? `<img src="${p.imagen_url}" class="w-full h-32 object-cover rounded-xl" alt="Producto">` : ''}
-            <h3 class="text-xs font-bold text-white">${p.nombre}</h3>
-            <p class="text-xs font-black text-amber-400">$${p.precio}</p>
-          </div>
-        `;
-      });
-      grid.innerHTML = html;
-    }
-
-    function filtrarProductos() {
-      const q = document.getElementById("buscador-productos").value.toLowerCase();
-      const filtrados = productosTiendaActual.filter(p => p.nombre.toLowerCase().includes(q));
-      renderizarProductos(filtrados);
-    }
-
-    // --- OPINIONES ---
     async function cargarOpiniones() {
       const cont = document.getElementById("lista-opiniones");
       try {
@@ -314,7 +198,7 @@
           .limit(10);
 
         if (!data || data.length === 0) {
-          cont.innerHTML = '<div class="text-xs text-slate-500 text-center py-2">Sé el primero en opinar sobre la plataforma.</div>';
+          cont.innerHTML = '<div class="text-xs text-slate-500 text-center py-3">Sé el primero en opinar sobre la plataforma.</div>';
           return;
         }
 
@@ -332,7 +216,7 @@
         });
         cont.innerHTML = html;
       } catch (e) {
-        cont.innerHTML = '<div class="text-xs text-slate-500 text-center py-2">Sin opiniones aún.</div>';
+        cont.innerHTML = '<div class="text-xs text-slate-500 text-center py-3">Sin opiniones aún.</div>';
       }
     }
 
@@ -360,7 +244,7 @@
         .insert([{ nombre, comentario }]);
 
       if (error) {
-        alert("⚠️ Crea la tabla 'comentarios_plataforma' en Supabase. Error: " + error.message);
+        alert("⚠️ Recuerda crear la tabla 'comentarios_plataforma' en Supabase. Error: " + error.message);
       } else {
         alert("¡Opinión publicada con éxito!");
         document.getElementById("input-nombre-op").value = '';
