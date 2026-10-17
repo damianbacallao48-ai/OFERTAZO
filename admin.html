@@ -60,7 +60,6 @@
             <input id="input-file-logo" type="file" accept="image/*" onchange="subirLogoGaleria(this)" class="w-full text-xs text-slate-400 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-amber-500 file:text-slate-950 hover:file:bg-amber-400 cursor-pointer">
           </div>
         </div>
-        <input id="input-platform-logo" type="hidden">
         <div id="status-upload" class="text-[10px] text-cyan-400 text-center font-bold hidden">Subiendo imagen a Supabase...</div>
       </div>
     </section>
@@ -155,7 +154,7 @@
         }
 
         const { data } = await supabaseClient.from('configuracion').select('*').eq('clave', 'pin_maestro').single();
-        if (data && data.valor === pin) {
+        if (data && String(data.valor).trim() === pin) {
           sessionStorage.setItem("superadmin_ok", "1");
           mostrarAdmin();
         } else {
@@ -192,17 +191,14 @@
 
       try {
         const fileName = `logo_plataforma_${Date.now()}.${file.name.split('.').pop()}`;
-        const { data, error } = await supabaseClient.storage.from('imagenes').upload(fileName, file);
+        const { error } = await supabaseClient.storage.from('imagenes').upload(fileName, file);
 
         if (error) throw error;
 
         const { data: publicUrlData } = supabaseClient.storage.from('imagenes').getPublicUrl(fileName);
         const urlFinal = publicUrlData.publicUrl;
 
-        document.getElementById("input-platform-logo").value = urlFinal;
-        
-        // Guardar automáticamente en la tabla de configuración
-        await supabaseClient.from('configuracion').upsert({ clave: 'platform_logo', valor: urlFinal });
+        await supabaseClient.from('configuracion').upsert({ clave: 'platform_logo', valor: urlFinal }, { onConflict: 'clave' });
 
         const img = document.getElementById("preview-img");
         const icon = document.getElementById("preview-icon");
@@ -316,15 +312,10 @@
 
     async function responderComentario(id) {
       const resp = document.getElementById(`resp-${id}`).value.trim();
-      // Usamos 'mensaje_admin' para prevenir errores de columnas en Supabase
       const { error } = await supabaseClient.from('comentarios').update({ mensaje_admin: resp }).eq('id', id);
       if (error) {
-        // Fallback si la columna fuera 'respuesta'
         const { error: err2 } = await supabaseClient.from('comentarios').update({ respuesta: resp }).eq('id', id);
-        if (err2) {
-          alert("Error al guardar respuesta. Asegúrate de que la tabla 'comentarios' tenga la columna 'mensaje_admin' o 'respuesta'.");
-          return;
-        }
+        if (err2) { alert("Error al guardar respuesta."); return; }
       }
       alert("¡Respuesta guardada con éxito!");
     }
@@ -361,7 +352,6 @@
 
       const { data: logo } = await supabaseClient.from('configuracion').select('*').eq('clave', 'platform_logo').single();
       if (logo && logo.valor) {
-        document.getElementById("input-platform-logo").value = logo.valor;
         actualizarPreviaLogo(logo.valor);
       }
     }
@@ -380,10 +370,10 @@
       const tarjeta = document.getElementById("input-admin-tarjeta").value.trim();
       const nuevoPin = document.getElementById("input-admin-pin").value.trim();
 
-      if (tasa) await supabaseClient.from('configuracion').upsert({ clave: 'tasa_usd', valor: String(tasa) });
-      if (wa) await supabaseClient.from('configuracion').upsert({ clave: 'admin_whatsapp', valor: wa });
-      if (tarjeta) await supabaseClient.from('configuracion').upsert({ clave: 'admin_tarjeta', valor: tarjeta });
-      if (nuevoPin) await supabaseClient.from('configuracion').upsert({ clave: 'pin_maestro', valor: nuevoPin });
+      if (tasa) await supabaseClient.from('configuracion').upsert({ clave: 'tasa_usd', valor: String(tasa) }, { onConflict: 'clave' });
+      if (wa) await supabaseClient.from('configuracion').upsert({ clave: 'admin_whatsapp', valor: wa }, { onConflict: 'clave' });
+      if (tarjeta) await supabaseClient.from('configuracion').upsert({ clave: 'admin_tarjeta', valor: tarjeta }, { onConflict: 'clave' });
+      if (nuevoPin) await supabaseClient.from('configuracion').upsert({ clave: 'pin_maestro', valor: nuevoPin }, { onConflict: 'clave' });
 
       alert("¡Configuración general actualizada con éxito!");
       document.getElementById("input-admin-pin").value = "";
