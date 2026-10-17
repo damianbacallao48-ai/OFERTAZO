@@ -9,7 +9,7 @@
   <meta property="og:type" content="website">
   <meta id="og-title" property="og:title" content="🔥 OFERTAZO.CA - Catálogo Digital & Directorio Comercial">
   <meta id="og-desc" property="og:description" content="Explora tiendas, menús y haz tus pedidos a domicilio en Ciego de Ávila.">
-  <meta id="og-image" property="og:image" content="https://qhkqznpgjirvnndriehr.supabase.co/storage/v1/object/public/imagenes/logo_plataforma_1792205994351.jpg">
+  <meta id="og-image" property="og:image" content="https://qhkqznpgjirvnndriehr.supabase.co/storage/v1/object/public/imagenes/ofertazo_promo.jpg">
 
   <!-- SCRIPT DE PROTECCIÓN ANTI-COPIA Y ANTI-INSPECCIÓN -->
   <script>
@@ -359,7 +359,6 @@
     </button>
   </div>
 
-  <!-- MODAL CARRITO -->
   <div id="cart-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="cyber-panel w-full max-w-lg rounded-t-3xl sm:rounded-3xl max-h-[90vh] flex flex-col border border-amber-500/40 shadow-2xl">
       <div class="p-4 border-b border-slate-800 flex justify-between items-center">
@@ -395,11 +394,13 @@
 
     window.onload = () => {
       if (!TIENDA_SLUG) {
+        // Carga automática del Directorio General como página de inicio principal
         document.getElementById("vista-directorio").classList.remove("hidden");
         document.getElementById("vista-tienda").classList.add("hidden");
         cargarDirectorioGeneral();
         cargarOpinionesGeneral();
       } else {
+        // Carga la tienda individual si viene con ?tienda=...
         document.getElementById("vista-directorio").classList.add("hidden");
         document.getElementById("vista-tienda").classList.remove("hidden");
         cargarCatalogo();
@@ -410,7 +411,7 @@
       window.location.href = "index.html";
     }
 
-    /* --- DIRECTORIO GENERAL --- */
+    /* --- LÓGICA DIRECTORIO GENERAL (PÁGINA PRINCIPAL) --- */
     async function cargarDirectorioGeneral() {
       const { data, error } = await supabaseClient
         .from('negocios')
@@ -528,56 +529,11 @@
       cont.innerHTML = html;
     }
 
-    /* --- TIENDA INDIVIDUAL --- */
+    /* --- LÓGICA DE TIENDA INDIVIDUAL --- */
     function abrirModalOpiniones() { document.getElementById("opiniones-modal").classList.remove("hidden"); }
     function cerrarModalOpiniones() { document.getElementById("opiniones-modal").classList.add("hidden"); }
-    function abrirCarrito() { 
-      const contenedorItems = document.getElementById("cart-items");
-      let html = '';
-      
-      if (carrito.length === 0) {
-        contenedorItems.innerHTML = '<div class="text-center text-xs text-slate-500 py-4">Tu carrito está vacío</div>';
-      } else {
-        carrito.forEach((item, index) => {
-          html += `
-            <div class="flex justify-between items-center bg-slate-900 p-2.5 rounded-xl border border-slate-800">
-              <div>
-                <h4 class="text-xs font-bold text-white">${item.nombre}</h4>
-                <p class="text-[10px] text-amber-400">$${item.precio} CUP x ${item.cantidad}</p>
-              </div>
-              <div class="flex items-center gap-2">
-                <button onclick="cambiarCantidad(${index}, -1)" class="w-6 h-6 bg-slate-800 text-white rounded-lg text-xs">-</button>
-                <span class="text-xs font-bold">${item.cantidad}</span>
-                <button onclick="cambiarCantidad(${index}, 1)" class="w-6 h-6 bg-slate-800 text-white rounded-lg text-xs">+</button>
-              </div>
-            </div>
-          `;
-        });
-        contenedorItems.innerHTML = html;
-      }
-      document.getElementById("cart-modal").classList.remove("hidden"); 
-    }
-    
+    function abrirCarrito() { document.getElementById("cart-modal").classList.remove("hidden"); }
     function cerrarCarrito() { document.getElementById("cart-modal").classList.add("hidden"); }
-
-    function cambiarCantidad(index, delta) {
-      carrito[index].cantidad += delta;
-      if (carrito[index].cantidad <= 0) {
-        carrito.splice(index, 1);
-      }
-      abrirCarrito();
-      
-      const totalCount = carrito.reduce((sum, item) => sum + item.cantidad, 0);
-      const totalCup = carrito.reduce((sum, item) => sum + (Number(item.precio || 0) * item.cantidad), 0);
-      
-      if (totalCount === 0) {
-        document.getElementById("cart-bar").classList.add("hidden");
-        cerrarCarrito();
-      } else {
-        document.getElementById("cart-count").innerText = totalCount;
-        document.getElementById("cart-total-bar").innerText = '$' + totalCup.toLocaleString() + ' CUP';
-      }
-    }
 
     async function cargarCatalogo() {
       const { data: negocio } = await supabaseClient
@@ -675,18 +631,6 @@
       document.getElementById("seccion-otros-negocios").classList.remove("hidden");
     }
 
-    function abrirCompartir() {
-      if (navigator.share) {
-        navigator.share({
-          title: negocioActual ? negocioActual.nombre : 'OFERTAZO',
-          text: '¡Visita este catálogo digital en OFERTAZO!',
-          url: window.location.href
-        }).catch(() => {});
-      } else {
-        alert("Enlace copiado al portapapeles: " + window.location.href);
-      }
-    }
-
     function agregar(id) {
       const prod = productos.find(p => p.id === id);
       const existe = carrito.find(item => item.id === id);
@@ -708,21 +652,6 @@
       let msg = `📦 *PEDIDO A ${negocioActual.nombre.toUpperCase()}*\n👤 Cliente: ${nombre}\n\n`;
       carrito.forEach(i => { msg += `▪️ ${i.cantidad}x ${i.nombre} ($${i.precio} CUP)\n`; });
       window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`, '_blank');
-    }
-
-    async function enviarComentarioModal() {
-      const nombre = document.getElementById("op-nombre").value.trim();
-      const mensaje = document.getElementById("op-mensaje").value.trim();
-      if (!nombre || !mensaje) { alert("Por favor completa tu nombre y el comentario."); return; }
-      
-      const { error } = await supabaseClient.from('comentarios').insert([{ nombre: nombre, mensaje: mensaje }]);
-      if (error) { alert("Error al enviar comentario."); return; }
-      
-      alert("¡Opinión publicada con éxito!");
-      document.getElementById("op-nombre").value = "";
-      document.getElementById("op-mensaje").value = "";
-      cerrarModalOpiniones();
-      cargarOpinionesGeneral();
     }
   </script>
 </body>
