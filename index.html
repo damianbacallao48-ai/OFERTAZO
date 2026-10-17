@@ -117,14 +117,13 @@
     <div class="absolute top-1/3 -right-20 w-72 h-72 bg-cyan-500/10 rounded-full blur-[90px]"></div>
   </div>
 
-  <!-- Contenedor oculto auxiliar para generar el QR en canvas -->
-  <div id="qr-buffer" style="display:none;"></div>
+  <!-- Contenedor oculto para procesar el QR -->
+  <div id="qr-buffer" class="hidden"></div>
 
   <!-- ========================================== -->
   <!-- VISTA 1: DIRECTORIO GENERAL (PÁGINA INICIAL) -->
   <!-- ========================================== -->
   <div id="vista-directorio" class="hidden relative z-10 space-y-4">
-    <!-- Header del Directorio -->
     <header class="bg-[#080d1a]/95 sticky top-0 z-30 px-3 py-3 border-b border-amber-500/30 shadow-2xl backdrop-blur-md">
       <div class="max-w-xl mx-auto flex items-center justify-between">
         <div class="flex items-center gap-2.5">
@@ -143,13 +142,11 @@
     </header>
 
     <main class="max-w-xl mx-auto px-3 space-y-4 pt-2">
-      <!-- Buscador General -->
       <div class="relative">
         <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-xs text-amber-400"></i>
         <input id="buscador-general" type="text" placeholder="Buscar tiendas, productos o servicios..." oninput="filtrarDirectorioGeneral()" class="w-full bg-[#0b1326] border border-amber-500/30 rounded-2xl pl-10 pr-4 py-3 text-xs text-white outline-none focus:border-amber-400 shadow-inner placeholder:text-slate-500">
       </div>
 
-      <!-- Botones Interactivos de Categorías -->
       <div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar" id="dir-categories-bar">
         <button onclick="cambiarCatDirectorio('todos')" id="btn-dir-cat-todos" class="px-4 py-1.5 rounded-full text-xs font-bold bg-amber-500 text-slate-950 shrink-0 transition">🔥 Todas</button>
         <button onclick="cambiarCatDirectorio('Gastronomía')" id="btn-dir-cat-Gastronomía" class="px-4 py-1.5 rounded-full text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 shrink-0 transition">🍔 Gastronomía</button>
@@ -158,7 +155,6 @@
         <button onclick="cambiarCatDirectorio('Servicios')" id="btn-dir-cat-Servicios" class="px-4 py-1.5 rounded-full text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 shrink-0 transition">⚙️ Servicios</button>
       </div>
 
-      <!-- Lista de Negocios -->
       <section class="space-y-3">
         <div class="flex justify-between items-center px-1">
           <h2 class="text-xs font-black font-cyber text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
@@ -174,7 +170,6 @@
         </div>
       </section>
 
-      <!-- Opiniones -->
       <section class="cyber-panel rounded-3xl p-4 shadow-xl space-y-3 mt-6">
         <div class="flex justify-between items-center">
           <h3 class="text-xs font-black text-amber-400 uppercase font-cyber flex items-center gap-1.5">
@@ -196,18 +191,15 @@
   <!-- VISTA 2: TIENDA INDIVIDUAL                 -->
   <!-- ========================================== -->
   <div id="vista-tienda" class="hidden">
-    <!-- Portada del Negocio Actual -->
     <div id="biz-portada-box" class="w-full max-w-xl mx-auto h-28 hidden overflow-hidden relative z-10">
       <img id="biz-portada" class="w-full h-full object-cover" alt="Portada" onerror="document.getElementById('biz-portada-box').classList.add('hidden')">
       <div class="absolute inset-0 bg-gradient-to-t from-[#05070e] via-transparent to-transparent"></div>
     </div>
 
-    <!-- HEADER FUTURISTA DE TIENDA CON BOTÓN DE REGRESO -->
     <header class="bg-[#080d1a]/95 sticky top-0 z-30 px-3 py-2.5 border-b border-amber-500/30 shadow-2xl backdrop-blur-md">
       <div class="max-w-xl mx-auto space-y-2">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2.5 min-w-0">
-            <!-- Botón para Volver al Directorio -->
             <button onclick="volverAlDirectorio()" class="w-9 h-9 rounded-xl bg-slate-900 border border-slate-700 text-amber-400 hover:text-white flex items-center justify-center text-xs active:scale-95 transition shrink-0 shadow-sm" title="Volver al Directorio">
               <i class="fa-solid fa-arrow-left"></i>
             </button>
@@ -239,7 +231,7 @@
             <span>Crear Tienda</span>
           </a>
 
-          <button onclick="abrirCompartir()" id="btn-difundir" class="neon-pill-btn bg-slate-900 border border-slate-700 text-slate-200 hover:text-amber-400 py-1.5 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1.5 shadow-sm">
+          <button onclick="abrirCompartir()" class="neon-pill-btn bg-slate-900 border border-slate-700 text-slate-200 hover:text-amber-400 py-1.5 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1.5 shadow-sm">
             <i class="fa-solid fa-share-nodes text-amber-400"></i>
             <span>Difundir</span>
           </button>
@@ -247,7 +239,6 @@
       </div>
     </header>
 
-    <!-- CARRUSEL "OTROS NEGOCIOS" -->
     <section id="seccion-otros-negocios" class="max-w-xl mx-auto pt-3 relative z-10 hidden">
       <div class="px-3 flex items-center justify-between mb-2">
         <div class="flex items-center gap-2">
@@ -267,7 +258,6 @@
       </div>
     </section>
 
-    <!-- BARRA DE BÚSQUEDA RÁPIDA -->
     <div class="max-w-xl mx-auto px-3 pt-2.5 relative z-20">
       <div class="relative">
         <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-xs text-amber-400"></i>
@@ -278,12 +268,10 @@
       </div>
     </div>
 
-    <!-- Categorías Deslizables -->
     <nav id="nav-categorias" class="sticky top-[92px] z-20 bg-[#05070e]/95 backdrop-blur-md px-3 py-2 border-b border-slate-900/80 mt-2">
       <div class="max-w-xl mx-auto flex gap-1.5 overflow-x-auto no-scrollbar" id="categories-bar"></div>
     </nav>
 
-    <!-- Contenedor Principal (Rejilla de Productos) -->
     <main class="max-w-xl mx-auto px-3 py-3 relative z-10 space-y-5">
       <div id="biz-inactive-notice" class="hidden text-center py-12 px-4 space-y-4">
         <div class="w-16 h-16 rounded-full bg-red-500/10 border border-red-500/30 flex items-center justify-center mx-auto text-red-400 text-2xl">
@@ -302,7 +290,6 @@
         </div>
       </div>
 
-      <!-- Banner Promocional -->
       <section class="cyber-panel rounded-3xl p-5 text-center space-y-3 border-2 border-dashed border-amber-500/40 relative overflow-hidden shadow-2xl">
         <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-300 text-slate-950 flex items-center justify-center text-xl font-black mx-auto shadow-lg">
           <i class="fa-solid fa-store"></i>
@@ -330,6 +317,30 @@
         </button>
       </div>
     </main>
+  </div>
+
+  <!-- MODAL DE DIFUSIÓN CON FLYER QR (EL DISEÑO EXACTO DE TU FOTO) -->
+  <div id="flyer-share-modal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="cyber-panel w-full max-w-sm rounded-3xl p-4 border border-amber-500/40 text-center relative shadow-2xl space-y-3">
+      <button onclick="cerrarModalFlyer()" class="absolute top-3 right-4 text-slate-400 hover:text-white text-xl">✕</button>
+      <h3 class="font-cyber font-black text-amber-400 text-xs uppercase tracking-wider">TARJETA DIGITAL DE LA TIENDA</h3>
+      
+      <div class="rounded-2xl overflow-hidden border border-slate-700 bg-[#070b16] shadow-lg flex items-center justify-center min-h-[280px]">
+        <div id="flyer-loading" class="text-xs text-amber-400 font-cyber py-12">
+          <i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i><br>Generando Flyer con Foto...
+        </div>
+        <img id="flyer-preview-img" class="w-full h-auto hidden" alt="Flyer de la Tienda">
+      </div>
+
+      <div class="space-y-2 pt-1">
+        <button onclick="compartirFlyerNativo()" id="btn-share-flyer-wa" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-3 rounded-2xl text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg active:scale-95 transition">
+          <i class="fa-brands fa-whatsapp text-base"></i> Enviar con Foto por WhatsApp
+        </button>
+        <button onclick="descargarFlyerDirecto()" class="w-full bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 border border-slate-700 active:scale-95 transition">
+          <i class="fa-solid fa-download"></i> Guardar Imagen en Galería
+        </button>
+      </div>
+    </div>
   </div>
 
   <!-- MODAL: MURO DE OPINIONES -->
@@ -373,10 +384,8 @@
       </div>
 
       <div class="p-4 space-y-4">
-        <!-- Lista de productos -->
         <div id="cart-items" class="space-y-2.5"></div>
 
-        <!-- Método de Entrega -->
         <div class="space-y-1.5 pt-2 border-t border-slate-800">
           <label class="text-[10px] font-black uppercase tracking-wider text-amber-400 font-cyber">MÉTODO DE ENTREGA:</label>
           <select id="metodo-entrega" onchange="actualizarTotalesCarrito()" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
@@ -385,7 +394,6 @@
           </select>
         </div>
 
-        <!-- Datos del Cliente -->
         <div class="space-y-1.5">
           <label class="text-[10px] font-black uppercase tracking-wider text-amber-400 font-cyber">NOMBRE DE QUIEN RECIBE / RECOGE:</label>
           <input id="client-name" type="text" placeholder="Ej. Juan" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
@@ -396,7 +404,6 @@
           <input id="client-address" type="text" placeholder="Calle, número, entrecalles y reparto" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
         </div>
 
-        <!-- Desglose de Totales -->
         <div class="bg-slate-950/80 border border-slate-800 rounded-2xl p-3.5 space-y-2 text-xs">
           <div class="flex justify-between text-slate-300">
             <span>Subtotal productos:</span>
@@ -439,6 +446,8 @@
     let tasaUSD = 320;
     let listaTodosNegocios = [];
     let categoriaDirectorioSeleccionada = 'todos';
+    let archivoFlyerListo = null;
+    let canvasFlyerListo = null;
 
     window.onload = () => {
       if (!TIENDA_SLUG) {
@@ -457,7 +466,7 @@
       window.location.href = "index.html";
     }
 
-    /* --- LÓGICA DIRECTORIO GENERAL (PÁGINA PRINCIPAL) --- */
+    /* --- DIRECTORIO GENERAL --- */
     async function cargarDirectorioGeneral() {
       const { data, error } = await supabaseClient
         .from('negocios')
@@ -575,7 +584,7 @@
       cont.innerHTML = html;
     }
 
-    /* --- LÓGICA DE TIENDA INDIVIDUAL --- */
+    /* --- TIENDA INDIVIDUAL --- */
     function abrirModalOpiniones() { document.getElementById("opiniones-modal").classList.remove("hidden"); }
     function cerrarModalOpiniones() { document.getElementById("opiniones-modal").classList.add("hidden"); }
 
@@ -675,139 +684,197 @@
       document.getElementById("seccion-otros-negocios").classList.remove("hidden");
     }
 
-    /* --- GENERADOR DE FLYER CON QR PARA COMPARTIR --- */
-    function crearCanvasFlyer(urlTienda) {
+    /* ========================================================== */
+    /* GENERADOR DE FLYER CON PORTADA, LOGO CIRCULAR Y CÓDIGO QR  */
+    /* ========================================================== */
+    function cargarImagenCors(url) {
       return new Promise((resolve) => {
-        const qrDiv = document.getElementById("qr-buffer");
-        qrDiv.innerHTML = "";
-        
-        new QRCode(qrDiv, {
-          text: urlTienda,
-          width: 280,
-          height: 280,
-          colorDark: "#000000",
-          colorLight: "#ffffff",
-          correctLevel: QRCode.CorrectLevel.H
-        });
-
-        setTimeout(() => {
-          const qrCanvas = qrDiv.querySelector("canvas");
-          const canvas = document.createElement("canvas");
-          canvas.width = 600;
-          canvas.height = 760;
-          const ctx = canvas.getContext("2d");
-
-          // Fondo principal
-          ctx.fillStyle = "#070b16";
-          ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-          // Borde decorativo
-          ctx.lineWidth = 6;
-          ctx.strokeStyle = "#f59e0b";
-          ctx.strokeRect(16, 16, canvas.width - 32, canvas.height - 32);
-
-          // Nombre de la tienda
-          const nombre = (negocioActual ? negocioActual.nombre : "OFERTAZO").toUpperCase();
-          ctx.fillStyle = "#fbbf24";
-          ctx.font = "bold 34px 'Orbitron', monospace";
-          ctx.textAlign = "center";
-          ctx.fillText(nombre, canvas.width / 2, 75);
-
-          // Categoría / Subtítulo
-          const cat = (negocioActual ? (negocioActual.tipo || negocioActual.categoria || "Comercio General") : "Comercio General").toUpperCase();
-          ctx.fillStyle = "#22d3ee";
-          ctx.font = "bold 17px 'Plus Jakarta Sans', sans-serif";
-          ctx.fillText(`⚡ ${cat} ⚡`, canvas.width / 2, 115);
-
-          // Recuadro oscuro para el QR
-          ctx.fillStyle = "#0c1529";
-          ctx.strokeStyle = "rgba(245, 158, 11, 0.4)";
-          ctx.lineWidth = 2;
-          ctx.roundRect ? ctx.roundRect(110, 150, 380, 440, 24) : ctx.fillRect(110, 150, 380, 440);
-          ctx.fill();
-          ctx.stroke();
-
-          // Fondo blanco para el código QR
-          ctx.fillStyle = "#ffffff";
-          ctx.roundRect ? ctx.roundRect(155, 180, 290, 290, 16) : ctx.fillRect(155, 180, 290, 290);
-          ctx.fill();
-
-          // Dibujar el código QR
-          if (qrCanvas) {
-            ctx.drawImage(qrCanvas, 165, 190, 270, 270);
-          }
-
-          // Textos dentro del marco
-          ctx.fillStyle = "#f8fafc";
-          ctx.font = "bold 15px 'Plus Jakarta Sans', sans-serif";
-          ctx.fillText("¡ESCANEA EL QR O ENTRA AL LINK PARA PEDIR!", canvas.width / 2, 510);
-
-          ctx.fillStyle = "#94a3b8";
-          ctx.font = "14px 'Plus Jakarta Sans', sans-serif";
-          ctx.fillText("📍 Ciego de Ávila", canvas.width / 2, 545);
-
-          // Pie del flyer
-          ctx.fillStyle = "#10b981";
-          ctx.font = "bold 13px 'Orbitron', monospace";
-          ctx.fillText("IMPULSADO POR OFERTAZO.CA • CATÁLOGO DIGITAL", canvas.width / 2, 690);
-
-          resolve(canvas);
-        }, 150);
+        if (!url) { resolve(null); return; }
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = () => resolve(img);
+        img.onerror = () => resolve(null);
+        img.src = url + (url.includes('?') ? '&' : '?') + 't=' + Date.now();
       });
     }
 
     async function abrirCompartir() {
-      const btn = document.getElementById("btn-difundir");
-      const textoOriginal = btn.innerHTML;
-      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-amber-400"></i> Preparando...`;
+      document.getElementById("flyer-share-modal").classList.remove("hidden");
+      document.getElementById("flyer-loading").classList.remove("hidden");
+      document.getElementById("flyer-preview-img").classList.add("hidden");
 
+      const urlTienda = `${window.location.origin}/?tienda=${negocioActual ? negocioActual.slug : 'ofertazo'}`;
+
+      // Generar el QR en memoria
+      const qrDiv = document.getElementById("qr-buffer");
+      qrDiv.innerHTML = "";
+      new QRCode(qrDiv, {
+        text: urlTienda,
+        width: 260,
+        height: 260,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+      });
+
+      const [imgPortada, imgLogo] = await Promise.all([
+        cargarImagenCors(negocioActual ? (negocioActual.portada_url || negocioActual.logo_url) : null),
+        cargarImagenCors(negocioActual ? (negocioActual.logo_url || negocioActual.portada_url) : null),
+        new Promise(r => setTimeout(r, 150))
+      ]);
+
+      const qrCanvas = qrDiv.querySelector("canvas");
+      const canvas = document.createElement("canvas");
+      canvas.width = 600;
+      canvas.height = 820;
+      const ctx = canvas.getContext("2d");
+
+      // 1. Fondo general oscuro
+      ctx.fillStyle = "#070b16";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // 2. Foto de portada en la parte superior con degradado
+      if (imgPortada) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(18, 18, canvas.width - 36, 210);
+        ctx.clip();
+        const scale = Math.max((canvas.width - 36) / imgPortada.width, 210 / imgPortada.height);
+        const w = imgPortada.width * scale;
+        const h = imgPortada.height * scale;
+        ctx.drawImage(imgPortada, 18 + ((canvas.width - 36) - w) / 2, 18 + (210 - h) / 2, w, h);
+        ctx.restore();
+
+        const grad = ctx.createLinearGradient(0, 100, 0, 230);
+        grad.addColorStop(0, "rgba(7, 11, 22, 0.15)");
+        grad.addColorStop(1, "#070b16");
+        ctx.fillStyle = grad;
+        ctx.fillRect(18, 18, canvas.width - 36, 212);
+      }
+
+      // 3. Borde exterior dorado redondeado
+      ctx.lineWidth = 6;
+      ctx.strokeStyle = "#d97706";
+      ctx.beginPath();
+      ctx.roundRect ? ctx.roundRect(16, 16, canvas.width - 32, canvas.height - 32, 24) : ctx.rect(16, 16, canvas.width - 32, canvas.height - 32);
+      ctx.stroke();
+
+      // 4. Logo circular en el centro con borde dorado
+      const cx = canvas.width / 2;
+      const cy = 205;
+      const r = 64;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.fillStyle = "#0b1326";
+      ctx.fill();
+      ctx.clip();
+      if (imgLogo) {
+        ctx.drawImage(imgLogo, cx - r, cy - r, r * 2, r * 2);
+      }
+      ctx.restore();
+
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = "#f59e0b";
+      ctx.stroke();
+
+      // 5. Nombre del negocio y categoría
+      const nombre = (negocioActual ? negocioActual.nombre : "OFERTAZO").toUpperCase();
+      ctx.fillStyle = "#f59e0b";
+      ctx.font = "900 32px 'Orbitron', sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(nombre, cx, 315);
+
+      const cat = (negocioActual ? (negocioActual.tipo || negocioActual.categoria || "COMERCIO GENERAL") : "COMERCIO GENERAL").toUpperCase();
+      ctx.fillStyle = "#38bdf8";
+      ctx.font = "bold 15px 'Plus Jakarta Sans', sans-serif";
+      ctx.fillText(`⚡ ${cat} ⚡`, cx, 345);
+
+      // 6. Marco interno oscuro para el QR
+      ctx.fillStyle = "#0b1120";
+      ctx.strokeStyle = "rgba(245, 158, 11, 0.25)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect ? ctx.roundRect(70, 370, 460, 365, 22) : ctx.rect(70, 370, 460, 365);
+      ctx.fill();
+      ctx.stroke();
+
+      // 7. Caja blanca del QR y código QR
+      ctx.fillStyle = "#ffffff";
+      ctx.beginPath();
+      ctx.roundRect ? ctx.roundRect(160, 395, 280, 280, 18) : ctx.rect(160, 395, 280, 280);
+      ctx.fill();
+
+      if (qrCanvas) {
+        ctx.drawImage(qrCanvas, 175, 410, 250, 250);
+      }
+
+      // 8. Textos inferiores
+      ctx.fillStyle = "#f8fafc";
+      ctx.font = "bold 15px 'Plus Jakarta Sans', sans-serif";
+      ctx.fillText("¡ESCANEA EL QR O ENTRA AL LINK PARA PEDIR!", cx, 702);
+
+      ctx.fillStyle = "#94a3b8";
+      ctx.font = "13px 'Plus Jakarta Sans', sans-serif";
+      ctx.fillText(`📍 ${negocioActual?.direccion || 'Ciego de Ávila'}`, cx, 725);
+
+      ctx.fillStyle = "#10b981";
+      ctx.font = "bold 12px 'Orbitron', sans-serif";
+      ctx.fillText("IMPULSADO POR OFERTAZO.CA • CATÁLOGO DIGITAL", cx, 775);
+
+      canvasFlyerListo = canvas;
+      const dataUrl = canvas.toDataURL("image/png");
+      const previewImg = document.getElementById("flyer-preview-img");
+      previewImg.src = dataUrl;
+      document.getElementById("flyer-loading").classList.add("hidden");
+      previewImg.classList.remove("hidden");
+
+      canvas.toBlob((blob) => {
+        if (blob) {
+          archivoFlyerListo = new File([blob], `Flyer_${negocioActual ? negocioActual.slug : 'tienda'}.png`, { type: "image/png" });
+        }
+      }, "image/png");
+    }
+
+    function cerrarModalFlyer() {
+      document.getElementById("flyer-share-modal").classList.add("hidden");
+    }
+
+    // Como el archivo ya está creado, al tocar el botón verde el teléfono permite compartir imagen + texto sin bloquearlo
+    async function compartirFlyerNativo() {
       const nombre = (negocioActual ? negocioActual.nombre : "OFERTAZO").toUpperCase();
       const rubro = negocioActual ? (negocioActual.tipo || negocioActual.categoria || "Comercio General") : "Comercio General";
-      const base = window.location.origin + window.location.pathname;
-      const urlTienda = `${base}?tienda=${negocioActual ? negocioActual.slug : 'ofertazo'}`;
+      const ubicacion = negocioActual ? (negocioActual.direccion || "Ciego de Ávila") : "Ciego de Ávila";
+      const urlTienda = `${window.location.origin}/?tienda=${negocioActual ? negocioActual.slug : 'ofertazo'}`;
 
-      const textoPublicitario = `🔥 *¡PIDE ONLINE EN ${nombre}!* 🛵\n\n🏷️ ${rubro}\n📍 Ciego de Ávila\n\n👉 *Mira nuestras fotos, precios y haz tu pedido directo aquí:*\n${urlTienda}`;
+      const texto = `🔥 *¡PIDE ONLINE EN ${nombre}!* 🛵\n🏷️ ${rubro}\n📍 ${ubicacion}\n\n👉 *Mira nuestras fotos, precios y haz tu pedido directo aquí:*\n${urlTienda}`;
 
-      try {
-        const canvas = await crearCanvasFlyer(urlTienda);
-
-        canvas.toBlob(async (blob) => {
-          btn.innerHTML = textoOriginal;
-          if (!blob) {
-            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(textoPublicitario)}`, '_blank');
-            return;
-          }
-
-          const file = new File([blob], `Flyer_${negocioActual ? negocioActual.slug : 'tienda'}.png`, { type: "image/png" });
-
-          // Si el navegador soporta compartir archivos, manda la foto del flyer + texto publicitario a WhatsApp
-          if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            try {
-              await navigator.share({
-                files: [file],
-                text: textoPublicitario
-              });
-              return;
-            } catch (err) {
-              if (err.name === 'AbortError') return;
-            }
-          }
-
-          // Alternativa en dispositivos donde la API no permite adjuntar archivos directamente
-          const a = document.createElement("a");
-          a.download = `Flyer_${negocioActual ? negocioActual.slug : 'tienda'}.png`;
-          a.href = canvas.toDataURL("image/png");
-          a.click();
-
-          setTimeout(() => {
-            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(textoPublicitario)}`, '_blank');
-          }, 300);
-        }, "image/png");
-
-      } catch (e) {
-        btn.innerHTML = textoOriginal;
-        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(textoPublicitario)}`, '_blank');
+      if (archivoFlyerListo && navigator.canShare && navigator.canShare({ files: [archivoFlyerListo] })) {
+        try {
+          await navigator.share({
+            files: [archivoFlyerListo],
+            text: texto
+          });
+          return;
+        } catch (err) {
+          if (err.name === 'AbortError') return;
+        }
       }
+
+      // Si el navegador no soporta compartir archivos, descarga la imagen y abre WhatsApp con el texto
+      descargarFlyerDirecto();
+      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`, '_blank');
+    }
+
+    function descargarFlyerDirecto() {
+      if (!canvasFlyerListo) return;
+      const a = document.createElement("a");
+      a.download = `Flyer_${negocioActual ? negocioActual.slug : 'tienda'}.png`;
+      a.href = canvasFlyerListo.toDataURL("image/png");
+      a.click();
     }
 
     /* --- GESTIÓN AVANZADA DEL CARRITO --- */
