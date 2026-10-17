@@ -418,22 +418,18 @@
       window.location.href = "index.html";
     }
 
-        // Función para compartir la plataforma principal con texto, enlace y vista previa configurada
+            // Función de compartir ultra limpia y sin duplicar enlaces
     function compartirPlataforma() {
-      const urlCompartir = "https://ofertazo-cuba.github.io/";
-      const textoCompartir = "🔥 *OFERTAZO.CA - Catálogo Digital & Directorio Comercial*\n\n¡Explora tiendas, menús y haz tus pedidos a domicilio en Ciego de Ávila!\n\n👉 Entra aquí: " + urlCompartir;
+      const textoCompartir = "🔥 *OFERTAZO.CA - Catálogo Digital & Directorio Comercial*\n\n¡Explora tiendas, menús y haz tus pedidos a domicilio en Ciego de Ávila!\n\n👉 Entra aquí: https://ofertazo-cuba.github.io/";
 
-      if (navigator.share) {
-        navigator.share({
-          title: 'OFERTAZO - Directorio Comercial',
-          text: textoCompartir,
-          url: urlCompartir
-        }).catch(() => {});
-      } else {
-        navigator.clipboard.writeText(textoCompartir);
-        alert("¡Enlace y mensaje de la plataforma copiados al portapapeles!");
-      }
+      navigator.clipboard.writeText(textoCompartir).then(() => {
+        alert("¡Enlace copiado! Ya puedes pegarlo en WhatsApp o tus redes.");
+      }).catch(() => {
+        // Fallback por si acaso
+        prompt("Copia este enlace para compartir:", "https://ofertazo-cuba.github.io/");
+      });
     }
+
 
 
     /* --- LÓGICA DIRECTORIO GENERAL (PÁGINA PRINCIPAL) --- */
