@@ -133,9 +133,15 @@
             <p class="text-[10px] text-cyan-400 font-semibold">Directorio Comercial • Ciego de Ávila</p>
           </div>
         </div>
-        <a href="registro.html" class="neon-pill-btn bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 glow-emerald">
-          <i class="fa-solid fa-rocket"></i> Crear Tienda
-        </a>
+        <div class="flex items-center gap-2">
+          <!-- Botón de Compartir Plataforma -->
+          <button onclick="compartirPlataforma()" class="neon-pill-btn bg-slate-900 border border-slate-700 text-amber-400 hover:text-white px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm" title="Compartir plataforma">
+            <i class="fa-solid fa-share-nodes"></i>
+          </button>
+          <a href="registro.html" class="neon-pill-btn bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 glow-emerald">
+            <i class="fa-solid fa-rocket"></i> Crear Tienda
+          </a>
+        </div>
       </div>
     </header>
 
@@ -409,6 +415,20 @@
 
     function volverAlDirectorio() {
       window.location.href = "index.html";
+    }
+
+    // Función para compartir la plataforma principal
+    function compartirPlataforma() {
+      if (navigator.share) {
+        navigator.share({
+          title: 'OFERTAZO - Directorio Comercial',
+          text: '¡Explora tiendas, menús y haz tus pedidos a domicilio en Ciego de Ávila!',
+          url: window.location.origin + window.location.pathname
+        }).catch(() => {});
+      } else {
+        navigator.clipboard.writeText(window.location.origin + window.location.pathname);
+        alert("¡Enlace de la plataforma copiado al portapapeles!");
+      }
     }
 
     /* --- LÓGICA DIRECTORIO GENERAL (PÁGINA PRINCIPAL) --- */
