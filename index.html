@@ -347,7 +347,7 @@
     </div>
   </div>
 
-  <!-- BARRA CARRITO Y MODALES -->
+  <!-- BARRA CARRITO -->
   <div id="cart-bar" class="fixed bottom-4 left-3 right-3 max-w-xl mx-auto hidden z-40">
     <button onclick="abrirCarrito()" class="w-full btn-neon text-slate-950 font-black py-3.5 px-5 rounded-2xl shadow-[0_0_25px_rgba(245,158,11,0.45)] flex justify-between items-center active:scale-95 transition">
       <span class="flex items-center gap-2">
@@ -359,19 +359,64 @@
     </button>
   </div>
 
+  <!-- MODAL CARRITO -->
   <div id="cart-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="cyber-panel w-full max-w-lg rounded-t-3xl sm:rounded-3xl max-h-[90vh] flex flex-col border border-amber-500/40 shadow-2xl">
-      <div class="p-4 border-b border-slate-800 flex justify-between items-center">
-        <h2 class="text-xs font-black text-amber-400 font-cyber">RESUMEN DE COMPRA</h2>
+    <div class="cyber-panel w-full max-w-lg rounded-t-3xl sm:rounded-3xl max-h-[90vh] flex flex-col border border-amber-500/40 shadow-2xl overflow-y-auto">
+      <div class="p-4 border-b border-slate-800 flex justify-between items-center sticky top-0 bg-[#0b1326] z-10">
+        <h2 class="text-xs font-black text-amber-400 font-cyber flex items-center gap-2">
+          <i class="fa-solid fa-cart-shopping"></i> RESUMEN DE COMPRA
+        </h2>
         <button onclick="cerrarCarrito()" class="text-slate-400 hover:text-white text-lg">✕</button>
       </div>
-      <div class="p-4 overflow-y-auto flex-1 space-y-3">
-        <div id="cart-items" class="space-y-2"></div>
-        <input id="client-name" type="text" placeholder="Tu Nombre" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white">
-        <input id="client-address" type="text" placeholder="Dirección exacta o Mensajería" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white">
+
+      <div class="p-4 space-y-4">
+        <!-- Lista de productos -->
+        <div id="cart-items" class="space-y-2.5"></div>
+
+        <!-- Método de Entrega -->
+        <div class="space-y-1.5 pt-2 border-t border-slate-800">
+          <label class="text-[10px] font-black uppercase tracking-wider text-amber-400 font-cyber">MÉTODO DE ENTREGA:</label>
+          <select id="metodo-entrega" onchange="actualizarTotalesCarrito()" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
+            <option value="250">🛵 Entrega a Domicilio (+$250 CUP)</option>
+            <option value="0">🏃 Recogida en Tienda ($0 CUP)</option>
+          </select>
+        </div>
+
+        <!-- Datos del Cliente -->
+        <div class="space-y-1.5">
+          <label class="text-[10px] font-black uppercase tracking-wider text-amber-400 font-cyber">NOMBRE DE QUIEN RECIBE / RECOGE:</label>
+          <input id="client-name" type="text" placeholder="Ej. Juan" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="text-[10px] font-black uppercase tracking-wider text-amber-400 font-cyber">DIRECCIÓN EXACTA EN CIEGO DE ÁVILA:</label>
+          <input id="client-address" type="text" placeholder="Calle, número, entrecalles y reparto" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
+        </div>
+
+        <!-- Desglose de Totales -->
+        <div class="bg-slate-950/80 border border-slate-800 rounded-2xl p-3.5 space-y-2 text-xs">
+          <div class="flex justify-between text-slate-300">
+            <span>Subtotal productos:</span>
+            <span id="txt-subtotal" class="font-cyber font-bold text-white">$0 CUP (≈ $0.00 USD)</span>
+          </div>
+          <div class="flex justify-between text-slate-300 pb-2 border-b border-slate-800">
+            <span id="txt-label-envio">🛵 Servicio a domicilio:</span>
+            <span id="txt-envio" class="font-cyber font-bold text-amber-400">+$250 CUP</span>
+          </div>
+          <div class="flex justify-between items-baseline pt-1">
+            <span class="font-black text-white font-cyber text-sm">Total a pagar:</span>
+            <div class="text-right">
+              <div id="txt-total-cup" class="font-cyber text-amber-400 font-black text-lg">$0 CUP</div>
+              <div id="txt-total-usd" class="font-cyber text-[10px] text-cyan-400 font-bold">≈ $0.00 USD</div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="p-4 border-t border-slate-800">
-        <button onclick="enviarPedido()" class="w-full bg-emerald-600 text-white font-black py-3.5 rounded-2xl text-xs uppercase tracking-wider">Confirmar Pedido por WhatsApp</button>
+
+      <div class="p-4 border-t border-slate-800 bg-[#0b1326]">
+        <button onclick="enviarPedido()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-3.5 rounded-2xl text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg transition active:scale-95">
+          <i class="fa-brands fa-whatsapp text-base"></i> Confirmar Pedido por WhatsApp
+        </button>
       </div>
     </div>
   </div>
@@ -394,11 +439,13 @@
 
     window.onload = () => {
       if (!TIENDA_SLUG) {
+        // Carga automática del Directorio General como página de inicio principal
         document.getElementById("vista-directorio").classList.remove("hidden");
         document.getElementById("vista-tienda").classList.add("hidden");
         cargarDirectorioGeneral();
         cargarOpinionesGeneral();
       } else {
+        // Carga la tienda individual si viene con ?tienda=...
         document.getElementById("vista-directorio").classList.add("hidden");
         document.getElementById("vista-tienda").classList.remove("hidden");
         cargarCatalogo();
@@ -409,7 +456,7 @@
       window.location.href = "index.html";
     }
 
-    /* --- DIRECTORIO GENERAL --- */
+    /* --- LÓGICA DIRECTORIO GENERAL (PÁGINA PRINCIPAL) --- */
     async function cargarDirectorioGeneral() {
       const { data, error } = await supabaseClient
         .from('negocios')
@@ -527,7 +574,7 @@
       cont.innerHTML = html;
     }
 
-    /* --- TIENDA INDIVIDUAL --- */
+    /* --- LÓGICA DE TIENDA INDIVIDUAL --- */
     function abrirModalOpiniones() { document.getElementById("opiniones-modal").classList.remove("hidden"); }
     function cerrarModalOpiniones() { document.getElementById("opiniones-modal").classList.add("hidden"); }
 
@@ -549,14 +596,6 @@
       document.getElementById("biz-header-name").innerText = negocioActual.nombre;
       document.getElementById("btn-ir-admin").href = `panel.html?tienda=${negocioActual.slug}`;
       document.getElementById("link-pie-admin").href = `panel.html?tienda=${negocioActual.slug}`;
-
-      // Inyección dinámica de OpenGraph para que la foto de la tienda cargue al compartir
-      if (negocioActual.logo_url || negocioActual.portada_url) {
-        const imgTienda = negocioActual.logo_url || negocioActual.portada_url;
-        document.getElementById("og-title").setAttribute("content", "🔥 " + negocioActual.nombre + " - Catálogo en OFERTAZO");
-        document.getElementById("og-desc").setAttribute("content", negocioActual.descripcion || "Explora el catálogo y haz tus pedidos a domicilio.");
-        document.getElementById("og-image").setAttribute("content", imgTienda);
-      }
 
       if (negocioActual.logo_url) {
         const img = document.getElementById("biz-logo");
@@ -635,7 +674,19 @@
       document.getElementById("seccion-otros-negocios").classList.remove("hidden");
     }
 
-    // --- LÓGICA DE CARRITO INTELIGENTE Y PEDIDOS ---
+    function abrirCompartir() {
+      if (navigator.share) {
+        navigator.share({
+          title: negocioActual ? negocioActual.nombre : 'OFERTAZO',
+          text: '¡Visita este catálogo digital en OFERTAZO!',
+          url: window.location.href
+        }).catch(() => {});
+      } else {
+        alert("Enlace copiado al portapapeles: " + window.location.href);
+      }
+    }
+
+    /* --- GESTIÓN AVANZADA DEL CARRITO --- */
     function agregar(id) {
       const prod = productos.find(p => p.id === id);
       const existe = carrito.find(item => item.id === id);
@@ -652,13 +703,14 @@
       if (carrito[index].cantidad <= 0) {
         carrito.splice(index, 1);
       }
+      
       actualizarBarraCarrito();
       
       const totalCount = carrito.reduce((sum, item) => sum + item.cantidad, 0);
       if (totalCount === 0) {
         cerrarCarrito();
       } else {
-        abrirCarrito(); // Actualiza el modal de compra visualmente
+        abrirCarrito();
       }
     }
 
@@ -684,72 +736,105 @@
         contenedorItems.innerHTML = '<div class="text-center text-xs text-slate-500 py-4">Tu carrito está vacío</div>';
       } else {
         carrito.forEach((item, index) => {
-          const subtotalCup = Number(item.precio || 0) * item.cantidad;
-          const subtotalUsd = (subtotalCup / tasaUSD).toFixed(2);
+          const totalItemCup = Number(item.precio || 0) * item.cantidad;
+          const totalItemUsd = (totalItemCup / tasaUSD).toFixed(2);
           
           html += `
-            <div class="flex justify-between items-center bg-slate-900 p-2.5 rounded-xl border border-slate-800">
-              <div>
-                <h4 class="text-xs font-bold text-white">${item.nombre}</h4>
-                <p class="text-[10px] text-amber-400">$${item.precio} CUP c/u</p>
-                <p class="text-[10px] text-cyan-400 font-bold mt-0.5">Subtotal: $${subtotalCup} CUP (≈ $${subtotalUsd} USD)</p>
+            <div class="flex justify-between items-center bg-slate-900 p-3 rounded-xl border border-slate-800">
+              <div class="min-w-0 pr-2">
+                <h4 class="text-xs font-bold text-white truncate">${item.nombre}</h4>
+                <div class="font-cyber text-amber-400 font-black text-xs mt-0.5">
+                  $${totalItemCup.toLocaleString()} CUP <span class="text-[10px] text-slate-400 font-normal">($${totalItemUsd} USD)</span>
+                </div>
               </div>
-              <div class="flex items-center gap-2">
-                <button onclick="cambiarCantidad(${index}, -1)" class="w-6 h-6 bg-slate-800 text-white rounded-lg text-xs font-bold">-</button>
-                <span class="text-xs font-bold px-1">${item.cantidad}</span>
-                <button onclick="cambiarCantidad(${index}, 1)" class="w-6 h-6 bg-slate-800 text-white rounded-lg text-xs font-bold">+</button>
+              <div class="flex items-center gap-2 shrink-0">
+                <button type="button" onclick="cambiarCantidad(${index}, -1)" class="w-7 h-7 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-bold flex items-center justify-center transition">-</button>
+                <span class="text-xs font-bold px-1.5 text-white font-cyber">${item.cantidad}</span>
+                <button type="button" onclick="cambiarCantidad(${index}, 1)" class="w-7 h-7 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-lg text-xs font-bold flex items-center justify-center transition">+</button>
               </div>
             </div>
           `;
         });
         contenedorItems.innerHTML = html;
       }
+
+      actualizarTotalesCarrito();
       document.getElementById("cart-modal").classList.remove("hidden"); 
     }
-    
+
     function cerrarCarrito() { 
       document.getElementById("cart-modal").classList.add("hidden"); 
+    }
+
+    function actualizarTotalesCarrito() {
+      const subtotalCup = carrito.reduce((sum, item) => sum + (Number(item.precio || 0) * item.cantidad), 0);
+      const subtotalUsd = (subtotalCup / tasaUSD).toFixed(2);
+
+      const costoEnvio = parseInt(document.getElementById("metodo-entrega")?.value || 250);
+      const totalCup = subtotalCup + costoEnvio;
+      const totalUsd = (totalCup / tasaUSD).toFixed(2);
+
+      const txtSub = document.getElementById("txt-subtotal");
+      const txtEnvio = document.getElementById("txt-envio");
+      const lblEnvio = document.getElementById("txt-label-envio");
+      const txtTotCup = document.getElementById("txt-total-cup");
+      const txtTotUsd = document.getElementById("txt-total-usd");
+
+      if (txtSub) txtSub.innerText = `$${subtotalCup.toLocaleString()} CUP (≈ $${subtotalUsd} USD)`;
+      if (txtEnvio) txtEnvio.innerText = costoEnvio > 0 ? `+$${costoEnvio} CUP` : `$0 CUP`;
+      if (lblEnvio) lblEnvio.innerText = costoEnvio > 0 ? `🛵 Servicio a domicilio:` : `🏃 Recogida en tienda:`;
+      if (txtTotCup) txtTotCup.innerText = `$${totalCup.toLocaleString()} CUP`;
+      if (txtTotUsd) txtTotUsd.innerText = `≈ $${totalUsd} USD`;
     }
 
     function enviarPedido() {
       const nombre = document.getElementById("client-name").value.trim();
       const direccion = document.getElementById("client-address").value.trim();
+      const metodoSelect = document.getElementById("metodo-entrega");
+      const esDomicilio = metodoSelect ? metodoSelect.value === "250" : true;
+      const costoEnvio = esDomicilio ? 250 : 0;
+
       if (!nombre) { alert("Por favor escribe tu nombre."); return; }
+      if (esDomicilio && !direccion) { alert("Por favor escribe tu dirección exacta en Ciego de Ávila."); return; }
       
       const waNumber = negocioActual.telefono_whatsapp || "5358960660";
-      let msg = `📦 *PEDIDO A ${negocioActual.nombre.toUpperCase()}*\n👤 Cliente: ${nombre}\n`;
-      if (direccion) msg += `📍 Dirección / Mensajería: ${direccion}\n`;
+      let msg = `📦 *PEDIDO A ${negocioActual.nombre.toUpperCase()}*\n`;
+      msg += `👤 Cliente: ${nombre}\n`;
+      msg += `🚚 Método: ${esDomicilio ? 'Entrega a Domicilio (+$250 CUP)' : 'Recogida en Tienda'}\n`;
+      if (esDomicilio) msg += `📍 Dirección: ${direccion}\n`;
       msg += `\n`;
       
-      let totalGeneralCup = 0;
+      let subtotalCup = 0;
       carrito.forEach(i => {
-        const subtotal = Number(i.precio || 0) * i.cantidad;
-        totalGeneralCup += subtotal;
-        msg += `▪️ ${i.cantidad}x ${i.nombre} ($${i.precio} CUP c/u) = $${subtotal} CUP\n`;
+        const sub = Number(i.precio || 0) * i.cantidad;
+        subtotalCup += sub;
+        msg += `▪️ ${i.cantidad}x ${i.nombre} ($${i.precio} CUP c/u) = $${sub.toLocaleString()} CUP\n`;
       });
       
+      const totalGeneralCup = subtotalCup + costoEnvio;
       const totalGeneralUsd = (totalGeneralCup / tasaUSD).toFixed(2);
-      msg += `\n💰 *Total a pagar: $${totalGeneralCup.toLocaleString()} CUP (≈ $${totalGeneralUsd} USD)*`;
+
+      msg += `\n------------------\n`;
+      msg += `Subtotal productos: $${subtotalCup.toLocaleString()} CUP\n`;
+      msg += `Envío: $${costoEnvio} CUP\n`;
+      msg += `💰 *Total a pagar: $${totalGeneralCup.toLocaleString()} CUP (≈ $${totalGeneralUsd} USD)*`;
       
       window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
-    // --- FUNCIÓN DE COMPARTIR TIENDA ---
-    function abrirCompartir() {
-      const urlActual = window.location.href;
-      const nombreTienda = negocioActual ? negocioActual.nombre : 'OFERTAZO';
-      const textoCompartir = `🔥 *${nombreTienda}* en OFERTAZO\n\n¡Explora el catálogo y haz tus pedidos aquí!\n\n👉 ${urlActual}`;
-
-      if (navigator.share) {
-        navigator.share({
-          title: nombreTienda,
-          text: textoCompartir,
-          url: urlActual
-        }).catch(() => {});
-      } else {
-        navigator.clipboard.writeText(textoCompartir);
-        alert("¡Enlace de la tienda copiado al portapapeles!");
-      }
+    async function enviarComentarioModal() {
+      const nombre = document.getElementById("op-nombre").value.trim();
+      const mensaje = document.getElementById("op-mensaje").value.trim();
+      if (!nombre || !mensaje) { alert("Por favor completa tu nombre y el comentario."); return; }
+      
+      const { error } = await supabaseClient.from('comentarios').insert([{ nombre: nombre, mensaje: mensaje }]);
+      if (error) { alert("Error al enviar comentario."); return; }
+      
+      alert("¡Opinión publicada con éxito!");
+      document.getElementById("op-nombre").value = "";
+      document.getElementById("op-mensaje").value = "";
+      cerrarModalOpiniones();
+      cargarOpinionesGeneral();
     }
   </script>
 </body>
