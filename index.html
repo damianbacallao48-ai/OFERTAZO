@@ -118,7 +118,7 @@
   </div>
 
   <!-- ========================================== -->
-  <!-- VISTA 1: PÁGINA PRINCIPAL / DIRECTORIO (POR DEFECTO) -->
+  <!-- VISTA 1: DIRECTORIO GENERAL (PÁGINA INICIAL) -->
   <!-- ========================================== -->
   <div id="vista-directorio" class="hidden relative z-10 space-y-4">
     <!-- Header del Directorio -->
@@ -199,15 +199,21 @@
       <div class="absolute inset-0 bg-gradient-to-t from-[#05070e] via-transparent to-transparent"></div>
     </div>
 
-    <!-- HEADER FUTURISTA -->
+    <!-- HEADER FUTURISTA DE TIENDA CON BOTÓN DE REGRESO -->
     <header class="bg-[#080d1a]/95 sticky top-0 z-30 px-3 py-2.5 border-b border-amber-500/30 shadow-2xl backdrop-blur-md">
       <div class="max-w-xl mx-auto space-y-2">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2.5 min-w-0">
+            <!-- Botón para Volver al Directorio -->
+            <button onclick="volverAlDirectorio()" class="w-9 h-9 rounded-xl bg-slate-900 border border-slate-700 text-amber-400 hover:text-white flex items-center justify-center text-xs active:scale-95 transition shrink-0 shadow-sm" title="Volver al Directorio">
+              <i class="fa-solid fa-arrow-left"></i>
+            </button>
+
             <div id="biz-icon-box" class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-300 flex items-center justify-center text-slate-950 text-base font-black shadow-[0_0_15px_rgba(245,158,11,0.5)] overflow-hidden shrink-0">
               <i class="fa-solid fa-store" id="biz-default-icon"></i>
               <img id="biz-logo" class="w-full h-full object-cover hidden" alt="Logo" onerror="this.classList.add('hidden');document.getElementById('biz-default-icon').classList.remove('hidden');">
             </div>
+            
             <div class="min-w-0">
               <h1 id="biz-header-name" class="text-base font-black tracking-wider text-amber-400 font-cyber truncate drop-shadow-[0_0_8px_rgba(245,158,11,0.4)]">
                 CARGANDO...
@@ -388,7 +394,7 @@
 
     window.onload = () => {
       if (!TIENDA_SLUG) {
-        // Carga automática del Directorio General como página de inicio
+        // Carga automática del Directorio General como página de inicio principal
         document.getElementById("vista-directorio").classList.remove("hidden");
         document.getElementById("vista-tienda").classList.add("hidden");
         cargarDirectorioGeneral();
