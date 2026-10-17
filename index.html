@@ -118,7 +118,7 @@
   </div>
 
   <!-- ========================================== -->
-  <!-- VISTA 1: PÁGINA PRINCIPAL / DIRECTORIO -->
+  <!-- VISTA 1: PÁGINA PRINCIPAL / DIRECTORIO (POR DEFECTO) -->
   <!-- ========================================== -->
   <div id="vista-directorio" class="hidden relative z-10 space-y-4">
     <!-- Header del Directorio -->
@@ -143,7 +143,16 @@
       <!-- Buscador General -->
       <div class="relative">
         <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-xs text-amber-400"></i>
-        <input id="buscador-general" type="text" placeholder="Buscar tiendas, productos o servicios..." oninput="filtrarDirectorioGeneral(this.value)" class="w-full bg-[#0b1326] border border-amber-500/30 rounded-2xl pl-10 pr-4 py-3 text-xs text-white outline-none focus:border-amber-400 shadow-inner placeholder:text-slate-500">
+        <input id="buscador-general" type="text" placeholder="Buscar tiendas, productos o servicios..." oninput="filtrarDirectorioGeneral()" class="w-full bg-[#0b1326] border border-amber-500/30 rounded-2xl pl-10 pr-4 py-3 text-xs text-white outline-none focus:border-amber-400 shadow-inner placeholder:text-slate-500">
+      </div>
+
+      <!-- Botones Interactivos de Categorías -->
+      <div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar" id="dir-categories-bar">
+        <button onclick="cambiarCatDirectorio('todos')" id="btn-dir-cat-todos" class="px-4 py-1.5 rounded-full text-xs font-bold bg-amber-500 text-slate-950 shrink-0 transition">🔥 Todas</button>
+        <button onclick="cambiarCatDirectorio('Gastronomía')" id="btn-dir-cat-Gastronomía" class="px-4 py-1.5 rounded-full text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 shrink-0 transition">🍔 Gastronomía</button>
+        <button onclick="cambiarCatDirectorio('Tecnología')" id="btn-dir-cat-Tecnología" class="px-4 py-1.5 rounded-full text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 shrink-0 transition">📱 Tecnología</button>
+        <button onclick="cambiarCatDirectorio('Ropa y Calzado')" id="btn-dir-cat-Ropa y Calzado" class="px-4 py-1.5 rounded-full text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 shrink-0 transition">👕 Ropa y Calzado</button>
+        <button onclick="cambiarCatDirectorio('Servicios')" id="btn-dir-cat-Servicios" class="px-4 py-1.5 rounded-full text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 shrink-0 transition">⚙️ Servicios</button>
       </div>
 
       <!-- Lista de Negocios -->
@@ -181,7 +190,7 @@
 
 
   <!-- ========================================== -->
-  <!-- VISTA 2: TU CÓDIGO ORIGINAL DE TIENDA     -->
+  <!-- VISTA 2: TIENDA INDIVIDUAL                 -->
   <!-- ========================================== -->
   <div id="vista-tienda" class="hidden">
     <!-- Portada del Negocio Actual -->
@@ -332,7 +341,7 @@
     </div>
   </div>
 
-  <!-- MODAL: QR, CARRITO Y COMPARTIR ORIGINALES -->
+  <!-- BARRA CARRITO Y MODALES ORIGINALES -->
   <div id="cart-bar" class="fixed bottom-4 left-3 right-3 max-w-xl mx-auto hidden z-40">
     <button onclick="abrirCarrito()" class="w-full btn-neon text-slate-950 font-black py-3.5 px-5 rounded-2xl shadow-[0_0_25px_rgba(245,158,11,0.45)] flex justify-between items-center active:scale-95 transition">
       <span class="flex items-center gap-2">
@@ -375,17 +384,17 @@
     let categoriaSeleccionada = 'todos';
     let tasaUSD = 320;
     let listaTodosNegocios = [];
-    let mapaImagenesNegocios = {};
+    let categoriaDirectorioSeleccionada = 'todos';
 
     window.onload = () => {
       if (!TIENDA_SLUG) {
-        // Muestra la vista de Directorio General
+        // Carga automática del Directorio General como página de inicio
         document.getElementById("vista-directorio").classList.remove("hidden");
         document.getElementById("vista-tienda").classList.add("hidden");
         cargarDirectorioGeneral();
         cargarOpinionesGeneral();
       } else {
-        // Muestra la vista de la tienda individual con todo el diseño original
+        // Carga la tienda individual si viene con ?tienda=...
         document.getElementById("vista-directorio").classList.add("hidden");
         document.getElementById("vista-tienda").classList.remove("hidden");
         cargarCatalogo();
@@ -396,7 +405,7 @@
       window.location.href = "index.html";
     }
 
-    /* --- LÓGICA DIRECTORIO GENERAL --- */
+    /* --- LÓGICA DIRECTORIO GENERAL (PÁGINA PRINCIPAL) --- */
     async function cargarDirectorioGeneral() {
       const { data, error } = await supabaseClient
         .from('negocios')
@@ -419,12 +428,27 @@
       renderizarDirectorioGeneral(listaTodosNegocios);
     }
 
+    function cambiarCatDirectorio(cat) {
+      categoriaDirectorioSeleccionada = cat;
+      ['todos', 'Gastronomía', 'Tecnología', 'Ropa y Calzado', 'Servicios'].forEach(c => {
+        const btn = document.getElementById(`btn-dir-cat-${c}`);
+        if (btn) {
+          if (c === cat) {
+            btn.className = "px-4 py-1.5 rounded-full text-xs font-bold bg-amber-500 text-slate-950 shrink-0 transition";
+          } else {
+            btn.className = "px-4 py-1.5 rounded-full text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 shrink-0 transition";
+          }
+        }
+      });
+      filtrarDirectorioGeneral();
+    }
+
     function renderizarDirectorioGeneral(lista) {
       const grid = document.getElementById("grid-directorio");
       document.getElementById("total-directorio").innerText = lista.length;
 
       if (lista.length === 0) {
-        grid.innerHTML = '<div class="text-xs text-slate-500 text-center py-8">No hay negocios registrados.</div>';
+        grid.innerHTML = '<div class="text-xs text-slate-500 text-center py-8">No hay negocios registrados en esta categoría.</div>';
         return;
       }
 
@@ -435,12 +459,15 @@
           ? `<img src="${logo}" class="w-12 h-12 rounded-xl object-cover bg-slate-950 border border-slate-700 shrink-0">` 
           : `<div class="w-12 h-12 rounded-xl bg-slate-950 border border-slate-700 flex items-center justify-center text-amber-400 font-black shrink-0">${t.nombre.charAt(0)}</div>`;
 
+        const catTag = t.tipo || t.categoria || 'General';
+
         html += `
           <div class="cyber-panel rounded-2xl p-3.5 flex justify-between items-center gap-3">
             <div class="flex items-center gap-3 min-w-0">
               ${logoHtml}
               <div class="min-w-0">
-                <h3 class="text-xs font-bold text-white font-cyber truncate">${t.nombre}</h3>
+                <span class="bg-slate-900 text-amber-400 border border-slate-800 text-[9px] font-bold px-2 py-0.5 rounded-full">${catTag}</span>
+                <h3 class="text-xs font-bold text-white font-cyber truncate mt-1">${t.nombre}</h3>
                 <p class="text-[11px] text-slate-400 truncate mt-0.5">${t.descripcion || 'Tienda digital en OFERTAZO.'}</p>
                 <p class="text-[10px] text-cyan-400 font-mono mt-0.5"><i class="fa-solid fa-location-dot"></i> ${t.direccion || 'Ciego de Ávila'}</p>
               </div>
@@ -454,13 +481,17 @@
       grid.innerHTML = html;
     }
 
-    function filtrarDirectorioGeneral(q) {
-      const query = q.toLowerCase().trim();
-      const filtrados = listaTodosNegocios.filter(t => 
-        (t.nombre && t.nombre.toLowerCase().includes(query)) ||
-        (t.descripcion && t.descripcion.toLowerCase().includes(query)) ||
-        (t.direccion && t.direccion.toLowerCase().includes(query))
-      );
+    function filtrarDirectorioGeneral() {
+      const q = (document.getElementById("buscador-general").value || "").toLowerCase().trim();
+      const filtrados = listaTodosNegocios.filter(t => {
+        const coincideCat = (categoriaDirectorioSeleccionada === 'todos') || 
+          ((t.tipo || t.categoria || '').toLowerCase() === categoriaDirectorioSeleccionada.toLowerCase());
+        const coincideTexto = !q || 
+          (t.nombre && t.nombre.toLowerCase().includes(q)) ||
+          (t.descripcion && t.descripcion.toLowerCase().includes(q)) ||
+          (t.direccion && t.direccion.toLowerCase().includes(q));
+        return coincideCat && coincideTexto;
+      });
       renderizarDirectorioGeneral(filtrados);
     }
 
@@ -492,7 +523,7 @@
       cont.innerHTML = html;
     }
 
-    /* --- TU LÓGICA ORIGINAL DE TIENDA E INDIVIDUAL --- */
+    /* --- LÓGICA DE TIENDA INDIVIDUAL --- */
     function abrirModalOpiniones() { document.getElementById("opiniones-modal").classList.remove("hidden"); }
     function cerrarModalOpiniones() { document.getElementById("opiniones-modal").classList.add("hidden"); }
     function abrirCarrito() { document.getElementById("cart-modal").classList.remove("hidden"); }
