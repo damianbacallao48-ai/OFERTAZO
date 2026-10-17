@@ -6,13 +6,10 @@
   
   <title>OFERTAZO - Catálogo Digital Ciego de Ávila</title>
   <meta name="description" content="Directorio y catálogo digital interactivo en Ciego de Ávila. Pide fácil, rápido y a domicilio.">
-  
-  <!-- ETIQUETAS OPEN GRAPH PARA LA VISTA PREVIA CON LOGO EN WHATSAPP Y REDES -->
   <meta property="og:type" content="website">
-  <meta property="og:title" content="🔥 OFERTAZO.CA - Catálogo Digital & Directorio Comercial">
-  <meta property="og:description" content="Explora tiendas, menús y haz tus pedidos a domicilio en Ciego de Ávila.">
-  <meta property="og:image" content="https://qhkqznpgjirvnndriehr.supabase.co/storage/v1/object/public/imagenes/logo_plataforma_1792205994351.jpg">
-  <meta property="og:url" content="https://ofertazo-cuba.github.io/">
+  <meta id="og-title" property="og:title" content="🔥 OFERTAZO.CA - Catálogo Digital & Directorio Comercial">
+  <meta id="og-desc" property="og:description" content="Explora tiendas, menús y haz tus pedidos a domicilio en Ciego de Ávila.">
+  <meta id="og-image" property="og:image" content="https://qhkqznpgjirvnndriehr.supabase.co/storage/v1/object/public/imagenes/ofertazo_promo.jpg">
 
   <!-- SCRIPT DE PROTECCIÓN ANTI-COPIA Y ANTI-INSPECCIÓN -->
   <script>
@@ -136,15 +133,9 @@
             <p class="text-[10px] text-cyan-400 font-semibold">Directorio Comercial • Ciego de Ávila</p>
           </div>
         </div>
-        <div class="flex items-center gap-2">
-          <!-- Botón de Compartir Plataforma -->
-          <button onclick="compartirPlataforma()" class="neon-pill-btn bg-slate-900 border border-slate-700 text-amber-400 hover:text-white px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm" title="Compartir plataforma">
-            <i class="fa-solid fa-share-nodes"></i>
-          </button>
-          <a href="registro.html" class="neon-pill-btn bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 glow-emerald">
-            <i class="fa-solid fa-rocket"></i> Crear Tienda
-          </a>
-        </div>
+        <a href="registro.html" class="neon-pill-btn bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 glow-emerald">
+          <i class="fa-solid fa-rocket"></i> Crear Tienda
+        </a>
       </div>
     </header>
 
@@ -403,11 +394,13 @@
 
     window.onload = () => {
       if (!TIENDA_SLUG) {
+        // Carga automática del Directorio General como página de inicio principal
         document.getElementById("vista-directorio").classList.remove("hidden");
         document.getElementById("vista-tienda").classList.add("hidden");
         cargarDirectorioGeneral();
         cargarOpinionesGeneral();
       } else {
+        // Carga la tienda individual si viene con ?tienda=...
         document.getElementById("vista-directorio").classList.add("hidden");
         document.getElementById("vista-tienda").classList.remove("hidden");
         cargarCatalogo();
@@ -417,24 +410,6 @@
     function volverAlDirectorio() {
       window.location.href = "index.html";
     }
-
-              
-       function abrirCompartir() {
-      // Función original e intacta de las tiendas individuales
-      if (navigator.share) {
-        navigator.share({
-          title: negocioActual ? negocioActual.nombre : 'OFERTAZO',
-          text: '¡Visita este catálogo digital en OFERTAZO!',
-          url: window.location.href
-        }).catch(() => {});
-      } else {
-        alert("Enlace copiado al portapapeles: " + window.location.href);
-      }
-    }
-
-
-
-
 
     /* --- LÓGICA DIRECTORIO GENERAL (PÁGINA PRINCIPAL) --- */
     async function cargarDirectorioGeneral() {
@@ -656,6 +631,19 @@
       document.getElementById("seccion-otros-negocios").classList.remove("hidden");
     }
 
+    // Función original de compartir en tiendas individuales
+    function abrirCompartir() {
+      if (navigator.share) {
+        navigator.share({
+          title: negocioActual ? negocioActual.nombre : 'OFERTAZO',
+          text: '¡Visita este catálogo digital en OFERTAZO!',
+          url: window.location.href
+        }).catch(() => {});
+      } else {
+        alert("Enlace copiado al portapapeles: " + window.location.href);
+      }
+    }
+
     function agregar(id) {
       const prod = productos.find(p => p.id === id);
       const existe = carrito.find(item => item.id === id);
@@ -677,6 +665,22 @@
       let msg = `📦 *PEDIDO A ${negocioActual.nombre.toUpperCase()}*\n👤 Cliente: ${nombre}\n\n`;
       carrito.forEach(i => { msg += `▪️ ${i.cantidad}x ${i.nombre} ($${i.precio} CUP)\n`; });
       window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    // Función para enviar comentarios en el modal general
+    async function enviarComentarioModal() {
+      const nombre = document.getElementById("op-nombre").value.trim();
+      const mensaje = document.getElementById("op-mensaje").value.trim();
+      if (!nombre || !mensaje) { alert("Por favor completa tu nombre y el comentario."); return; }
+      
+      const { error } = await supabaseClient.from('comentarios').insert([{ nombre: nombre, mensaje: mensaje }]);
+      if (error) { alert("Error al enviar comentario."); return; }
+      
+      alert("¡Opinión publicada con éxito!");
+      document.getElementById("op-nombre").value = "";
+      document.getElementById("op-mensaje").value = "";
+      cerrarModalOpiniones();
+      cargarOpinionesGeneral();
     }
   </script>
 </body>
