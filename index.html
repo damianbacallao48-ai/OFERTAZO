@@ -418,9 +418,9 @@
       window.location.href = "index.html";
     }
 
-    // Función para compartir la plataforma principal con texto, enlace y vista previa configurada
+        // Función para compartir la plataforma principal con texto, enlace y vista previa configurada
     function compartirPlataforma() {
-      const urlCompartir = window.location.origin + window.location.pathname;
+      const urlCompartir = "https://ofertazo-cuba.github.io/";
       const textoCompartir = "🔥 *OFERTAZO.CA - Catálogo Digital & Directorio Comercial*\n\n¡Explora tiendas, menús y haz tus pedidos a domicilio en Ciego de Ávila!\n\n👉 Entra aquí: " + urlCompartir;
 
       if (navigator.share) {
@@ -434,6 +434,7 @@
         alert("¡Enlace y mensaje de la plataforma copiados al portapapeles!");
       }
     }
+
 
     /* --- LÓGICA DIRECTORIO GENERAL (PÁGINA PRINCIPAL) --- */
     async function cargarDirectorioGeneral() {
