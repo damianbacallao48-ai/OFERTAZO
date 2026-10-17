@@ -14,138 +14,81 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen p-4 pb-28 font-sans max-w-lg mx-auto antialiased">
 
-  <!-- ================= VISTA 1: DIRECTORIO GENERAL (PORTADA) ================= -->
-  <div id="vista-directorio" class="space-y-4">
-    <header class="text-center py-6 border-b border-slate-800/80 mb-6 space-y-3">
-      <div class="flex justify-center">
-        <div class="w-20 h-20 rounded-3xl bg-slate-900 border border-amber-500/40 flex items-center justify-center shadow-lg shadow-amber-500/10">
-          <i class="fa-solid fa-cube text-3xl text-amber-400"></i>
+  <!-- ================= VISTA DE LA TIENDA (DISEÑO ORIGINAL EXACTO) ================= -->
+  <div id="vista-tienda" class="space-y-4">
+    
+    <!-- BANNER SUPERIOR DE LA TIENDA CON PORTADA Y LOGO -->
+    <div class="relative bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl">
+      <!-- Imagen de portada de la tienda -->
+      <div class="w-full h-36 bg-slate-900 relative">
+        <img id="tienda-portada" src="" class="w-full h-full object-cover hidden" alt="Portada">
+        <div id="tienda-portada-placeholder" class="w-full h-full bg-gradient-to-r from-purple-900 via-indigo-950 to-slate-900 flex items-center justify-center">
+          <i class="fa-solid fa-store text-4xl text-amber-400/50"></i>
         </div>
       </div>
-      <div>
-        <h1 class="text-2xl font-black text-white tracking-widest">OFERTAZO</h1>
-        <p class="text-[11px] text-cyan-400 tracking-wider font-semibold uppercase mt-0.5">Online Shopping & Digital Catalog</p>
-        <p class="text-xs text-slate-400 mt-1">El centro comercial digital de Ciego de Ávila</p>
-      </div>
 
-      <div class="flex gap-2 justify-center pt-2">
-        <a href="registro.html" target="_blank" class="bg-emerald-600 hover:bg-emerald-500 text-xs px-4 py-2.5 rounded-xl text-white font-bold flex items-center gap-1.5 active:scale-95 shadow transition">
-          <i class="fa-solid fa-store"></i> Crear mi Tienda
-        </a>
-        <a href="admin.html" target="_blank" class="bg-slate-900 hover:bg-slate-800 text-xs px-4 py-2.5 rounded-xl text-amber-400 border border-amber-500/30 font-bold flex items-center gap-1.5 active:scale-95 shadow transition">
-          <i class="fa-solid fa-user-shield"></i> Admin
-        </a>
-      </div>
-    </header>
+      <!-- Contenido del perfil de la tienda -->
+      <div class="p-5 text-center -mt-12 relative space-y-3">
+        <!-- Logo / Avatar -->
+        <div class="w-20 h-20 rounded-2xl bg-slate-950 border-2 border-amber-500/50 flex items-center justify-center mx-auto text-amber-400 text-3xl font-black shadow-xl overflow-hidden" id="tienda-avatar-container">
+          <i class="fa-solid fa-store" id="tienda-avatar-icon"></i>
+        </div>
 
-    <!-- BUSCADOR GENERAL -->
-    <div class="mb-4 relative">
-      <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-500"></i>
-      <input id="buscador-general" type="text" placeholder="Buscar tiendas, productos o servicios..." oninput="filtrarDirectorio()" class="w-full bg-slate-900 border border-slate-800 rounded-2xl pl-11 pr-4 py-3 text-xs text-white placeholder-slate-500 outline-none focus:border-amber-400 shadow-inner">
+        <div>
+          <h1 id="tienda-nombre" class="text-xl font-black text-amber-400">Cargando tienda...</h1>
+          <p id="tienda-desc" class="text-xs text-slate-400 mt-0.5">...</p>
+        </div>
+
+        <!-- Botones de Acción (Admin, Crear Tienda, Difundir / WhatsApp) -->
+        <div class="grid grid-cols-3 gap-2 pt-1">
+          <a href="admin.html" target="_blank" class="bg-slate-950 hover:bg-slate-900 border border-amber-500/30 text-amber-400 text-xs py-2.5 rounded-2xl font-bold flex items-center justify-center gap-1 shadow transition">
+            <i class="fa-solid fa-gear"></i> Admin
+          </a>
+          <a href="registro.html" target="_blank" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs py-2.5 rounded-2xl font-bold flex items-center justify-center gap-1 shadow transition">
+            <i class="fa-solid fa-store"></i> Crear Tienda
+          </a>
+          <a id="link-whatsapp-tienda" href="#" target="_blank" class="bg-slate-950 hover:bg-slate-900 border border-slate-800 text-slate-200 text-xs py-2.5 rounded-2xl font-bold flex items-center justify-center gap-1 shadow transition">
+            <i class="fa-solid fa-share-nodes text-cyan-400"></i> Difundir
+          </a>
+        </div>
+      </div>
     </div>
 
-    <!-- FILTROS DE CATEGORÍAS -->
-    <div class="flex gap-2 overflow-x-auto pb-2 mb-6 no-scrollbar">
-      <button onclick="cambiarCat('todos')" id="btn-cat-todos" class="px-4 py-1.5 rounded-full text-xs font-bold bg-amber-500 text-slate-950 shrink-0 transition">Todas</button>
-      <button onclick="cambiarCat('Gastronomía')" id="btn-cat-Gastronomía" class="px-4 py-1.5 rounded-full text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 shrink-0 transition">🍔 Gastronomía</button>
-      <button onclick="cambiarCat('Tecnología')" id="btn-cat-Tecnología" class="px-4 py-1.5 rounded-full text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 shrink-0 transition">📱 Tecnología</button>
-      <button onclick="cambiarCat('Ropa y Calzado')" id="btn-cat-Ropa y Calzado" class="px-4 py-1.5 rounded-full text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 shrink-0 transition">👕 Ropa y Calzado</button>
-      <button onclick="cambiarCat('Servicios')" id="btn-cat-Servicios" class="px-4 py-1.5 rounded-full text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 shrink-0 transition">⚙️ Servicios</button>
-    </div>
-
-    <!-- LISTA DE NEGOCIOS -->
-    <section class="space-y-3 mb-8">
-      <div class="flex justify-between items-center px-1">
-        <h2 class="text-xs font-black text-white uppercase tracking-wider flex items-center gap-1.5">
-          <i class="fa-solid fa-store text-amber-400"></i> Tiendas Activas (<span id="total-directorio">0</span>)
-        </h2>
-        <button onclick="cargarDirectorio()" class="text-xs text-cyan-400 font-bold hover:underline">
-          <i class="fa-solid fa-rotate"></i> Actualizar
-        </button>
-      </div>
-
-      <div id="grid-directorio" class="space-y-3">
-        <div class="text-center py-12 text-slate-500 text-xs">Cargando directorio de tiendas...</div>
-      </div>
-    </section>
-
-    <!-- OPINIONES -->
-    <section class="bg-slate-900 border border-slate-800 rounded-3xl p-4 shadow-xl space-y-4 mb-6">
-      <div class="flex justify-between items-center">
-        <h3 class="text-xs font-black text-amber-400 uppercase flex items-center gap-1.5">
-          <i class="fa-solid fa-comments"></i> Opiniones sobre la Plataforma
-        </h3>
-        <button onclick="abrirModalOpinion()" class="text-[11px] text-cyan-400 font-bold hover:underline">
-          + Dejar Opinión
-        </button>
-      </div>
-
-      <div id="lista-opiniones" class="space-y-2.5 max-h-56 overflow-y-auto pr-1">
-        <div class="text-center py-4 text-slate-500 text-xs">Cargando opiniones...</div>
-      </div>
-    </section>
-  </div>
-
-
-  <!-- ================= VISTA 2: TIENDA INDIVIDUAL (ORIGINAL CON CARRUSEL) ================= -->
-  <div id="vista-tienda" class="hidden space-y-4">
-    <!-- Cabecera de la tienda -->
-    <div class="flex justify-between items-center py-3 border-b border-slate-800">
-      <a href="index.html" class="bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl text-xs text-amber-400 font-bold flex items-center gap-1">
-        <i class="fa-solid fa-arrow-left"></i> Volver al Directorio
-      </a>
-      <a id="link-whatsapp-tienda" href="#" target="_blank" class="bg-emerald-600 text-white text-xs px-3 py-1.5 rounded-xl font-bold flex items-center gap-1 shadow">
-        <i class="fa-brands fa-whatsapp"></i> Contactar
-      </a>
-    </div>
-
-    <!-- Info del Negocio -->
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 text-center space-y-2 shadow-xl">
-      <div class="w-16 h-16 rounded-2xl bg-slate-950 border border-amber-500/30 flex items-center justify-center mx-auto text-amber-400 text-2xl font-black shadow-inner" id="tienda-avatar">
-        <i class="fa-solid fa-store"></i>
-      </div>
-      <h1 id="tienda-nombre" class="text-xl font-black text-amber-400">Cargando...</h1>
-      <p id="tienda-desc" class="text-xs text-slate-400">...</p>
-    </div>
-
-    <!-- SECCIÓN "OTROS NEGOCIOS" (CARRUSEL) -->
-    <div class="space-y-2">
+    <!-- SECCIÓN "OTROS NEGOCIOS" (CARRUSEL HORIZONTAL CON IMÁGENES) -->
+    <div class="space-y-2 pt-1">
       <div class="flex justify-between items-center px-1">
         <span class="text-[11px] font-black text-cyan-400 uppercase tracking-wider flex items-center gap-1">
           <i class="fa-solid fa-bolt text-amber-400"></i> OTROS NEGOCIOS
         </span>
-        <a href="index.html" class="text-[10px] text-slate-400 hover:text-white font-bold">Ver Directorio ></a>
+        <!-- Botón que enlaza a tu directorio.html que creamos antes -->
+        <a href="directorio.html" class="text-[10px] text-amber-400 hover:underline font-bold">Ver Directorio ></a>
       </div>
       
+      <!-- Carrusel -->
       <div id="carrusel-otros-negocios" class="flex gap-3 overflow-x-auto pb-2 no-scrollbar">
-        <div class="text-xs text-slate-500 py-2 px-3">Cargando otros negocios...</div>
+        <div class="text-xs text-slate-500 py-3 px-4">Cargando negocios...</div>
       </div>
     </div>
 
-    <!-- Buscador de productos -->
+    <!-- BUSCADOR DE PRODUCTOS -->
     <div class="relative">
       <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-500"></i>
-      <input id="buscador-productos" type="text" placeholder="Buscar producto, plato o servicio en esta tienda.." oninput="filtrarProductos()" class="w-full bg-slate-900 border border-slate-800 rounded-2xl pl-11 pr-4 py-3 text-xs text-white placeholder-slate-500 outline-none focus:border-amber-400">
+      <input id="buscador-productos" type="text" placeholder="Buscar producto, plato o servicio en esta tienda.." oninput="filtrarProductos()" class="w-full bg-slate-900 border border-slate-800 rounded-2xl pl-11 pr-4 py-3 text-xs text-white placeholder-slate-500 outline-none focus:border-amber-400 shadow-inner">
     </div>
 
-    <!-- Grid de productos -->
-    <div id="grid-productos" class="grid grid-cols-2 gap-3">
-      <div class="col-span-2 text-center py-10 text-slate-500 text-xs">Cargando productos...</div>
+    <!-- FILTROS DE CATEGORÍAS DE PRODUCTOS -->
+    <div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+      <button onclick="filtrarCatProductos('todos')" id="btn-cat-all" class="px-4 py-1.5 rounded-full text-xs font-bold bg-amber-500 text-slate-950 shrink-0 transition">🔥 Todos</button>
+      <button onclick="filtrarCatProductos('Confituras')" class="px-4 py-1.5 rounded-full text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 shrink-0 transition">Confituras</button>
+      <button onclick="filtrarCatProductos('Comida')" class="px-4 py-1.5 rounded-full text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 shrink-0 transition">Comida</button>
+      <button onclick="filtrarCatProductos('Bebidas')" class="px-4 py-1.5 rounded-full text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 shrink-0 transition">Bebidas</button>
     </div>
-  </div>
 
-
-  <!-- MODAL DE OPINIÓN -->
-  <div id="modal-opinion" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-    <div class="bg-slate-900 border border-slate-700 rounded-3xl p-5 w-full max-w-xs space-y-3 shadow-2xl">
-      <h3 class="text-sm font-black text-white text-center">¿Qué opinas de OFERTAZO?</h3>
-      <input id="input-nombre-op" type="text" placeholder="Tu Nombre o Negocio" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400">
-      <textarea id="input-texto-op" rows="3" placeholder="Escribe tu comentario..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400 resize-none"></textarea>
-      <div class="flex gap-2 pt-1">
-        <button onclick="enviarOpinion()" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-2 rounded-xl text-xs uppercase tracking-wider transition">Publicar</button>
-        <button onclick="cerrarModalOpinion()" class="px-3 bg-slate-800 text-slate-300 font-bold py-2 rounded-xl text-xs">Cancelar</button>
-      </div>
+    <!-- GRID DE PRODUCTOS (ESTÉTICA ORIGINAL CON FOTOS Y PRECIOS) -->
+    <div id="grid-productos" class="grid grid-cols-2 gap-3 pt-1">
+      <div class="col-span-2 text-center py-12 text-slate-500 text-xs">Cargando productos...</div>
     </div>
+
   </div>
 
   <script>
@@ -153,119 +96,72 @@
     const SUPABASE_KEY = "sb_publishable_Ih_3RgWJTptRasXqF9UcxQ_eTkkw7j-";
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    let listadoNegocios = [];
-    let categoriaSeleccionada = 'todos';
     let productosTiendaActual = [];
 
+    // Detectar qué tienda mostrar mediante ?tienda=slug (Si no hay, por defecto muestra la tienda principal o la última)
     const urlParams = new URLSearchParams(window.location.search);
-    const slugTienda = urlParams.get('tienda');
+    let slugTienda = urlParams.get('tienda');
 
-    window.onload = () => {
-      if (slugTienda) {
-        document.getElementById("vista-directorio").classList.add("hidden");
-        document.getElementById("vista-tienda").classList.remove("hidden");
-        cargarTiendaIndividual(slugTienda);
-      } else {
-        document.getElementById("vista-tienda").classList.add("hidden");
-        document.getElementById("vista-directorio").classList.remove("hidden");
-        cargarDirectorio();
-        cargarOpiniones();
+    window.onload = async () => {
+      // Si no se especifica tienda en la URL, cargamos por defecto la tienda "tupunto" o la primera activa
+      if (!slugTienda) {
+        slugTienda = 'tupunto'; 
       }
+      await cargarTiendaIndividual(slugTienda);
     };
 
-    async function cargarDirectorio() {
-      const { data, error } = await supabaseClient
-        .from('negocios')
-        .select('*')
-        .eq('activo', true)
-        .order('id', { ascending: false });
-
-      if (error) {
-        document.getElementById("grid-directorio").innerHTML = `<div class="text-xs text-red-400 text-center py-4">Error cargando tiendas.</div>`;
-        return;
-      }
-
-      listadoNegocios = data || [];
-      renderizarDirectorio(listadoNegocios);
-    }
-
-    function renderizarDirectorio(lista) {
-      const grid = document.getElementById("grid-directorio");
-      document.getElementById("total-directorio").innerText = lista.length;
-
-      if (lista.length === 0) {
-        grid.innerHTML = '<div class="text-xs text-slate-500 text-center py-8">No hay negocios registrados en esta categoría.</div>';
-        return;
-      }
-
-      let html = '';
-      lista.forEach(t => {
-        const cat = t.categoria || 'General';
-        html += `
-          <div class="bg-slate-900 border border-slate-800 hover:border-amber-500/40 rounded-2xl p-4 transition shadow-md flex justify-between items-center">
-            <div class="space-y-1">
-              <span class="bg-slate-800 text-amber-400 border border-slate-700 text-[9px] font-bold px-2 py-0.5 rounded-full">${cat}</span>
-              <h3 class="text-sm font-bold text-white">${t.nombre}</h3>
-              <p class="text-[11px] text-slate-400">${t.descripcion || 'Tienda digital en OFERTAZO.'}</p>
-              <p class="text-[10px] text-emerald-400 font-mono"><i class="fa-brands fa-whatsapp"></i> +${t.telefono_whatsapp || ''}</p>
-            </div>
-            <a href="index.html?tienda=${t.slug}" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-xs shadow shrink-0 flex items-center gap-1 active:scale-95 transition">
-              Visitar <i class="fa-solid fa-arrow-right"></i>
-            </a>
-          </div>
-        `;
-      });
-      grid.innerHTML = html;
-    }
-
-    function cambiarCat(cat) {
-      categoriaSeleccionada = cat;
-      ['todos', 'Gastronomía', 'Tecnología', 'Ropa y Calzado', 'Servicios'].forEach(c => {
-        const btn = document.getElementById(`btn-cat-${c}`);
-        if(btn) {
-          if(c === cat) {
-            btn.className = "px-4 py-1.5 rounded-full text-xs font-bold bg-amber-500 text-slate-950 shrink-0 transition";
-          } else {
-            btn.className = "px-4 py-1.5 rounded-full text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 shrink-0 transition";
-          }
-        }
-      });
-      filtrarDirectorio();
-    }
-
-    function filtrarDirectorio() {
-      const query = document.getElementById("buscador-general").value.toLowerCase();
-      const filtrados = listadoNegocios.filter(t => {
-        const coincideCat = categoriaSeleccionada === 'todos' || t.categoria === categoriaSeleccionada;
-        const coincideTexto = t.nombre.toLowerCase().includes(query) || (t.descripcion && t.descripcion.toLowerCase().includes(query));
-        return coincideCat && coincideTexto;
-      });
-      renderizarDirectorio(filtrados);
-    }
-
     async function cargarTiendaIndividual(slug) {
-      const { data: negocio, error } = await supabaseClient
+      // Buscar la tienda por slug, o si falla, buscar la primera disponible
+      let { data: negocio, error } = await supabaseClient
         .from('negocios')
         .select('*')
         .eq('slug', slug)
         .single();
 
       if (error || !negocio) {
-        document.getElementById("tienda-nombre").innerText = "Tienda no encontrada";
-        document.getElementById("tienda-desc").innerText = "El enlace no es válido o la tienda ya no existe.";
-        return;
+        // Fallback: traer la primera tienda activa
+        const { data: listado } = await supabaseClient
+          .from('negocios')
+          .select('*')
+          .eq('activo', true)
+          .limit(1);
+        
+        if (listado && listado.length > 0) {
+          negocio = listado[0];
+        } else {
+          document.getElementById("tienda-nombre").innerText = "No hay tiendas activas";
+          document.getElementById("tienda-desc").innerText = "Crea una tienda desde el panel de administración.";
+          return;
+        }
       }
 
+      // Rellenar datos del perfil de la tienda
       document.getElementById("tienda-nombre").innerText = negocio.nombre;
-      document.getElementById("tienda-desc").innerText = negocio.descripcion || 'Todo al alcance de un clic';
-      document.getElementById("tienda-avatar").innerHTML = negocio.nombre.charAt(0).toUpperCase();
-      
+      document.getElementById("tienda-desc").innerText = negocio.descripcion || negocio.municipio || 'Ciego de Ávila';
+
+      // Manejar portada si existe
+      if (negocio.portada_url) {
+        const imgPortada = document.getElementById("tienda-portada");
+        imgPortada.src = negocio.portada_url;
+        imgPortada.classList.remove("hidden");
+        document.getElementById("tienda-portada-placeholder").classList.add("hidden");
+      }
+
+      // Manejar logo / avatar si existe
+      if (negocio.logo_url) {
+        document.getElementById("tienda-avatar-container").innerHTML = `<img src="${negocio.logo_url}" class="w-full h-full object-cover rounded-2xl" alt="Logo">`;
+      } else {
+        document.getElementById("tienda-avatar-icon").className = "fa-solid fa-store";
+      }
+
+      // Enlace de WhatsApp
       if (negocio.telefono_whatsapp) {
         document.getElementById("link-whatsapp-tienda").href = `https://wa.me/${negocio.telefono_whatsapp}`;
       } else {
         document.getElementById("link-whatsapp-tienda").style.display = 'none';
       }
 
+      // Cargar productos de esta tienda y el carrusel de otros negocios
       cargarProductosTienda(negocio.id);
       cargarCarruselOtrosNegocios(negocio.id);
     }
@@ -276,23 +172,27 @@
         .select('*')
         .eq('activo', true)
         .neq('id', currentId)
-        .limit(5);
+        .limit(6);
 
       const cont = document.getElementById("carrusel-otros-negocios");
       if (!data || data.length === 0) {
-        cont.innerHTML = '<span class="text-xs text-slate-500">No hay más negocios.</span>';
+        cont.innerHTML = '<span class="text-xs text-slate-500 py-2">No hay más negocios por ahora.</span>';
         return;
       }
 
       let html = '';
       data.forEach(n => {
+        const logoHtml = n.logo_url 
+          ? `<img src="${n.logo_url}" class="w-full h-full object-cover">` 
+          : `<div class="w-full h-full bg-slate-900 flex items-center justify-center text-amber-400 font-bold">${n.nombre.charAt(0)}</div>`;
+
         html += `
-          <a href="index.html?tienda=${n.slug}" class="bg-slate-900 border border-slate-800 rounded-2xl p-3 shrink-0 w-36 text-center space-y-1 shadow hover:border-amber-400 transition">
-            <div class="w-10 h-10 rounded-xl bg-slate-950 border border-slate-800 text-amber-400 font-bold flex items-center justify-center mx-auto text-sm">
-              ${n.nombre.charAt(0).toUpperCase()}
+          <a href="index.html?tienda=${n.slug}" class="bg-slate-900 border border-slate-800 hover:border-amber-400/60 rounded-2xl p-2.5 shrink-0 w-32 text-center space-y-1.5 shadow transition">
+            <div class="w-12 h-12 rounded-xl bg-slate-950 border border-slate-800 mx-auto overflow-hidden shadow-inner flex items-center justify-center">
+              ${logoHtml}
             </div>
             <h4 class="text-xs font-bold text-white truncate">${n.nombre}</h4>
-            <span class="text-[9px] text-amber-400 font-bold block">VER TIENDA</span>
+            <span class="text-[9px] text-amber-400 font-black tracking-wider block">VER TIENDA</span>
           </a>
         `;
       });
@@ -318,17 +218,24 @@
     function renderizarProductos(lista) {
       const grid = document.getElementById("grid-productos");
       if (lista.length === 0) {
-        grid.innerHTML = '<div class="col-span-2 text-center text-slate-500 text-xs py-10">No hay productos en este catálogo.</div>';
+        grid.innerHTML = '<div class="col-span-2 text-center text-slate-500 text-xs py-12">No hay productos en este catálogo.</div>';
         return;
       }
 
       let html = '';
       lista.forEach(p => {
+        const catBadge = p.categoria ? `<span class="absolute top-2 left-2 bg-slate-950/80 backdrop-blur-md text-amber-400 border border-amber-500/30 text-[9px] font-bold px-2 py-0.5 rounded-full uppercase">${p.categoria}</span>` : '';
+        
         html += `
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-3 space-y-2 shadow-md">
-            ${p.imagen_url ? `<img src="${p.imagen_url}" class="w-full h-32 object-cover rounded-xl" alt="Producto">` : ''}
-            <h3 class="text-xs font-bold text-white">${p.nombre}</h3>
-            <p class="text-xs font-black text-amber-400">$${p.precio}</p>
+          <div class="bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-2xl p-3 space-y-2 shadow-md relative flex flex-col justify-between">
+            <div class="relative">
+              ${p.imagen_url ? `<img src="${p.imagen_url}" class="w-full h-32 object-cover rounded-xl" alt="Producto">` : `<div class="w-full h-32 bg-slate-950 rounded-xl flex items-center justify-center text-slate-700"><i class="fa-solid fa-box text-2xl"></i></div>`}
+              ${catBadge}
+            </div>
+            <div class="space-y-1">
+              <h3 class="text-xs font-bold text-white line-clamp-2">${p.nombre}</h3>
+              <p class="text-xs font-black text-amber-400">$${p.precio}</p>
+            </div>
           </div>
         `;
       });
@@ -341,69 +248,12 @@
       renderizarProductos(filtrados);
     }
 
-    async function cargarOpiniones() {
-      const cont = document.getElementById("lista-opiniones");
-      try {
-        const { data } = await supabaseClient
-          .from('comentarios_plataforma')
-          .select('*')
-          .order('id', { ascending: false })
-          .limit(10);
-
-        if (!data || data.length === 0) {
-          cont.innerHTML = '<div class="text-xs text-slate-500 text-center py-3">Sé el primero en opinar sobre la plataforma.</div>';
-          return;
-        }
-
-        let html = '';
-        data.forEach(op => {
-          html += `
-            <div class="bg-slate-950/60 border border-slate-800/80 rounded-xl p-2.5 space-y-1">
-              <div class="flex justify-between items-center">
-                <span class="text-xs font-bold text-amber-400">${op.nombre}</span>
-                <span class="text-[9px] text-slate-500">${new Date(op.created_at || Date.now()).toLocaleDateString()}</span>
-              </div>
-              <p class="text-[11px] text-slate-300">${op.comentario}</p>
-            </div>
-          `;
-        });
-        cont.innerHTML = html;
-      } catch (e) {
-        cont.innerHTML = '<div class="text-xs text-slate-500 text-center py-3">Sin opiniones aún.</div>';
-      }
-    }
-
-    function abrirModalOpinion() {
-      document.getElementById("modal-opinion").classList.remove("hidden");
-      document.getElementById("modal-opinion").classList.add("flex");
-    }
-
-    function cerrarModalOpinion() {
-      document.getElementById("modal-opinion").classList.add("hidden");
-      document.getElementById("modal-opinion").classList.remove("flex");
-    }
-
-    async function enviarOpinion() {
-      const nombre = document.getElementById("input-nombre-op").value.trim();
-      const comentario = document.getElementById("input-texto-op").value.trim();
-
-      if (!nombre || !comentario) {
-        alert("Por favor completa tu nombre y tu comentario.");
-        return;
-      }
-
-      const { error } = await supabaseClient
-        .from('comentarios_plataforma')
-        .insert([{ nombre, comentario }]);
-
-      if (error) {
-        alert("⚠️ Recuerda crear la tabla 'comentarios_plataforma' en Supabase. Error: " + error.message);
+    function filtrarCatProductos(cat) {
+      if(cat === 'todos') {
+        renderizarProductos(productosTiendaActual);
       } else {
-        alert("¡Opinión publicada con éxito!");
-        document.getElementById("input-nombre-op").value = '';
-        document.getElementById("input-texto-op").value = '';
-        cerrarModalOpinion();
-        cargarOpiniones();
+        const filtrados = productosTiendaActual.filter(p => p.categoria && p.categoria.toLowerCase() === cat.toLowerCase());
+        renderizarProductos(filtrados);
       }
     }
   </script>
