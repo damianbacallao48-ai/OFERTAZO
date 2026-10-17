@@ -28,44 +28,19 @@
   </div>
 
   <!-- CONTENIDO DEL PANEL MAESTRO -->
-  <div id="admin-content" class="hidden space-y-5">
-    <header class="flex justify-between items-center py-4 border-b border-slate-800 mb-2">
+  <div id="admin-content" class="hidden">
+    <header class="flex justify-between items-center py-4 border-b border-slate-800 mb-5">
       <div>
         <h1 class="text-xl font-black text-amber-400">PANEL MAESTRO</h1>
-        <p class="text-xs text-slate-400">Control de Negocios, Comentarios y Plataforma</p>
+        <p class="text-xs text-slate-400">Control de Pagos y Suscripciones (2,000 CUP / Mes)</p>
       </div>
       <a href="registro.html" target="_blank" class="bg-emerald-600 text-xs px-3 py-1.5 rounded-xl text-white font-bold flex items-center gap-1.5 active:scale-95 shadow">
         <i class="fa-solid fa-plus"></i> Registro
       </a>
     </header>
 
-    <!-- SECCIÓN: SUBIR LOGO DE LA PLATAFORMA DESDE LA GALERÍA -->
-    <section class="bg-slate-900 border border-amber-500/40 rounded-3xl p-4 shadow-xl space-y-3">
-      <div class="flex items-center gap-2 border-b border-slate-800 pb-2">
-        <i class="fa-solid fa-image text-amber-400 text-lg"></i>
-        <div>
-          <h3 class="text-xs font-black text-white uppercase">Logo / Foto de la Página Principal</h3>
-          <p class="text-[10px] text-slate-400">Sube tu logo directo desde la galería de tu dispositivo</p>
-        </div>
-      </div>
-
-      <div class="space-y-3 pt-1">
-        <div class="flex items-center gap-3">
-          <div id="preview-logo-box" class="w-14 h-14 rounded-2xl bg-slate-950 border border-amber-500/50 flex items-center justify-center overflow-hidden shrink-0 shadow-inner">
-            <i class="fa-solid fa-store text-amber-400 text-lg" id="preview-icon"></i>
-            <img id="preview-img" class="w-full h-full object-cover hidden" alt="Logo">
-          </div>
-          <div class="flex-1 space-y-1">
-            <label class="text-[10px] text-slate-400 font-bold uppercase">Seleccionar imagen de la galería:</label>
-            <input id="input-file-logo" type="file" accept="image/*" onchange="subirLogoGaleria(this)" class="w-full text-xs text-slate-400 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-amber-500 file:text-slate-950 hover:file:bg-amber-400 cursor-pointer">
-          </div>
-        </div>
-        <div id="status-upload" class="text-[10px] text-cyan-400 text-center font-bold hidden">Subiendo imagen a Supabase...</div>
-      </div>
-    </section>
-
     <!-- LISTA DE TODOS LOS NEGOCIOS REGISTRADOS -->
-    <section class="space-y-3">
+    <section class="space-y-3 mb-6">
       <div class="flex justify-between items-center px-1">
         <h2 class="text-xs font-black text-white uppercase tracking-wider flex items-center gap-1.5">
           <i class="fa-solid fa-users-gear text-amber-400"></i> Negocios Registrados (<span id="total-biz">0</span>)
@@ -80,57 +55,22 @@
       </div>
     </section>
 
-    <!-- SECCIÓN DE MODERACIÓN Y RESPUESTA A COMENTARIOS -->
-    <section class="bg-slate-900 border border-cyan-500/40 rounded-3xl p-4 shadow-xl space-y-3">
-      <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+    <!-- TASA DE CAMBIO USD -->
+    <section class="bg-slate-900 border border-cyan-500/40 rounded-3xl p-4 shadow-xl">
+      <div class="flex items-center justify-between gap-3">
         <div class="flex items-center gap-2">
-          <i class="fa-solid fa-comments text-cyan-400 text-lg"></i>
+          <i class="fa-solid fa-money-bill-transfer text-cyan-400 text-lg"></i>
           <div>
-            <h3 class="text-xs font-black text-white uppercase">Comentarios de la Comunidad</h3>
-            <p class="text-[10px] text-slate-400">Modera y responde las opiniones de los usuarios</p>
+            <h3 class="text-xs font-black text-white uppercase">Tasa del Dólar (USD / CUP)</h3>
+            <p class="text-[10px] text-slate-400">Aplica a todas las tiendas</p>
           </div>
         </div>
-        <button onclick="cargarComentariosAdmin()" class="text-xs text-cyan-400 font-bold hover:underline">
-          <i class="fa-solid fa-rotate"></i> Actualizar
-        </button>
-      </div>
-
-      <div id="lista-comentarios-admin" class="space-y-3 max-h-80 overflow-y-auto pr-1">
-        <div class="text-center py-6 text-slate-500 text-xs">Cargando comentarios...</div>
-      </div>
-    </section>
-
-    <!-- TASA DE CAMBIO USD Y CONFIGURACIÓN GENERAL -->
-    <section class="bg-slate-900 border border-amber-500/40 rounded-3xl p-4 shadow-xl space-y-3">
-      <div class="flex items-center gap-2 border-b border-slate-800 pb-2">
-        <i class="fa-solid fa-sliders text-amber-400 text-lg"></i>
-        <div>
-          <h3 class="text-xs font-black text-white uppercase">Ajustes Generales de la Plataforma</h3>
-          <p class="text-[10px] text-slate-400">Tasas, soporte y PIN de seguridad</p>
+        <div class="flex items-center gap-2">
+          <input id="input-tasa-usd" type="number" placeholder="320" class="w-20 bg-slate-800 border border-slate-700 rounded-xl p-2 text-xs text-center font-black text-amber-400 outline-none focus:border-cyan-400">
+          <button onclick="guardarTasaUSD()" id="btn-tasa" class="bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-black px-3 py-2 rounded-xl active:scale-95 transition">
+            Actualizar
+          </button>
         </div>
-      </div>
-
-      <div class="space-y-2.5 pt-1">
-        <div class="flex items-center justify-between gap-3">
-          <span class="text-xs text-slate-300 font-bold">Tasa USD (CUP):</span>
-          <input id="input-tasa-usd" type="number" placeholder="320" class="w-24 bg-slate-950 border border-slate-800 rounded-xl p-2 text-xs text-center font-black text-amber-400 outline-none focus:border-amber-400">
-        </div>
-        <div>
-          <label class="text-[10px] text-slate-400 font-bold uppercase">WhatsApp de Soporte General:</label>
-          <input id="input-admin-wa" type="text" placeholder="Ej. 5358960660" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400 mt-1">
-        </div>
-        <div>
-          <label class="text-[10px] text-slate-400 font-bold uppercase">Tarjeta Transfermóvil (Cobros):</label>
-          <input id="input-admin-tarjeta" type="text" placeholder="Ej. 9238129979527274" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400 mt-1">
-        </div>
-        <div>
-          <label class="text-[10px] text-slate-400 font-bold uppercase">Nuevo PIN Maestro (Opcional):</label>
-          <input id="input-admin-pin" type="password" placeholder="Dejar en blanco para no cambiar" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-400 mt-1">
-        </div>
-
-        <button onclick="guardarConfigGlobal()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-2.5 rounded-xl text-xs uppercase tracking-wider active:scale-95 transition shadow-lg mt-1">
-          Guardar Todos los Cambios
-        </button>
       </div>
     </section>
   </div>
@@ -142,25 +82,36 @@
 
     let negocios = [];
 
+    // Función optimizada para validar directo contra Supabase sin errores de red externos
     async function desbloquearAdmin() {
       const pin = document.getElementById("super-pin").value.trim();
-      if (!pin) { alert("Por favor ingresa el PIN Maestro."); return; }
+      if (!pin) {
+        alert("Por favor ingresa el PIN Maestro.");
+        return;
+      }
 
       try {
+        // Validación directa del PIN maestro de respaldo o configurado
         if (pin === "0110") {
           sessionStorage.setItem("superadmin_ok", "1");
           mostrarAdmin();
           return;
         }
 
-        const { data } = await supabaseClient.from('configuracion').select('*').eq('clave', 'pin_maestro').single();
-        if (data && String(data.valor).trim() === pin) {
+        const { data, error } = await supabaseClient
+          .from('configuracion')
+          .select('*')
+          .eq('clave', 'pin_maestro')
+          .single();
+
+        if (data && data.valor === pin) {
           sessionStorage.setItem("superadmin_ok", "1");
           mostrarAdmin();
         } else {
           alert("PIN Maestro incorrecto.");
         }
       } catch (err) {
+        console.error("Error validando PIN:", err);
         if (pin === "0110") {
           sessionStorage.setItem("superadmin_ok", "1");
           mostrarAdmin();
@@ -174,61 +125,24 @@
       document.getElementById("admin-lock").classList.add("hidden");
       document.getElementById("admin-content").classList.remove("hidden");
       cargarTasaUSD();
-      cargarConfigGlobal();
       cargarNegocios();
-      cargarComentariosAdmin();
     }
 
     if (sessionStorage.getItem("superadmin_ok") === "1") {
       mostrarAdmin();
     }
 
-    async function subirLogoGaleria(input) {
-      if (!input.files || input.files.length === 0) return;
-      const file = input.files[0];
-      const statusEl = document.getElementById("status-upload");
-      statusEl.classList.remove("hidden");
-
-      try {
-        const fileName = `logo_plataforma_${Date.now()}.${file.name.split('.').pop()}`;
-        const { error } = await supabaseClient.storage.from('imagenes').upload(fileName, file);
-
-        if (error) throw error;
-
-        const { data: publicUrlData } = supabaseClient.storage.from('imagenes').getPublicUrl(fileName);
-        const urlFinal = publicUrlData.publicUrl;
-
-        await supabaseClient.from('configuracion').upsert({ clave: 'platform_logo', valor: urlFinal }, { onConflict: 'clave' });
-
-        const img = document.getElementById("preview-img");
-        const icon = document.getElementById("preview-icon");
-        img.src = urlFinal;
-        img.classList.remove("hidden");
-        icon.classList.add("hidden");
-
-        statusEl.innerText = "¡Logo subido y guardado con éxito!";
-        setTimeout(() => { statusEl.classList.add("hidden"); }, 3000);
-      } catch (err) {
-        alert("Error al subir la imagen: " + err.message);
-        statusEl.classList.add("hidden");
-      }
-    }
-
-    function actualizarPreviaLogo(url) {
-      const img = document.getElementById("preview-img");
-      const icon = document.getElementById("preview-icon");
-      if (url && url.startsWith('http')) {
-        img.src = url;
-        img.classList.remove("hidden");
-        icon.classList.add("hidden");
-      }
-    }
-
     async function cargarNegocios() {
       const cont = document.getElementById("lista-negocios");
-      const { data, error } = await supabaseClient.from('negocios').select('*').order('id', { ascending: false });
+      const { data, error } = await supabaseClient
+        .from('negocios')
+        .select('*')
+        .order('id', { ascending: false });
 
-      if (error) { cont.innerHTML = `<div class="text-xs text-red-400 text-center py-4">${error.message}</div>`; return; }
+      if (error) {
+        cont.innerHTML = `<div class="text-xs text-red-400 text-center py-4">${error.message}</div>`;
+        return;
+      }
 
       negocios = data || [];
       document.getElementById("total-biz").innerText = negocios.length;
@@ -248,9 +162,14 @@
         const pinMostrar = b.pin_admin || b.pin || b.password || '----';
         const nombreSeguro = (b.nombre || 'Negocio').replace(/'/g, "\\'");
 
-        let badgeEstado = estaVencido 
-          ? `<span class="bg-red-500/20 text-red-400 border border-red-500/40 text-[9px] font-bold px-2 py-0.5 rounded-full">SUSPENDIDO</span>`
-          : `<span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[9px] font-bold px-2 py-0.5 rounded-full">ACTIVO (${diffDias}d)</span>`;
+        let badgeEstado = '';
+        if (estaVencido) {
+          badgeEstado = `<span class="bg-red-500/20 text-red-400 border border-red-500/40 text-[9px] font-bold px-2 py-0.5 rounded-full">SUSPENDIDO / VENCIDO</span>`;
+        } else if (b.estado_pago === 'prueba') {
+          badgeEstado = `<span class="bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[9px] font-bold px-2 py-0.5 rounded-full">PRUEBA (${diffDias} días)</span>`;
+        } else {
+          badgeEstado = `<span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[9px] font-bold px-2 py-0.5 rounded-full">PAGADO (${diffDias} días)</span>`;
+        }
 
         html += `<div id="card-biz-${b.id}" class="bg-slate-900 border ${estaVencido ? 'border-red-900/60' : 'border-slate-800'} rounded-2xl p-3.5 space-y-2.5 shadow-md">
           <div class="flex justify-between items-start">
@@ -262,121 +181,117 @@
               <p class="text-[11px] text-cyan-400 font-mono mt-0.5">?tienda=${b.slug}</p>
               <p class="text-[10px] text-slate-400">WA: +${b.telefono_whatsapp || ''} • PIN: <strong class="text-amber-300 font-mono">${pinMostrar}</strong></p>
             </div>
+            <!-- Botones de acceso directo -->
             <div class="flex items-center gap-1.5 shrink-0">
-              <a href="panel.html?tienda=${b.slug}" target="_blank" class="p-2 bg-amber-500 text-slate-950 font-bold rounded-xl text-xs flex items-center gap-1 shadow"><i class="fa-solid fa-pen-to-square"></i> Editar</a>
-              <a href="index.html?tienda=${b.slug}" target="_blank" class="p-2 bg-slate-800 text-slate-300 rounded-xl text-xs border border-slate-700"><i class="fa-solid fa-eye"></i></a>
+              <a href="panel.html?tienda=${b.slug}" target="_blank" title="Editar Productos" class="p-2 bg-amber-500 text-slate-950 font-bold rounded-xl text-xs flex items-center gap-1 shadow">
+                <i class="fa-solid fa-pen-to-square"></i> Editar
+              </a>
+              <a href="index.html?tienda=${b.slug}" target="_blank" title="Ver Tienda Cliente" class="p-2 bg-slate-800 text-slate-300 rounded-xl text-xs border border-slate-700">
+                <i class="fa-solid fa-eye"></i>
+              </a>
             </div>
           </div>
 
           <div class="flex items-center justify-between pt-2 border-t border-slate-800 text-xs">
             <div class="flex items-center gap-1.5">
-              <button onclick="renovar30Dias(${b.id})" class="bg-emerald-600 text-white font-bold px-2.5 py-1 rounded-xl text-[10px] active:scale-95"><i class="fa-solid fa-check-circle"></i> +30 Días</button>
-              <button onclick="toggleActivo(${b.id}, ${b.activo})" class="bg-slate-800 text-slate-300 font-bold px-2.5 py-1 rounded-xl text-[10px] border border-slate-700">${b.activo ? 'Pausar' : 'Reactivar'}</button>
+              <button onclick="renovar30Dias(${b.id})" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-2.5 py-1 rounded-xl text-[10px] active:scale-95 flex items-center gap-1">
+                <i class="fa-solid fa-check-circle"></i> Aprobar +30 Días ($2,000 CUP)
+              </button>
+              <button onclick="toggleActivo(${b.id}, ${b.activo})" class="bg-slate-800 text-slate-300 font-bold px-2.5 py-1 rounded-xl text-[10px] border border-slate-700 active:scale-95">
+                ${b.activo ? 'Pausar' : 'Reactivar'}
+              </button>
             </div>
-            <button onclick="eliminarNegocio(${b.id}, '${nombreSeguro}')" id="btn-del-${b.id}" class="text-red-400 hover:text-white hover:bg-red-600 text-xs px-2.5 py-1.5 rounded-xl transition"><i class="fa-solid fa-trash"></i></button>
+            <button onclick="eliminarNegocio(${b.id}, '${nombreSeguro}')" id="btn-del-${b.id}" class="text-red-400 hover:text-white hover:bg-red-600 text-xs px-2.5 py-1.5 rounded-xl transition active:scale-95" title="Eliminar definitivamente">
+              <i class="fa-solid fa-trash"></i>
+            </button>
           </div>
         </div>`;
       });
+
       cont.innerHTML = html;
-    }
-
-    async function cargarComentariosAdmin() {
-      const cont = document.getElementById("lista-comentarios-admin");
-      const { data, error } = await supabaseClient.from('comentarios').select('*').order('id', { ascending: false });
-
-      if (error || !data || data.length === 0) {
-        cont.innerHTML = '<div class="text-xs text-slate-500 text-center py-4">No hay comentarios en la plataforma.</div>';
-        return;
-      }
-
-      let html = '';
-      data.forEach(c => {
-        const respuestaActual = c.mensaje_admin || c.respuesta || '';
-        html += `
-          <div class="bg-slate-950 border border-slate-800 rounded-2xl p-3 space-y-2">
-            <div class="flex justify-between items-center">
-              <span class="text-xs font-bold text-amber-400">${c.nombre}</span>
-              <button onclick="eliminarComentario(${c.id})" class="text-red-400 text-xs hover:text-red-300" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
-            </div>
-            <p class="text-[11px] text-slate-200">${c.mensaje || c.comentario}</p>
-            
-            <div class="flex gap-2 pt-1">
-              <input id="resp-${c.id}" type="text" placeholder="Escribir respuesta oficial..." value="${respuestaActual}" class="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-2.5 py-1 text-[11px] text-white outline-none focus:border-cyan-400">
-              <button onclick="responderComentario(${c.id})" class="bg-cyan-600 hover:bg-cyan-500 text-white px-3 py-1 rounded-xl text-[11px] font-bold">Responder</button>
-            </div>
-          </div>
-        `;
-      });
-      cont.innerHTML = html;
-    }
-
-    async function responderComentario(id) {
-      const resp = document.getElementById(`resp-${id}`).value.trim();
-      const { error } = await supabaseClient.from('comentarios').update({ mensaje_admin: resp }).eq('id', id);
-      if (error) {
-        const { error: err2 } = await supabaseClient.from('comentarios').update({ respuesta: resp }).eq('id', id);
-        if (err2) { alert("Error al guardar respuesta."); return; }
-      }
-      alert("¡Respuesta guardada con éxito!");
-    }
-
-    async function eliminarComentario(id) {
-      if (!confirm("¿Eliminar este comentario?")) return;
-      await supabaseClient.from('comentarios').delete().eq('id', id);
-      cargarComentariosAdmin();
     }
 
     async function renovar30Dias(id) {
-      if (!confirm("¿Aprobar +30 días de suscripción (2,000 CUP)?")) return;
+      if (!confirm("¿Confirmas que este cliente pagó los 2,000 CUP y deseas activar/extender 30 días de suscripción?")) return;
+
       const nuevaFecha = new Date();
       nuevaFecha.setDate(nuevaFecha.getDate() + 30);
-      await supabaseClient.from('negocios').update({ activo: true, estado_pago: 'pagado', fecha_vencimiento: nuevaFecha.toISOString() }).eq('id', id);
-      cargarNegocios();
+
+      const { error } = await supabaseClient
+        .from('negocios')
+        .update({
+          activo: true,
+          estado_pago: 'pagado',
+          fecha_vencimiento: nuevaFecha.toISOString()
+        })
+        .eq('id', id);
+
+      if (error) {
+        alert("Error renovando: " + error.message);
+      } else {
+        alert("¡Negocio renovado exitosamente por 30 días!");
+        cargarNegocios();
+      }
     }
 
     async function toggleActivo(id, act) {
-      await supabaseClient.from('negocios').update({ activo: !act }).eq('id', id);
+      const { error } = await supabaseClient.from('negocios').update({ activo: !act }).eq('id', id);
+      if (error) alert("Error al cambiar estado: " + error.message);
       cargarNegocios();
     }
 
     async function eliminarNegocio(id, nombre) {
-      if (!confirm(`⚠️ ¿Eliminar definitivamente a "${nombre}"?`)) return;
-      await supabaseClient.from('productos').delete().eq('negocio_id', id);
-      await supabaseClient.from('negocios').delete().eq('id', id);
+      if (!confirm(`⚠️ ¿Estás seguro de eliminar definitivamente "${nombre}" y TODOS sus productos?`)) return;
+
+      const btn = document.getElementById(`btn-del-${id}`);
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+      }
+
+      try {
+        const { error: errProd } = await supabaseClient
+          .from('productos')
+          .delete()
+          .eq('negocio_id', id);
+
+        if (errProd) {
+          console.warn("Aviso al borrar productos:", errProd.message);
+        }
+
+        const { data: borrados, error: errNeg } = await supabaseClient
+          .from('negocios')
+          .delete()
+          .eq('id', id)
+          .select();
+
+        if (errNeg) {
+          alert("❌ Error de base de datos al eliminar: " + errNeg.message);
+        } else if (!borrados || borrados.length === 0) {
+          alert("⚠️ Supabase bloqueó el borrado físico porque falta activar la política DELETE en la tabla 'negocios'.\n\nPor ahora el negocio ha sido desactivado y ocultado.");
+          await supabaseClient.from('negocios').update({ activo: false }).eq('id', id);
+        } else {
+          const card = document.getElementById(`card-biz-${id}`);
+          if (card) card.remove();
+        }
+      } catch (e) {
+        alert("Error inesperado: " + e.message);
+      }
+
       cargarNegocios();
     }
 
     async function cargarTasaUSD() {
-      const { data } = await supabaseClient.from('configuracion').select('*').eq('clave', 'tasa_usd').single();
-      if (data && data.valor) document.getElementById("input-tasa-usd").value = data.valor;
-
-      const { data: logo } = await supabaseClient.from('configuracion').select('*').eq('clave', 'platform_logo').single();
-      if (logo && logo.valor) {
-        actualizarPreviaLogo(logo.valor);
-      }
+      try {
+        const { data } = await supabaseClient.from('configuracion').select('*').eq('clave', 'tasa_usd').single();
+        if (data && data.valor) document.getElementById("input-tasa-usd").value = data.valor;
+      } catch (e) {}
     }
 
-    async function cargarConfigGlobal() {
-      const { data: wa } = await supabaseClient.from('configuracion').select('*').eq('clave', 'admin_whatsapp').single();
-      if (wa && wa.valor) document.getElementById("input-admin-wa").value = wa.valor;
-
-      const { data: tar } = await supabaseClient.from('configuracion').select('*').eq('clave', 'admin_tarjeta').single();
-      if (tar && tar.valor) document.getElementById("input-admin-tarjeta").value = tar.valor;
-    }
-
-    async function guardarConfigGlobal() {
-      const tasa = document.getElementById("input-tasa-usd").value;
-      const wa = document.getElementById("input-admin-wa").value.trim();
-      const tarjeta = document.getElementById("input-admin-tarjeta").value.trim();
-      const nuevoPin = document.getElementById("input-admin-pin").value.trim();
-
-      if (tasa) await supabaseClient.from('configuracion').upsert({ clave: 'tasa_usd', valor: String(tasa) }, { onConflict: 'clave' });
-      if (wa) await supabaseClient.from('configuracion').upsert({ clave: 'admin_whatsapp', valor: wa }, { onConflict: 'clave' });
-      if (tarjeta) await supabaseClient.from('configuracion').upsert({ clave: 'admin_tarjeta', valor: tarjeta }, { onConflict: 'clave' });
-      if (nuevoPin) await supabaseClient.from('configuracion').upsert({ clave: 'pin_maestro', valor: nuevoPin }, { onConflict: 'clave' });
-
-      alert("¡Configuración general actualizada con éxito!");
-      document.getElementById("input-admin-pin").value = "";
+    async function guardarTasaUSD() {
+      const v = document.getElementById("input-tasa-usd").value;
+      await supabaseClient.from('configuracion').upsert({ clave: 'tasa_usd', valor: String(v) });
+      alert("Tasa actualizada.");
     }
   </script>
 </body>
