@@ -117,6 +117,9 @@
     <div class="absolute top-1/3 -right-20 w-72 h-72 bg-cyan-500/10 rounded-full blur-[90px]"></div>
   </div>
 
+  <!-- Contenedor oculto auxiliar para generar el QR en canvas -->
+  <div id="qr-buffer" style="display:none;"></div>
+
   <!-- ========================================== -->
   <!-- VISTA 1: DIRECTORIO GENERAL (PÁGINA INICIAL) -->
   <!-- ========================================== -->
@@ -236,7 +239,7 @@
             <span>Crear Tienda</span>
           </a>
 
-          <button onclick="abrirCompartir()" class="neon-pill-btn bg-slate-900 border border-slate-700 text-slate-200 hover:text-amber-400 py-1.5 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1.5 shadow-sm">
+          <button onclick="abrirCompartir()" id="btn-difundir" class="neon-pill-btn bg-slate-900 border border-slate-700 text-slate-200 hover:text-amber-400 py-1.5 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1.5 shadow-sm">
             <i class="fa-solid fa-share-nodes text-amber-400"></i>
             <span>Difundir</span>
           </button>
@@ -439,13 +442,11 @@
 
     window.onload = () => {
       if (!TIENDA_SLUG) {
-        // Carga automática del Directorio General como página de inicio principal
         document.getElementById("vista-directorio").classList.remove("hidden");
         document.getElementById("vista-tienda").classList.add("hidden");
         cargarDirectorioGeneral();
         cargarOpinionesGeneral();
       } else {
-        // Carga la tienda individual si viene con ?tienda=...
         document.getElementById("vista-directorio").classList.add("hidden");
         document.getElementById("vista-tienda").classList.remove("hidden");
         cargarCatalogo();
@@ -674,13 +675,139 @@
       document.getElementById("seccion-otros-negocios").classList.remove("hidden");
     }
 
-    function abrirCompartir() {
-      const nombre = negocioActual ? negocioActual.nombre : 'OFERTAZO';
+    /* --- GENERADOR DE FLYER CON QR PARA COMPARTIR --- */
+    function crearCanvasFlyer(urlTienda) {
+      return new Promise((resolve) => {
+        const qrDiv = document.getElementById("qr-buffer");
+        qrDiv.innerHTML = "";
+        
+        new QRCode(qrDiv, {
+          text: urlTienda,
+          width: 280,
+          height: 280,
+          colorDark: "#000000",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.H
+        });
+
+        setTimeout(() => {
+          const qrCanvas = qrDiv.querySelector("canvas");
+          const canvas = document.createElement("canvas");
+          canvas.width = 600;
+          canvas.height = 760;
+          const ctx = canvas.getContext("2d");
+
+          // Fondo principal
+          ctx.fillStyle = "#070b16";
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+          // Borde decorativo
+          ctx.lineWidth = 6;
+          ctx.strokeStyle = "#f59e0b";
+          ctx.strokeRect(16, 16, canvas.width - 32, canvas.height - 32);
+
+          // Nombre de la tienda
+          const nombre = (negocioActual ? negocioActual.nombre : "OFERTAZO").toUpperCase();
+          ctx.fillStyle = "#fbbf24";
+          ctx.font = "bold 34px 'Orbitron', monospace";
+          ctx.textAlign = "center";
+          ctx.fillText(nombre, canvas.width / 2, 75);
+
+          // Categoría / Subtítulo
+          const cat = (negocioActual ? (negocioActual.tipo || negocioActual.categoria || "Comercio General") : "Comercio General").toUpperCase();
+          ctx.fillStyle = "#22d3ee";
+          ctx.font = "bold 17px 'Plus Jakarta Sans', sans-serif";
+          ctx.fillText(`⚡ ${cat} ⚡`, canvas.width / 2, 115);
+
+          // Recuadro oscuro para el QR
+          ctx.fillStyle = "#0c1529";
+          ctx.strokeStyle = "rgba(245, 158, 11, 0.4)";
+          ctx.lineWidth = 2;
+          ctx.roundRect ? ctx.roundRect(110, 150, 380, 440, 24) : ctx.fillRect(110, 150, 380, 440);
+          ctx.fill();
+          ctx.stroke();
+
+          // Fondo blanco para el código QR
+          ctx.fillStyle = "#ffffff";
+          ctx.roundRect ? ctx.roundRect(155, 180, 290, 290, 16) : ctx.fillRect(155, 180, 290, 290);
+          ctx.fill();
+
+          // Dibujar el código QR
+          if (qrCanvas) {
+            ctx.drawImage(qrCanvas, 165, 190, 270, 270);
+          }
+
+          // Textos dentro del marco
+          ctx.fillStyle = "#f8fafc";
+          ctx.font = "bold 15px 'Plus Jakarta Sans', sans-serif";
+          ctx.fillText("¡ESCANEA EL QR O ENTRA AL LINK PARA PEDIR!", canvas.width / 2, 510);
+
+          ctx.fillStyle = "#94a3b8";
+          ctx.font = "14px 'Plus Jakarta Sans', sans-serif";
+          ctx.fillText("📍 Ciego de Ávila", canvas.width / 2, 545);
+
+          // Pie del flyer
+          ctx.fillStyle = "#10b981";
+          ctx.font = "bold 13px 'Orbitron', monospace";
+          ctx.fillText("IMPULSADO POR OFERTAZO.CA • CATÁLOGO DIGITAL", canvas.width / 2, 690);
+
+          resolve(canvas);
+        }, 150);
+      });
+    }
+
+    async function abrirCompartir() {
+      const btn = document.getElementById("btn-difundir");
+      const textoOriginal = btn.innerHTML;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-amber-400"></i> Preparando...`;
+
+      const nombre = (negocioActual ? negocioActual.nombre : "OFERTAZO").toUpperCase();
+      const rubro = negocioActual ? (negocioActual.tipo || negocioActual.categoria || "Comercio General") : "Comercio General";
       const base = window.location.origin + window.location.pathname;
       const urlTienda = `${base}?tienda=${negocioActual ? negocioActual.slug : 'ofertazo'}`;
-      
-      const txt = encodeURIComponent(`🔥 ¡Pide en ${nombre}! Catálogo digital directo:\n${urlTienda}`);
-      window.open(`https://api.whatsapp.com/send?text=${txt}`, '_blank');
+
+      const textoPublicitario = `🔥 *¡PIDE ONLINE EN ${nombre}!* 🛵\n\n🏷️ ${rubro}\n📍 Ciego de Ávila\n\n👉 *Mira nuestras fotos, precios y haz tu pedido directo aquí:*\n${urlTienda}`;
+
+      try {
+        const canvas = await crearCanvasFlyer(urlTienda);
+
+        canvas.toBlob(async (blob) => {
+          btn.innerHTML = textoOriginal;
+          if (!blob) {
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(textoPublicitario)}`, '_blank');
+            return;
+          }
+
+          const file = new File([blob], `Flyer_${negocioActual ? negocioActual.slug : 'tienda'}.png`, { type: "image/png" });
+
+          // Si el navegador soporta compartir archivos, manda la foto del flyer + texto publicitario a WhatsApp
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            try {
+              await navigator.share({
+                files: [file],
+                text: textoPublicitario
+              });
+              return;
+            } catch (err) {
+              if (err.name === 'AbortError') return;
+            }
+          }
+
+          // Alternativa en dispositivos donde la API no permite adjuntar archivos directamente
+          const a = document.createElement("a");
+          a.download = `Flyer_${negocioActual ? negocioActual.slug : 'tienda'}.png`;
+          a.href = canvas.toDataURL("image/png");
+          a.click();
+
+          setTimeout(() => {
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(textoPublicitario)}`, '_blank');
+          }, 300);
+        }, "image/png");
+
+      } catch (e) {
+        btn.innerHTML = textoOriginal;
+        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(textoPublicitario)}`, '_blank');
+      }
     }
 
     /* --- GESTIÓN AVANZADA DEL CARRITO --- */
