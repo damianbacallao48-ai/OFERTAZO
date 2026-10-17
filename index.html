@@ -7,27 +7,30 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen p-4 pb-28 font-sans max-w-lg mx-auto antialiased">
 
-  <!-- ================= VISTA PRINCIPAL (DIRECTORIO + PORTADA) ================= -->
+  <!-- ================= VISTA 1: DIRECTORIO GENERAL (PORTADA) ================= -->
   <div id="vista-directorio" class="space-y-4">
-    <!-- PORTADA Y LOGO DE LA PLATAFORMA -->
-    <header class="text-center py-4 border-b border-slate-800/80 mb-4 space-y-3">
+    <header class="text-center py-6 border-b border-slate-800/80 mb-6 space-y-3">
       <div class="flex justify-center">
-        <div class="w-20 h-20 rounded-3xl bg-slate-900 border border-amber-500/40 flex items-center justify-center shadow-lg shadow-amber-500/10 overflow-hidden">
+        <div class="w-20 h-20 rounded-3xl bg-slate-900 border border-amber-500/40 flex items-center justify-center shadow-lg shadow-amber-500/10">
           <i class="fa-solid fa-cube text-3xl text-amber-400"></i>
         </div>
       </div>
       <div>
-        <h1 class="text-2xl font-black text-white tracking-wider">OFERTAZO</h1>
-        <p class="text-[10px] text-cyan-400 tracking-wider font-bold uppercase mt-0.5">Online Shopping & Digital Catalog</p>
+        <h1 class="text-2xl font-black text-white tracking-widest">OFERTAZO</h1>
+        <p class="text-[11px] text-cyan-400 tracking-wider font-semibold uppercase mt-0.5">Online Shopping & Digital Catalog</p>
         <p class="text-xs text-slate-400 mt-1">El centro comercial digital de Ciego de Ávila</p>
       </div>
 
       <div class="flex gap-2 justify-center pt-2">
         <a href="registro.html" target="_blank" class="bg-emerald-600 hover:bg-emerald-500 text-xs px-4 py-2.5 rounded-xl text-white font-bold flex items-center gap-1.5 active:scale-95 shadow transition">
-          <i class="fa-solid fa-store"></i> Crear Tienda
+          <i class="fa-solid fa-store"></i> Crear mi Tienda
         </a>
         <a href="admin.html" target="_blank" class="bg-slate-900 hover:bg-slate-800 text-xs px-4 py-2.5 rounded-xl text-amber-400 border border-amber-500/30 font-bold flex items-center gap-1.5 active:scale-95 shadow transition">
           <i class="fa-solid fa-user-shield"></i> Admin
@@ -36,25 +39,25 @@
     </header>
 
     <!-- BUSCADOR GENERAL -->
-    <div class="relative">
+    <div class="mb-4 relative">
       <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-500"></i>
       <input id="buscador-general" type="text" placeholder="Buscar tiendas, productos o servicios..." oninput="filtrarDirectorio()" class="w-full bg-slate-900 border border-slate-800 rounded-2xl pl-11 pr-4 py-3 text-xs text-white placeholder-slate-500 outline-none focus:border-amber-400 shadow-inner">
     </div>
 
     <!-- FILTROS DE CATEGORÍAS -->
-    <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
-      <button onclick="cambiarCat('todos')" id="btn-cat-todos" class="px-4 py-1.5 rounded-full text-xs font-bold bg-amber-500 text-slate-950 shrink-0 transition">🔥 Todos</button>
+    <div class="flex gap-2 overflow-x-auto pb-2 mb-6 no-scrollbar">
+      <button onclick="cambiarCat('todos')" id="btn-cat-todos" class="px-4 py-1.5 rounded-full text-xs font-bold bg-amber-500 text-slate-950 shrink-0 transition">Todas</button>
       <button onclick="cambiarCat('Gastronomía')" id="btn-cat-Gastronomía" class="px-4 py-1.5 rounded-full text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 shrink-0 transition">🍔 Gastronomía</button>
       <button onclick="cambiarCat('Tecnología')" id="btn-cat-Tecnología" class="px-4 py-1.5 rounded-full text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 shrink-0 transition">📱 Tecnología</button>
       <button onclick="cambiarCat('Ropa y Calzado')" id="btn-cat-Ropa y Calzado" class="px-4 py-1.5 rounded-full text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 shrink-0 transition">👕 Ropa y Calzado</button>
       <button onclick="cambiarCat('Servicios')" id="btn-cat-Servicios" class="px-4 py-1.5 rounded-full text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 shrink-0 transition">⚙️ Servicios</button>
     </div>
 
-    <!-- LISTA DE NEGOCIOS (ESTÉTICA ORIGINAL CON TARJETAS HORIZONTALES) -->
-    <section class="space-y-3 pt-2">
+    <!-- LISTA DE NEGOCIOS -->
+    <section class="space-y-3 mb-8">
       <div class="flex justify-between items-center px-1">
         <h2 class="text-xs font-black text-white uppercase tracking-wider flex items-center gap-1.5">
-          <i class="fa-solid fa-store text-amber-400"></i> Tiendas Disponibles (<span id="total-directorio">0</span>)
+          <i class="fa-solid fa-store text-amber-400"></i> Tiendas Activas (<span id="total-directorio">0</span>)
         </h2>
         <button onclick="cargarDirectorio()" class="text-xs text-cyan-400 font-bold hover:underline">
           <i class="fa-solid fa-rotate"></i> Actualizar
@@ -67,7 +70,7 @@
     </section>
 
     <!-- OPINIONES -->
-    <section class="bg-slate-900 border border-slate-800 rounded-3xl p-4 shadow-xl space-y-3 mt-6">
+    <section class="bg-slate-900 border border-slate-800 rounded-3xl p-4 shadow-xl space-y-4 mb-6">
       <div class="flex justify-between items-center">
         <h3 class="text-xs font-black text-amber-400 uppercase flex items-center gap-1.5">
           <i class="fa-solid fa-comments"></i> Opiniones sobre la Plataforma
@@ -76,16 +79,17 @@
           + Dejar Opinión
         </button>
       </div>
-      <div id="lista-opiniones" class="space-y-2.5 max-h-52 overflow-y-auto pr-1">
-        <div class="text-center py-3 text-slate-500 text-xs">Cargando opiniones...</div>
+
+      <div id="lista-opiniones" class="space-y-2.5 max-h-56 overflow-y-auto pr-1">
+        <div class="text-center py-4 text-slate-500 text-xs">Cargando opiniones...</div>
       </div>
     </section>
   </div>
 
 
-  <!-- ================= VISTA 2: TIENDA INDIVIDUAL (ESTÉTICA EXACTA DEL INICIO) ================= -->
+  <!-- ================= VISTA 2: TIENDA INDIVIDUAL (ORIGINAL CON CARRUSEL) ================= -->
   <div id="vista-tienda" class="hidden space-y-4">
-    <!-- Cabecera de la tienda individual -->
+    <!-- Cabecera de la tienda -->
     <div class="flex justify-between items-center py-3 border-b border-slate-800">
       <a href="index.html" class="bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl text-xs text-amber-400 font-bold flex items-center gap-1">
         <i class="fa-solid fa-arrow-left"></i> Volver al Directorio
@@ -95,22 +99,36 @@
       </a>
     </div>
 
-    <!-- Banner de la tienda -->
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 text-center space-y-2 shadow-xl">
-      <div class="w-16 h-16 rounded-2xl bg-slate-950 border border-amber-500/30 flex items-center justify-center mx-auto text-amber-400 text-2xl font-black shadow-inner" id="tienda-inicial">
+    <!-- Info del Negocio -->
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 text-center space-y-2 shadow-xl">
+      <div class="w-16 h-16 rounded-2xl bg-slate-950 border border-amber-500/30 flex items-center justify-center mx-auto text-amber-400 text-2xl font-black shadow-inner" id="tienda-avatar">
         <i class="fa-solid fa-store"></i>
       </div>
-      <h1 id="tienda-nombre" class="text-lg font-black text-amber-400">Cargando...</h1>
+      <h1 id="tienda-nombre" class="text-xl font-black text-amber-400">Cargando...</h1>
       <p id="tienda-desc" class="text-xs text-slate-400">...</p>
+    </div>
+
+    <!-- SECCIÓN "OTROS NEGOCIOS" (CARRUSEL) -->
+    <div class="space-y-2">
+      <div class="flex justify-between items-center px-1">
+        <span class="text-[11px] font-black text-cyan-400 uppercase tracking-wider flex items-center gap-1">
+          <i class="fa-solid fa-bolt text-amber-400"></i> OTROS NEGOCIOS
+        </span>
+        <a href="index.html" class="text-[10px] text-slate-400 hover:text-white font-bold">Ver Directorio ></a>
+      </div>
+      
+      <div id="carrusel-otros-negocios" class="flex gap-3 overflow-x-auto pb-2 no-scrollbar">
+        <div class="text-xs text-slate-500 py-2 px-3">Cargando otros negocios...</div>
+      </div>
     </div>
 
     <!-- Buscador de productos -->
     <div class="relative">
       <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-500"></i>
-      <input id="buscador-productos" type="text" placeholder="Buscar producto en esta tienda..." oninput="filtrarProductos()" class="w-full bg-slate-900 border border-slate-800 rounded-2xl pl-11 pr-4 py-3 text-xs text-white placeholder-slate-500 outline-none focus:border-amber-400">
+      <input id="buscador-productos" type="text" placeholder="Buscar producto, plato o servicio en esta tienda.." oninput="filtrarProductos()" class="w-full bg-slate-900 border border-slate-800 rounded-2xl pl-11 pr-4 py-3 text-xs text-white placeholder-slate-500 outline-none focus:border-amber-400">
     </div>
 
-    <!-- Grid de productos original (2 columnas con diseño limpio) -->
+    <!-- Grid de productos -->
     <div id="grid-productos" class="grid grid-cols-2 gap-3">
       <div class="col-span-2 text-center py-10 text-slate-500 text-xs">Cargando productos...</div>
     </div>
@@ -183,26 +201,17 @@
       let html = '';
       lista.forEach(t => {
         const cat = t.categoria || 'General';
-        const direccion = t.direccion || t.municipio || 'Ciego de Ávila';
-        
-        // Estética original exacta de las tarjetas de tiendas
         html += `
-          <div class="bg-slate-900 border border-slate-800 hover:border-amber-500/40 rounded-2xl p-3.5 space-y-2.5 shadow-md">
-            <div class="flex justify-between items-start">
-              <div>
-                <div class="flex items-center gap-2 flex-wrap">
-                  <h3 class="text-sm font-bold text-white">${t.nombre}</h3>
-                  <span class="bg-slate-800 text-amber-400 border border-slate-700 text-[9px] font-bold px-2 py-0.5 rounded-full">${cat}</span>
-                </div>
-                <p class="text-[11px] text-slate-400 mt-0.5">${t.descripcion || 'Tienda digital en OFERTAZO.'}</p>
-                <p class="text-[10px] text-cyan-400 mt-1 font-mono"><i class="fa-solid fa-location-dot"></i> ${direccion}</p>
-              </div>
-              <div class="flex items-center gap-1.5 shrink-0">
-                <a href="index.html?tienda=${t.slug}" class="p-2 bg-amber-500 text-slate-950 font-bold rounded-xl text-xs flex items-center gap-1 shadow active:scale-95 transition">
-                  Visitar <i class="fa-solid fa-arrow-right"></i>
-                </a>
-              </div>
+          <div class="bg-slate-900 border border-slate-800 hover:border-amber-500/40 rounded-2xl p-4 transition shadow-md flex justify-between items-center">
+            <div class="space-y-1">
+              <span class="bg-slate-800 text-amber-400 border border-slate-700 text-[9px] font-bold px-2 py-0.5 rounded-full">${cat}</span>
+              <h3 class="text-sm font-bold text-white">${t.nombre}</h3>
+              <p class="text-[11px] text-slate-400">${t.descripcion || 'Tienda digital en OFERTAZO.'}</p>
+              <p class="text-[10px] text-emerald-400 font-mono"><i class="fa-brands fa-whatsapp"></i> +${t.telefono_whatsapp || ''}</p>
             </div>
+            <a href="index.html?tienda=${t.slug}" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-xs shadow shrink-0 flex items-center gap-1 active:scale-95 transition">
+              Visitar <i class="fa-solid fa-arrow-right"></i>
+            </a>
           </div>
         `;
       });
@@ -248,8 +257,8 @@
       }
 
       document.getElementById("tienda-nombre").innerText = negocio.nombre;
-      document.getElementById("tienda-desc").innerText = negocio.descripcion || 'Bienvenido a nuestro catálogo digital.';
-      document.getElementById("tienda-inicial").innerHTML = negocio.nombre.charAt(0).toUpperCase();
+      document.getElementById("tienda-desc").innerText = negocio.descripcion || 'Todo al alcance de un clic';
+      document.getElementById("tienda-avatar").innerHTML = negocio.nombre.charAt(0).toUpperCase();
       
       if (negocio.telefono_whatsapp) {
         document.getElementById("link-whatsapp-tienda").href = `https://wa.me/${negocio.telefono_whatsapp}`;
@@ -258,6 +267,36 @@
       }
 
       cargarProductosTienda(negocio.id);
+      cargarCarruselOtrosNegocios(negocio.id);
+    }
+
+    async function cargarCarruselOtrosNegocios(currentId) {
+      const { data } = await supabaseClient
+        .from('negocios')
+        .select('*')
+        .eq('activo', true)
+        .neq('id', currentId)
+        .limit(5);
+
+      const cont = document.getElementById("carrusel-otros-negocios");
+      if (!data || data.length === 0) {
+        cont.innerHTML = '<span class="text-xs text-slate-500">No hay más negocios.</span>';
+        return;
+      }
+
+      let html = '';
+      data.forEach(n => {
+        html += `
+          <a href="index.html?tienda=${n.slug}" class="bg-slate-900 border border-slate-800 rounded-2xl p-3 shrink-0 w-36 text-center space-y-1 shadow hover:border-amber-400 transition">
+            <div class="w-10 h-10 rounded-xl bg-slate-950 border border-slate-800 text-amber-400 font-bold flex items-center justify-center mx-auto text-sm">
+              ${n.nombre.charAt(0).toUpperCase()}
+            </div>
+            <h4 class="text-xs font-bold text-white truncate">${n.nombre}</h4>
+            <span class="text-[9px] text-amber-400 font-bold block">VER TIENDA</span>
+          </a>
+        `;
+      });
+      cont.innerHTML = html;
     }
 
     async function cargarProductosTienda(negocioId) {
@@ -312,7 +351,7 @@
           .limit(10);
 
         if (!data || data.length === 0) {
-          cont.innerHTML = '<div class="text-xs text-slate-500 text-center py-2">Sé el primero en opinar sobre la plataforma.</div>';
+          cont.innerHTML = '<div class="text-xs text-slate-500 text-center py-3">Sé el primero en opinar sobre la plataforma.</div>';
           return;
         }
 
@@ -330,7 +369,7 @@
         });
         cont.innerHTML = html;
       } catch (e) {
-        cont.innerHTML = '<div class="text-xs text-slate-500 text-center py-2">Sin opiniones aún.</div>';
+        cont.innerHTML = '<div class="text-xs text-slate-500 text-center py-3">Sin opiniones aún.</div>';
       }
     }
 
@@ -358,7 +397,7 @@
         .insert([{ nombre, comentario }]);
 
       if (error) {
-        alert("⚠️ Crea la tabla 'comentarios_plataforma' en Supabase. Error: " + error.message);
+        alert("⚠️ Recuerda crear la tabla 'comentarios_plataforma' en Supabase. Error: " + error.message);
       } else {
         alert("¡Opinión publicada con éxito!");
         document.getElementById("input-nombre-op").value = '';
